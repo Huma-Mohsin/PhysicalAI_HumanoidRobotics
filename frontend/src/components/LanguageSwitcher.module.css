@@ -1,0 +1,70 @@
+/**
+ * Language Switcher Styles
+ */
+
+.switcherContainer {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.langButton {
+  padding: 8px 16px;
+  border: 2px solid #dee2e6;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.langButton:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.langButton.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  font-weight: 600;
+}
+
+.authPrompt {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #856404;
+  text-align: right;
+  direction: rtl;
+}
+
+.authPrompt a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.authPrompt a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .switcherContainer {
+    width: 100%;
+  }
+
+  .langButton {
+    flex: 1;
+    justify-content: center;
+  }
+}

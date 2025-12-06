@@ -1,0 +1,37 @@
+/**
+ * Environment Badge Styles
+ */
+
+.badgeContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.workstation {
+  background: #e7f5ff;
+  color: #1864ab;
+  border: 1px solid #a5d8ff;
+}
+
+.cloud {
+  background: #e3fafc;
+  color: #0b7285;
+  border: 1px solid #99e9f2;
+}
+
+.mac {
+  background: #f3f0ff;
+  color: #5f3dc4;
+  border: 1px solid #d0bfff;
+}

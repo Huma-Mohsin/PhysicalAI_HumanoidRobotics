@@ -1,0 +1,140 @@
+/**
+ * Environment Switcher Styles
+ */
+
+.switcherContainer {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.switcherHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.switcherLabel {
+  font-weight: 600;
+  font-size: 14px;
+  color: #495057;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resetButton {
+  background: transparent;
+  border: 1px solid #dee2e6;
+  color: #667eea;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.resetButton:hover {
+  background: #f8f9fa;
+  border-color: #667eea;
+}
+
+.modeButtons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.modeButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.modeButton:hover:not(.disabled) {
+  border-color: #667eea;
+  background: #f8f9ff;
+  transform: translateY(-2px);
+}
+
+.modeButton.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modeButton.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modeIcon {
+  font-size: 28px;
+}
+
+.modeInfo {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.modeName {
+  font-weight: 600;
+  font-size: 14px;
+  color: #212529;
+}
+
+.modeDesc {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.lockIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 16px;
+}
+
+.authPrompt {
+  margin-top: 16px;
+  padding: 12px;
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #856404;
+}
+
+.authPrompt a {
+  color: #667eea;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.authPrompt a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .modeButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .switcherHeader {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}

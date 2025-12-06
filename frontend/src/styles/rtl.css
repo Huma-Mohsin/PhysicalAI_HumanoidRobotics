@@ -1,0 +1,94 @@
+/**
+ * RTL (Right-to-Left) Styles for Urdu
+ *
+ * Applied when document has dir="rtl"
+ */
+
+/* Global RTL adjustments */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] body {
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Mehr Nastaliq Web', serif;
+}
+
+/* Code blocks remain LTR */
+[dir="rtl"] pre,
+[dir="rtl"] code {
+  direction: ltr;
+  text-align: left;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Docusaurus sidebar */
+[dir="rtl"] .theme-doc-sidebar-container {
+  border-right: none;
+  border-left: 1px solid var(--ifm-toc-border-color);
+}
+
+[dir="rtl"] .menu__link {
+  padding-left: 0;
+  padding-right: var(--ifm-menu-link-padding-horizontal);
+}
+
+/* Chat interface RTL */
+[dir="rtl"] .chat-interface {
+  left: 20px;
+  right: auto;
+}
+
+[dir="rtl"] .message.user .message-content {
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 4px;
+}
+
+[dir="rtl"] .message.assistant .message-content {
+  border-bottom-right-radius: 12px;
+  border-bottom-left-radius: 4px;
+}
+
+/* Environment switcher */
+[dir="rtl"] .modeButton {
+  flex-direction: row-reverse;
+}
+
+/* Navbar */
+[dir="rtl"] .navbar__items {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .navbar__item {
+  margin-left: 0;
+  margin-right: var(--ifm-navbar-item-padding-horizontal);
+}
+
+/* Lists */
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-right: 2rem;
+  padding-left: 0;
+}
+
+/* Tables */
+[dir="rtl"] table {
+  direction: rtl;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: right;
+}
+
+/* Preserve LTR for technical terms */
+[dir="rtl"] .technical-term {
+  direction: ltr;
+  display: inline-block;
+  unicode-bidi: embed;
+}
+
+/* Badge positioning */
+[dir="rtl"] .badge {
+  margin-left: 0;
+  margin-right: 8px;
+}

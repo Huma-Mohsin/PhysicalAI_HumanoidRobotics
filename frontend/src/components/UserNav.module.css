@@ -1,0 +1,107 @@
+/**
+ * User Navigation Styles
+ */
+
+.authLinks {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.signInLink {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 6px 16px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.signInLink:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.signUpButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  transition: transform 0.2s;
+}
+
+.signUpButton:hover {
+  transform: translateY(-2px);
+}
+
+.userMenu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 13px;
+}
+
+.userEmail {
+  font-weight: 600;
+  color: #495057;
+}
+
+.userMode {
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.userDropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  margin-top: 8px;
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.userMenu:hover .userDropdown {
+  display: block;
+}
+
+.dropdownLink {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  color: #495057;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.dropdownLink:hover {
+  background: #f8f9fa;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .userEmail {
+    display: none;
+  }
+
+  .userMode {
+    font-size: 16px;
+  }
+}

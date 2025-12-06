@@ -1,0 +1,19 @@
+/**
+ * Environment Content Styles
+ */
+
+.environmentContent {
+  margin-bottom: 24px;
+}
+
+/* Highlight environment-specific sections */
+.environmentContent::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  left: -16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
