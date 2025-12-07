@@ -4,20 +4,256 @@
  */
 
 .heroBanner {
-  padding: 4rem 0;
-  text-align: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d1117 100%);
+  padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(32, 72, 96, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(32, 72, 96, 0.2) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.heroContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroText {
+  text-align: left;
+}
+
+.heroTitle {
+  font-size: 3.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #b0c4d0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #204860;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.heroDescription {
+  font-size: 1.2rem;
+  color: #b0c4d0;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
 .buttons {
   display: flex;
   align-items: center;
+  gap: 1rem;
+}
+
+.ctaButton {
+  background: #204860;
+  color: #ffffff;
+  border: 2px solid #204860;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(32, 72, 96, 0.4);
+}
+
+.ctaButton:hover {
+  background: #2a5f7a;
+  border-color: #2a5f7a;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(32, 72, 96, 0.6);
+}
+
+.heroImageContainer {
+  display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.heroImagePlaceholder {
+  background: linear-gradient(135deg, rgba(32, 72, 96, 0.1) 0%, rgba(42, 95, 122, 0.1) 100%);
+  border: 2px solid #204860;
+  border-radius: 16px;
+  padding: 3rem;
+  text-align: center;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.robotImage {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  border-radius: 12px;
+  border: 2px solid #204860;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.4),
+              0 0 15px rgba(32, 72, 96, 0.6);
+  transition: transform 0.3s ease;
+}
+
+.robotImage:hover {
+  transform: scale(1.02);
+}
+
+.placeholderFallback {
+  display: block;
+}
+
+.robotIcon {
+  width: 300px;
+  height: 300px;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5))
+          drop-shadow(0 0 10px rgba(32, 72, 96, 0.7));
+}
+
+.imagePlaceholderText {
+  color: #204860;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+.compactFeatures {
+  background: #0d1117;
+  padding: 3rem 2rem;
+  border-top: 2px solid #204860;
+}
+
+.compactGrid {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.compactCard {
+  background: linear-gradient(135deg, rgba(32, 72, 96, 0.15) 0%, rgba(13, 17, 23, 0.3) 100%);
+  border: 1px solid #204860;
+  border-radius: 8px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.compactCard:hover {
+  transform: translateY(-3px);
+  border-color: #2a5f7a;
+  box-shadow: 0 6px 20px rgba(32, 72, 96, 0.3);
+}
+
+.compactCard h3 {
+  color: #204860;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.compactCard p {
+  color: #b0c4d0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 3rem 1rem;
+    min-height: auto;
+  }
+
+  .heroContent {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .heroText {
+    text-align: center;
+  }
+
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.4rem;
+  }
+
+  .heroDescription {
+    font-size: 1rem;
+  }
+
+  .buttons {
+    justify-content: center;
+  }
+
+  .heroImagePlaceholder {
+    min-height: 300px;
+    padding: 2rem;
+  }
+
+  .robotImage {
+    max-width: 300px;
+  }
+
+  .robotIcon {
+    width: 200px;
+    height: 200px;
+  }
+
+  .compactFeatures {
+    padding: 2rem 1rem;
+  }
+
+  .compactGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .compactCard {
+    padding: 1.25rem 1rem;
+  }
+
+  .compactCard h3 {
+    font-size: 0.9rem;
+  }
+
+  .compactCard p {
+    font-size: 0.85rem;
+  }
 }
