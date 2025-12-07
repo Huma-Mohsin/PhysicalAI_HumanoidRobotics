@@ -1,30 +1,147 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Physical AI & Humanoid Robotics - Custom Theme
+ * Deep Teal & Dark Grey Color Scheme
  */
 
-/* You can override the default Infima variables here. */
+/* Light Mode Theme - Deep Teal Primary */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  /* Primary Deep Teal Color */
+  --ifm-color-primary: #204860;
+  --ifm-color-primary-dark: #1A3E54;
+  --ifm-color-primary-darker: #17384A;
+  --ifm-color-primary-darkest: #112B39;
+  --ifm-color-primary-light: #25566C;
+  --ifm-color-primary-lighter: #2A5E76;
+  --ifm-color-primary-lightest: #357289;
+
+  /* Background Colors */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f5f5f5;
+
+  /* Navbar - Deep Teal */
+  --ifm-navbar-background-color: #204860;
+  --ifm-navbar-link-color: #E6E6E6;
+  --ifm-navbar-link-hover-color: #ffffff;
+
+  /* Footer */
+  --ifm-footer-background-color: #383E3C;
+  --ifm-footer-color: #E6E6E6;
+  --ifm-footer-link-color: #E6E6E6;
+  --ifm-footer-link-hover-color: #ffffff;
+
+  /* Text Colors */
+  --ifm-font-color-base: #2c3e50;
+  --ifm-heading-color: #204860;
+
+  /* Code */
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --docusaurus-highlighted-code-line-bg: rgba(32, 72, 96, 0.1);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
+/* Dark Mode Theme - Enhanced Deep Teal */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  /* Primary Deep Teal Color (Brighter for dark mode) */
+  --ifm-color-primary: #2A6582;
+  --ifm-color-primary-dark: #255A73;
+  --ifm-color-primary-darker: #22536B;
+  --ifm-color-primary-darkest: #1C4558;
+  --ifm-color-primary-light: #2F7091;
+  --ifm-color-primary-lighter: #357899;
+  --ifm-color-primary-lightest: #4289AB;
+
+  /* Dark Background */
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #242424;
+
+  /* Navbar - Deep Teal */
+  --ifm-navbar-background-color: #204860;
+  --ifm-navbar-link-color: #E6E6E6;
+  --ifm-navbar-link-hover-color: #ffffff;
+
+  /* Footer - Dark Grey */
+  --ifm-footer-background-color: #383E3C;
+  --ifm-footer-color: #E6E6E6;
+  --ifm-footer-link-color: #E6E6E6;
+  --ifm-footer-link-hover-color: #ffffff;
+
+  /* Text Colors */
+  --ifm-font-color-base: #E6E6E6;
+  --ifm-heading-color: #E6E6E6;
+
+  /* Code */
+  --docusaurus-highlighted-code-line-bg: rgba(42, 101, 130, 0.3);
+}
+
+/* Additional Navbar Styling */
+.navbar {
+  background-color: var(--ifm-navbar-background-color) !important;
+}
+
+.navbar__link {
+  color: var(--ifm-navbar-link-color) !important;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--ifm-navbar-link-hover-color) !important;
+}
+
+.navbar__title {
+  color: #E6E6E6 !important;
+  font-weight: bold;
+}
+
+/* Footer Styling */
+.footer {
+  background-color: var(--ifm-footer-background-color) !important;
+  color: var(--ifm-footer-color) !important;
+}
+
+.footer__link-item {
+  color: var(--ifm-footer-link-color) !important;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-footer-link-hover-color) !important;
+}
+
+/* Button Styling with Deep Teal */
+.button--primary {
+  background-color: #204860 !important;
+  border-color: #204860 !important;
+  color: #E6E6E6 !important;
+}
+
+.button--primary:hover {
+  background-color: #1A3E54 !important;
+  border-color: #1A3E54 !important;
+}
+
+/* Sidebar Active Item */
+.menu__link--active {
+  background-color: rgba(32, 72, 96, 0.1) !important;
+  color: #204860 !important;
+  font-weight: bold;
+}
+
+[data-theme='dark'] .menu__link--active {
+  background-color: rgba(42, 101, 130, 0.2) !important;
+  color: #2A6582 !important;
+}
+
+/* Link Colors */
+a {
+  color: #204860;
+}
+
+a:hover {
+  color: #1A3E54;
+}
+
+[data-theme='dark'] a {
+  color: #2A6582;
+}
+
+[data-theme='dark'] a:hover {
+  color: #357899;
 }
