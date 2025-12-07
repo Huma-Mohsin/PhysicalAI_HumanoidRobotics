@@ -1,0 +1,467 @@
+---
+id: module-3-nvidia-isaac
+title: "Module 3: The AI-Robot Brain (NVIDIA Isaac)"
+sidebar_label: "Module 3: NVIDIA Isaac"
+sidebar_position: 5
+---
+
+# Module 3: The AI-Robot Brain (NVIDIA Isaac™)
+
+## Overview
+
+**Focus**: Advanced perception, AI-powered navigation, and synthetic data generation
+
+NVIDIA Isaac is the industry-leading platform for AI-powered robotics. It combines photorealistic simulation (Isaac Sim), hardware-accelerated perception (Isaac ROS), and AI model training to enable next-generation autonomous robots.
+
+---
+
+## Learning Objectives
+
+By the end of this module, you will:
+
+1. ✅ Master NVIDIA Isaac Sim for photorealistic simulation
+2. ✅ Generate synthetic training data for AI models
+3. ✅ Implement Isaac ROS for hardware-accelerated VSLAM
+4. ✅ Use Nav2 for path planning and navigation
+5. ✅ Deploy perception pipelines on NVIDIA Jetson
+6. ✅ Execute sim-to-real transfer workflows
+
+---
+
+## The Isaac Ecosystem
+
+| Component | Purpose | Key Features |
+|-----------|---------|--------------|
+| **Isaac Sim** | Photorealistic robot simulation | USD, RTX rendering, physics accuracy |
+| **Isaac ROS** | Hardware-accelerated perception | VSLAM, object detection, path planning |
+| **Isaac SDK** | Robot application framework | Pre-built components, deployment tools |
+| **Isaac GEMs** | Reusable AI models | Pre-trained networks for common tasks |
+
+---
+
+## Isaac Sim: The Digital Reality
+
+Isaac Sim is built on NVIDIA Omniverse, providing:
+- **RTX Ray Tracing** for photorealistic rendering
+- **PhysX 5** for accurate physics simulation
+- **USD (Universal Scene Description)** for asset interoperability
+- **Synthetic Data Generation** for AI training
+
+### System Requirements
+
+:::danger RTX GPU Required
+Isaac Sim requires an **NVIDIA RTX GPU** (RTX 2000 series or newer). It will not work on integrated graphics or non-NVIDIA GPUs.
+:::
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **GPU** | RTX 2070 (8GB VRAM) | RTX 4080 (16GB VRAM) |
+| **CPU** | Intel i7 9th Gen | Intel i9 12th Gen+ |
+| **RAM** | 32 GB | 64 GB |
+| **Storage** | 50 GB SSD | 100 GB NVMe |
+| **OS** | Ubuntu 20.04/22.04 or Windows 10/11 | Ubuntu 22.04 LTS |
+
+---
+
+### Installing Isaac Sim
+
+**Method 1: Omniverse Launcher (Recommended)**
+
+```bash
+# Download Omniverse Launcher
+wget https://install.launcher.omniverse.nvidia.com/installers/omniverse-launcher-linux.AppImage
+
+# Make executable
+chmod +x omniverse-launcher-linux.AppImage
+
+# Run launcher
+./omniverse-launcher-linux.AppImage
+
+# In the launcher:
+# 1. Sign in with NVIDIA account
+# 2. Go to "Exchange" tab
+# 3. Install "Isaac Sim"
+```
+
+**Method 2: Docker Container**
+
+```bash
+# Pull Isaac Sim container
+docker pull nvcr.io/nvidia/isaac-sim:2023.1.1
+
+# Run container
+docker run --name isaac-sim --entrypoint bash -it --gpus all \
+  -e "ACCEPT_EULA=Y" --rm --network=host \
+  -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache:rw \
+  -v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
+  -v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
+  -v ~/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
+  -v ~/docker/isaac-sim/cache/computecache:/root/.nv/ComputeCache:rw \
+  -v ~/docker/isaac-sim/logs:/root/.nvidia-omniverse/logs:rw \
+  -v ~/docker/isaac-sim/data:/root/.local/share/ov/data:rw \
+  nvcr.io/nvidia/isaac-sim:2023.1.1
+
+# Launch Isaac Sim
+./runheadless.native.sh
+```
+
+---
+
+### Creating Your First Isaac Sim Scene
+
+```python
+from isaacsim import SimulationApp
+
+# Launch Isaac Sim
+simulation_app = SimulationApp({"headless": False})
+
+from omni.isaac.core import World
+from omni.isaac.core.objects import DynamicCuboid
+from omni.isaac.core.prims import RigidPrim
+import numpy as np
+
+# Create world
+world = World()
+
+# Add ground plane
+world.scene.add_default_ground_plane()
+
+# Add a cube
+cube = world.scene.add(
+    DynamicCuboid(
+        prim_path="/World/Cube",
+        name="cube",
+        position=np.array([0, 0, 1.0]),
+        scale=np.array([0.5, 0.5, 0.5]),
+        color=np.array([0, 0, 1]),
+    )
+)
+
+# Reset world
+world.reset()
+
+# Run simulation
+for i in range(1000):
+    world.step(render=True)
+
+# Cleanup
+simulation_app.close()
+```
+
+---
+
+### Loading a Humanoid Robot
+
+```python
+from omni.isaac.core.robots import Robot
+from omni.isaac.core.utils.stage import add_reference_to_stage
+
+# Import URDF/USD robot
+add_reference_to_stage(
+    usd_path="/Isaac/Robots/Unitree/G1/g1.usd",
+    prim_path="/World/G1"
+)
+
+# Create robot object
+robot = Robot(prim_path="/World/G1")
+
+# Get joint names
+joint_names = robot.dof_names
+print(f"Robot has {len(joint_names)} joints: {joint_names}")
+
+# Set joint positions (standing pose)
+standing_pose = {
+    "left_hip_pitch_joint": -0.3,
+    "left_knee_joint": 0.6,
+    "left_ankle_pitch_joint": -0.3,
+    "right_hip_pitch_joint": -0.3,
+    "right_knee_joint": 0.6,
+    "right_ankle_pitch_joint": -0.3,
+}
+
+robot.set_joint_positions(list(standing_pose.values()))
+```
+
+---
+
+## Synthetic Data Generation
+
+One of Isaac Sim's most powerful features is generating labeled training data for AI models.
+
+### Domain Randomization
+
+```python
+from omni.replicator.core import AnnotatorRegistry, Writer, BackendDispatch
+import omni.replicator.core as rep
+
+# Set up camera
+camera = rep.create.camera(position=(5, 5, 5), look_at=(0, 0, 0))
+
+# Create randomization
+with rep.new_layer():
+    # Randomize lighting
+    def randomize_lighting():
+        lights = rep.create.light(
+            light_type="Sphere",
+            temperature=rep.distribution.uniform(3000, 6500),
+            intensity=rep.distribution.uniform(10000, 50000),
+            position=rep.distribution.uniform((-5, -5, 5), (5, 5, 10)),
+            count=3
+        )
+        return lights.node
+
+    # Randomize object colors
+    def randomize_materials():
+        cube = rep.get.prims(path_pattern="/World/Cube")
+        with cube:
+            rep.randomizer.color(
+                colors=rep.distribution.uniform((0, 0, 0), (1, 1, 1))
+            )
+
+    # Register randomizers
+    rep.randomizer.register(randomize_lighting)
+    rep.randomizer.register(randomize_materials)
+
+# Run randomization
+with rep.trigger.on_frame(num_frames=100):
+    rep.randomizer.randomize_lighting()
+    rep.randomizer.randomize_materials()
+
+# Capture data
+writer = rep.WriterRegistry.get("BasicWriter")
+writer.initialize(output_dir="synthetic_data", rgb=True, bounding_box_2d_tight=True)
+
+# Run data generation
+rep.orchestrator.run()
+```
+
+---
+
+## Isaac ROS: Hardware-Accelerated Perception
+
+Isaac ROS provides GPU-accelerated ROS 2 packages for perception and navigation.
+
+### Key Packages
+
+| Package | Purpose | Acceleration |
+|---------|---------|--------------|
+| `isaac_ros_visual_slam` | VSLAM | CUDA + Tensor Cores |
+| `isaac_ros_dnn_inference` | Object detection | TensorRT |
+| `isaac_ros_image_pipeline` | Image processing | VPI (Vision Programming Interface) |
+| `isaac_ros_apriltag` | AprilTag detection | CUDA |
+| `isaac_ros_nvblox` | 3D reconstruction | CUDA |
+
+---
+
+### Installing Isaac ROS
+
+```bash
+# Install dependencies
+sudo apt-get install -y git-lfs
+
+# Clone Isaac ROS
+mkdir -p ~/workspaces/isaac_ros-dev/src
+cd ~/workspaces/isaac_ros-dev/src
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
+
+# Build Docker image
+cd ~/workspaces/isaac_ros-dev/src/isaac_ros_common
+./scripts/run_dev.sh
+
+# Inside container, clone packages
+cd /workspaces/isaac_ros-dev/src
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
+
+# Build
+cd /workspaces/isaac_ros-dev
+colcon build --symlink-install
+
+# Source workspace
+source install/setup.bash
+```
+
+---
+
+### VSLAM Example
+
+```bash
+# Launch VSLAM node
+ros2 launch isaac_ros_visual_slam isaac_ros_visual_slam_realsense.launch.py
+
+# Visualize in RViz
+rviz2 -d src/isaac_ros_visual_slam/isaac_ros_visual_slam/rviz/default.rviz
+```
+
+**Launch File:**
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='isaac_ros_visual_slam',
+            executable='isaac_ros_visual_slam',
+            name='visual_slam',
+            parameters=[{
+                'enable_rectified_pose': True,
+                'denoise_input_images': True,
+                'rectified_images': True,
+                'enable_slam_visualization': True,
+                'enable_landmarks_view': True,
+                'enable_observations_view': True,
+                'map_frame': 'map',
+                'odom_frame': 'odom',
+                'base_frame': 'base_link',
+                'input_base_frame': 'camera',
+                'input_left_camera_frame': 'left_camera',
+                'input_right_camera_frame': 'right_camera'
+            }],
+            remappings=[
+                ('stereo_camera/left/image', '/front/stereo_camera/left/image'),
+                ('stereo_camera/right/image', '/front/stereo_camera/right/image'),
+                ('stereo_camera/left/camera_info', '/front/stereo_camera/left/camera_info'),
+                ('stereo_camera/right/camera_info', '/front/stereo_camera/right/camera_info')
+            ]
+        )
+    ])
+```
+
+---
+
+## Nav2: Path Planning for Humanoids
+
+Nav2 is the ROS 2 navigation framework, adapted for bipedal robots.
+
+### Navigation Stack Architecture
+
+```
+┌─────────────────┐
+│   Goal Pose     │
+└────────┬────────┘
+         │
+    ┌────▼─────┐
+    │ Planner  │  (Global path planning)
+    └────┬─────┘
+         │
+    ┌────▼─────────┐
+    │  Controller  │  (Local trajectory tracking)
+    └────┬─────────┘
+         │
+    ┌────▼──────────┐
+    │  Cmd Velocity  │
+    └────────────────┘
+```
+
+### Nav2 Configuration
+
+```yaml
+# nav2_params.yaml
+bt_navigator:
+  ros__parameters:
+    use_sim_time: True
+    global_frame: map
+    robot_base_frame: base_link
+    odom_topic: /odometry/filtered
+    bt_loop_duration: 10
+    default_server_timeout: 20
+
+controller_server:
+  ros__parameters:
+    use_sim_time: True
+    controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      min_vel_x: 0.0
+      min_vel_y: 0.0
+      max_vel_x: 0.26
+      max_vel_y: 0.0
+      max_vel_theta: 1.0
+      min_speed_xy: 0.0
+      max_speed_xy: 0.26
+      min_speed_theta: 0.0
+      acc_lim_x: 2.5
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.2
+      decel_lim_x: -2.5
+      decel_lim_y: 0.0
+      decel_lim_theta: -3.2
+
+planner_server:
+  ros__parameters:
+    use_sim_time: True
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_navfn_planner/NavfnPlanner"
+      tolerance: 0.5
+      use_astar: false
+```
+
+---
+
+## Hands-On Project: Build an Autonomous Navigation System
+
+### Project Requirements
+
+1. ✅ Create a humanoid robot in Isaac Sim
+2. ✅ Implement VSLAM using Isaac ROS
+3. ✅ Generate a 3D map with nvblox
+4. ✅ Set up Nav2 for autonomous navigation
+5. ✅ Deploy to NVIDIA Jetson (Sim-to-Real)
+
+### Assessment Criteria
+
+- Simulation fidelity
+- SLAM accuracy
+- Navigation success rate
+- Code quality and documentation
+
+---
+
+## Sim-to-Real Transfer
+
+### Domain Randomization Checklist
+
+- ✅ Lighting conditions
+- ✅ Material properties
+- ✅ Object textures
+- ✅ Sensor noise
+- ✅ Physics parameters
+- ✅ Background clutter
+
+### Deployment to Jetson
+
+```bash
+# On Jetson device
+# Install Isaac ROS
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
+cd isaac_ros_common
+./scripts/run_dev.sh
+
+# Deploy trained model
+scp -r trained_model/ jetson@192.168.1.100:~/models/
+
+# Run navigation stack
+ros2 launch my_robot_nav navigation.launch.py use_sim_time:=False
+```
+
+---
+
+## Resources
+
+- [Isaac Sim Documentation](https://docs.omniverse.nvidia.com/isaacsim/latest/)
+- [Isaac ROS GitHub](https://github.com/NVIDIA-ISAAC-ROS)
+- [Nav2 Documentation](https://navigation.ros.org/)
+- [NVIDIA Jetson Developer Zone](https://developer.nvidia.com/embedded/jetson)
+
+---
+
+## Next Steps
+
+Now let's bring it all together with Vision-Language-Action models for conversational robotics!
+
+👉 **Next**: [Module 4: Vision-Language-Action (VLA)](./module-4-vla)

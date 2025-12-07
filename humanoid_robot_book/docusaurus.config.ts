@@ -83,9 +83,9 @@ const config: Config = {
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'physicalAISidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Book',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
@@ -102,8 +102,8 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Get Started',
+              to: '/docs/introduction',
             },
           ],
         },
