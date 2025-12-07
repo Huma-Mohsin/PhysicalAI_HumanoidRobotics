@@ -1,0 +1,12 @@
+{
+  "buildCommand": "cd humanoid_robot_book && npm run build",
+  "outputDirectory": "humanoid_robot_book/build",
+  "installCommand": "cd humanoid_robot_book && npm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ]
+}
