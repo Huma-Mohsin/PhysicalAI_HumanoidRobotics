@@ -4,7 +4,7 @@
  */
 
 const API_BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://humanoidbackend-6x8tssomi-huma-mohsins-projects.vercel.app'
+  ? 'https://humanoidbackend.vercel.app'
   : 'http://localhost:8000';
 
 export interface ChatMessage {
