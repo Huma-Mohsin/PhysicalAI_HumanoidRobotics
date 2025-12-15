@@ -24,14 +24,29 @@ interface Message {
   metadata?: any;
 }
 
-export default function Chatbot(): JSX.Element {
+interface ChatbotProps {
+  selectedText?: string;
+  onSelectedTextUsed?: () => void;
+}
+
+export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotProps = {}): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [pendingSelection, setPendingSelection] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Handle selected text from parent
+  useEffect(() => {
+    if (selectedText && selectedText.trim()) {
+      setPendingSelection(selectedText);
+      setIsOpen(true); // Auto-open chatbot
+      setInputValue(`About this text: "${selectedText.substring(0, 50)}${selectedText.length > 50 ? '...' : ''}"`);
+    }
+  }, [selectedText]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -64,11 +79,27 @@ export default function Chatbot(): JSX.Element {
       const sessionId = getOrCreateSessionId();
       const conversationId = getConversationId();
 
-      const response: ChatMessageType = await sendChatQuery({
+      // Build query with optional text selection
+      const queryPayload: any = {
         question: userMessage.content,
         session_id: sessionId,
         conversation_id: conversationId || undefined,
-      });
+      };
+
+      // Add text selection if present (SAFE: optional feature)
+      if (pendingSelection && pendingSelection.trim()) {
+        queryPayload.text_selection = {
+          text: pendingSelection,
+          chapter_id: 'selected-content',
+          start_offset: 0,
+          end_offset: pendingSelection.length,
+        };
+        // Clear after use
+        setPendingSelection(null);
+        if (onSelectedTextUsed) onSelectedTextUsed();
+      }
+
+      const response: ChatMessageType = await sendChatQuery(queryPayload);
 
       // Save conversation ID for continuity
       setConversationId(response.conversation_id);
