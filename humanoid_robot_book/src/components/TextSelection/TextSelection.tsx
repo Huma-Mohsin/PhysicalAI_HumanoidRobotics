@@ -29,7 +29,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         if (rect) {
           setSelectedText(text);
           setButtonPosition({
-            top: rect.top + window.scrollY - 45,
+            top: rect.top - 45,
             left: rect.left + rect.width / 2,
           });
           setShowButton(true);
@@ -39,8 +39,12 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    const handleClickOutside = () => {
-      setShowButton(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      // Don't hide if clicking the button itself
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-text-selection-button]')) {
+        setShowButton(false);
+      }
     };
 
     document.addEventListener('mouseup', handleSelection);
@@ -66,12 +70,13 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     <button
       className={styles.askButton}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: `${buttonPosition.top}px`,
         left: `${buttonPosition.left}px`,
       }}
       onClick={handleAskClick}
       title="Ask chatbot about this selection"
+      data-text-selection-button="true"
     >
       <svg
         width="16"
