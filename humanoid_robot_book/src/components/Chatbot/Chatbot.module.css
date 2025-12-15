@@ -381,42 +381,43 @@
   }
 }
 
-/* Dark mode support (for Docusaurus) */
+/* Dark mode support - DISABLED - Always use light theme */
+/* Force white background on all devices including mobile */
 [data-theme='dark'] .chatPanel {
-  background: #1e2125;
+  background: white !important;
 }
 
 [data-theme='dark'] .messagesContainer {
-  background: #181a1b;
+  background: #f8f9fa !important;
 }
 
 [data-theme='dark'] .assistant .messageContent {
-  background: #2d3035;
-  color: #e3e4e6;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  background: white !important;
+  color: #2d3748 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 [data-theme='dark'] .input {
-  background: #2d3035;
-  border-color: #3a3d42;
-  color: #e3e4e6;
+  background: white !important;
+  border-color: #e2e8f0 !important;
+  color: #2d3748 !important;
 }
 
 [data-theme='dark'] .input:focus {
-  border-color: #204860;
+  border-color: #204860 !important;
 }
 
 [data-theme='dark'] .inputContainer {
-  background: #1e2125;
-  border-top-color: #3a3d42;
+  background: white !important;
+  border-top-color: #e2e8f0 !important;
 }
 
 [data-theme='dark'] .emptyState li {
-  background: #2d3035;
-  color: #a0a7b4;
+  background: white !important;
+  color: #4a5568 !important;
 }
 
 [data-theme='dark'] .messageContent code {
-  background: #3a3d42;
-  color: #e3e4e6;
+  background: #edf2f7 !important;
+  color: #2d3748 !important;
 }

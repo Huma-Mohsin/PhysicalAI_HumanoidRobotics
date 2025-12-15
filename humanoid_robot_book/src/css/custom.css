@@ -211,3 +211,37 @@ a:hover {
 .markdown li {
     margin-bottom: 0.5rem !important;
 }
+
+/* Mobile Navbar - Force White Text on All Devices */
+.navbar__item,
+.navbar__link,
+.navbar__brand,
+.navbar__toggle {
+    color: #ffffff !important;
+}
+
+/* Mobile Menu Items - Force White */
+.menu__link,
+.navbar-sidebar__item {
+    color: #ffffff !important;
+}
+
+/* Navbar Items - All States White */
+.navbar__item > a,
+.navbar__item .navbar__link {
+    color: #ffffff !important;
+}
+
+/* Mobile Sidebar Background */
+.navbar-sidebar {
+    background-color: #204860 !important;
+}
+
+.navbar-sidebar__items {
+    color: #ffffff !important;
+}
+
+/* Mobile Navbar Toggle Icon */
+.navbar__toggle svg {
+    stroke: #ffffff !important;
+}
