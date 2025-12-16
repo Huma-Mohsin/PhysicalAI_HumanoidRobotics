@@ -18,32 +18,36 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
   useEffect(() => {
     const handleSelection = () => {
-      // Longer delay for mobile to ensure selection is properly captured
-      setTimeout(() => {
-        const selection = window.getSelection();
-        const text = selection?.toString().trim();
+      // Shorter delay for immediate button appearance
+      // Immediate check without delay to show button immediately
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
 
-        if (text && text.length > 5) {
-          // Only show if substantial text selected
-          try {
-            const range = selection?.getRangeAt(0);
-            const rect = range?.getBoundingClientRect();
+      if (text && text.length > 5) {
+        try {
+          const range = selection?.getRangeAt(0);
+          const rect = range?.getBoundingClientRect();
 
-            if (rect && rect.width > 0 && rect.height > 0) {
-              setSelectedText(text);
-              setButtonPosition({
-                top: rect.top + window.scrollY - 50,
-                left: rect.left + rect.width / 2,
-              });
-              setShowButton(true);
-            }
-          } catch (e) {
-            console.error('Error getting selection range:', e);
+          if (rect && rect.width > 0 && rect.height > 0) {
+            setSelectedText(text);
+
+            // Calculate position to appear immediately without requiring scroll
+            // Use viewport-relative coordinates for immediate visibility
+            const buttonTop = rect.top + window.scrollY - 40; // Position above selection
+            const buttonLeft = rect.left + rect.width / 2 + window.scrollX;
+
+            setButtonPosition({
+              top: buttonTop,
+              left: buttonLeft,
+            });
+            setShowButton(true);
           }
-        } else {
-          setShowButton(false);
+        } catch (e) {
+          console.error('Error getting selection range:', e);
         }
-      }, 150); // Increased delay for mobile touch events
+      } else {
+        setShowButton(false);
+      }
     };
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -86,6 +90,29 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
+    // Prevent mobile selection menu (copy, search, etc.) from appearing
+    const handleSelectionChange = () => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      // If text is selected, immediately prevent default menu
+      if (text && text.length > 0) {
+        // Trigger our custom selection handler
+        handleSelection();
+      }
+    };
+
+    // Block mobile text selection toolbar/menu
+    const preventMobileMenu = (e: Event) => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().trim().length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    };
+
     // Additional blocking for specific content areas
     const handleContentContextMenu = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -101,13 +128,20 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Use mouseup for desktop and touchend for mobile - selectionchange fires too early and causes issues
+    // Use mouseup for desktop and touchend for mobile
     document.addEventListener('mouseup', handleSelection);
     document.addEventListener('touchend', handleSelection); // Mobile touch support
     document.addEventListener('click', handleClickOutside);
 
     // Mobile: Prevent long-press context menu at touchstart
     document.addEventListener('touchstart', handleTouchStart, { passive: false });
+
+    // Listen to selectionchange for immediate response
+    document.addEventListener('selectionchange', handleSelectionChange);
+
+    // Prevent mobile selection menu/toolbar
+    document.addEventListener('selectstart', preventMobileMenu as any);
+    document.addEventListener('selectionchange', preventMobileMenu as any);
 
     // MULTIPLE LAYERS of context menu blocking - capture phase + bubble phase
     document.addEventListener('contextmenu', handleContextMenu as any, true); // Capture
@@ -119,20 +153,65 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     if (mainContent) {
       mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
       mainContent.addEventListener('touchstart', handleTouchStart as any, { passive: false });
+      mainContent.addEventListener('selectstart', preventMobileMenu as any);
+    }
+
+    // Enhanced mobile-specific handlers to prevent default menu
+    const handleTouchMove = (e: TouchEvent) => {
+      // Prevent context menu during touch movement when text is selected
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
+    };
+
+    const handleTouchContextMenu = (e: TouchEvent) => {
+      // Additional touch context menu prevention
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    };
+
+    // Add mobile-specific event listeners
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchcancel', handleTouchContextMenu as any, true);
+
+    // Update main content listeners for mobile
+    if (mainContent) {
+      mainContent.addEventListener('touchmove', handleTouchMove as any, { passive: false });
+      mainContent.addEventListener('touchcancel', handleTouchContextMenu as any, true);
     }
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
-      document.removeEventListener('touchend', handleSelection); // Mobile touch cleanup
+      document.removeEventListener('touchend', handleSelection);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('touchstart', handleTouchStart as any);
+      document.removeEventListener('selectionchange', handleSelectionChange);
+      document.removeEventListener('selectstart', preventMobileMenu as any);
+      document.removeEventListener('selectionchange', preventMobileMenu as any);
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
       document.removeEventListener('contextmenu', handleContextMenu as any, false);
+      document.removeEventListener('touchmove', handleTouchMove as any);
+      document.removeEventListener('touchcancel', handleTouchContextMenu as any);
 
       if (mainContent) {
         mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
         mainContent.removeEventListener('touchstart', handleTouchStart as any);
+        mainContent.removeEventListener('selectstart', preventMobileMenu as any);
+        mainContent.removeEventListener('touchmove', handleTouchMove as any);
+        mainContent.removeEventListener('touchcancel', handleTouchContextMenu as any);
       }
     };
   }, []);

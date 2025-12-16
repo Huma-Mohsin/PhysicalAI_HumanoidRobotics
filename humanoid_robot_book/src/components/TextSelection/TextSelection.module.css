@@ -62,6 +62,11 @@
     box-shadow: 0 8px 28px rgba(32, 72, 96, 0.6), 0 0 0 5px rgba(32, 72, 96, 0.15);
     /* Prevent accidental scrolling */
     touch-action: none;
+    /* Ensure button appears immediately without scrolling issues */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
 
   .askButton svg {

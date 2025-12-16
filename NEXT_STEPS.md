@@ -1,6 +1,8 @@
 # 🎯 Next Steps to Complete the Project
 
-**Current Status**: Backend code ready, deployment files created, ready to deploy
+**Current Status**: ✅ RAG Chatbot deployed and working!
+
+**🚀 Production Site**: https://humanoidrobotbook-7xo2xto38-huma-mohsins-projects.vercel.app/
 
 ---
 
