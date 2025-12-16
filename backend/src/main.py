@@ -9,6 +9,7 @@ from utils.logger import logger
 from services.database_service import db_service
 from services.auth_service import init_auth_service
 from api import chat
+from api.auth import router as auth_router
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -30,6 +31,7 @@ app.add_middleware(
 
 # Register routers
 app.include_router(chat.router)
+app.include_router(auth_router)
 
 
 @app.on_event("startup")
