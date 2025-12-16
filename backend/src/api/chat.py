@@ -11,6 +11,7 @@ from datetime import datetime
 
 from services.database_service import db_service
 from services.rag_service import rag_service
+from services.auth_service import get_auth_service
 from models.user_session import UserSessionCreate
 from models.conversation import ConversationCreate
 from models.message import MessageCreate, Message, MessageMetadata
@@ -27,6 +28,7 @@ class ChatQueryRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=2000, description="User's question")
     conversation_id: Optional[UUID] = Field(default=None, description="Existing conversation ID")
     session_id: Optional[UUID] = Field(default=None, description="User session ID")
+    user_id: Optional[str] = Field(default=None, description="Authenticated user ID from Better-Auth")
 
 
 class ChunkMetadata(BaseModel):
@@ -141,7 +143,22 @@ async def chat_query(request: ChatQueryRequest):
         # ====================
         # T023: RAG Pipeline Execution
         # ====================
-        hardware_profile = session.hardware_profile.type if session.hardware_profile else None
+        # First, try to get hardware profile from user_id (authenticated user)
+        hardware_profile = None
+        if request.user_id:
+            try:
+                auth_service = get_auth_service()
+                hardware_profile_data = await auth_service.get_hardware_profile(request.user_id)
+                if hardware_profile_data and hardware_profile_data.get("type"):
+                    hardware_profile = hardware_profile_data["type"]
+                    logger.info(f"Using hardware profile from authenticated user: {hardware_profile}")
+            except Exception as e:
+                logger.error(f"Error fetching user profile for personalization: {str(e)}")
+                # Fallback to session hardware profile if available
+                hardware_profile = session.hardware_profile.type if session.hardware_profile else None
+        else:
+            # For anonymous users, use session hardware profile if available
+            hardware_profile = session.hardware_profile.type if session.hardware_profile else None
 
         rag_result = rag_service.query_book(
             question=question,

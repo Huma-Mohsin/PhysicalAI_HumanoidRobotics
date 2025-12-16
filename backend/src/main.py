@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from utils.config import settings
 from utils.logger import logger
 from services.database_service import db_service
+from services.auth_service import init_auth_service
 from api import chat
 
 # Initialize FastAPI application
@@ -42,6 +43,10 @@ async def startup_event():
     # Initialize database connection pool
     await db_service.connect()
     logger.info("Database service initialized")
+
+    # Initialize auth service
+    init_auth_service(db_service.pool)
+    logger.info("Auth service initialized")
 
 
 @app.on_event("shutdown")

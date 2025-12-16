@@ -5,6 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   sendChatQuery,
   getOrCreateSessionId,
@@ -38,6 +39,9 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
   const [pendingSelection, setPendingSelection] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Get auth context to access user information
+  const { user } = useAuth();
 
   // Handle selected text from parent
   useEffect(() => {
@@ -84,6 +88,7 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
         question: userMessage.content,
         session_id: sessionId,
         conversation_id: conversationId || undefined,
+        user_id: user?.id, // Include user ID for personalization if authenticated
       };
 
       // Add text selection if present (SAFE: optional feature)

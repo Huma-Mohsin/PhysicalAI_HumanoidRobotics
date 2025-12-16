@@ -10,7 +10,7 @@ from uuid import UUID
 
 class HardwareProfile(BaseModel):
     """Hardware profile from Better-Auth."""
-    type: str = Field(..., description="Hardware type: GPU, Edge, or Cloud")
+    type: str = Field(..., description="Hardware type: gpu_workstation, edge_device, or cloud_mac")
     details: Optional[dict] = Field(default=None, description="Additional hardware details")
 
 

@@ -42,6 +42,7 @@ export interface ChatQueryRequest {
   question: string;
   conversation_id?: string;
   session_id?: string;
+  user_id?: string;  // Added for Better-Auth integration
   text_selection?: {
     text: string;
     chapter_id: string;
@@ -99,6 +100,32 @@ export async function sendChatQuery(request: ChatQueryRequest): Promise<ChatMess
       'NetworkError'
     );
   }
+}
+
+/**
+ * Send a chat query with user authentication context
+ */
+export async function sendChatQueryWithAuth(
+  question: string,
+  user_id?: string,
+  conversation_id?: string,
+  session_id?: string,
+  text_selection?: {
+    text: string;
+    chapter_id: string;
+    start_offset: number;
+    end_offset: number;
+  }
+): Promise<ChatMessage> {
+  const request: ChatQueryRequest = {
+    question,
+    user_id,
+    conversation_id,
+    session_id,
+    text_selection,
+  };
+
+  return sendChatQuery(request);
 }
 
 /**
