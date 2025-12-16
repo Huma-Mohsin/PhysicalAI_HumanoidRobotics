@@ -220,6 +220,15 @@ a:hover {
     color: #ffffff !important;
 }
 
+/* Desktop Sidebar - Ensure Visibility */
+.menu__link {
+    color: var(--ifm-font-color-base) !important;
+}
+
+[data-theme="dark"] .menu__link {
+    color: var(--ifm-font-color-base) !important;
+}
+
 /* Mobile Menu Items - Force White (MOBILE ONLY) */
 @media (max-width: 996px) {
     .menu__link,

@@ -21,15 +21,15 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      if (text && text.length > 10) {
-        // Only show if substantial text selected
+      if (text && text.length > 5) {
+        // Only show if substantial text selected (reduced from 10 to 5 for better UX)
         const range = selection?.getRangeAt(0);
         const rect = range?.getBoundingClientRect();
 
         if (rect) {
           setSelectedText(text);
           setButtonPosition({
-            top: rect.top - 45,
+            top: rect.top - 50, // Increased offset for better visibility
             left: rect.left + rect.width / 2,
           });
           setShowButton(true);
@@ -79,16 +79,21 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       data-text-selection-button="true"
     >
       <svg
-        width="16"
-        height="16"
+        width="18"
+        height="18"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        <circle cx="9" cy="10" r="0.5" fill="white" />
+        <circle cx="12" cy="10" r="0.5" fill="white" />
+        <circle cx="15" cy="10" r="0.5" fill="white" />
       </svg>
-      Ask about this
+      💬 Ask Me
     </button>
   );
 }
