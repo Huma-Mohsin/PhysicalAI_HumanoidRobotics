@@ -16,10 +16,16 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
   const [showButton, setShowButton] = useState(false);
   const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isProcessingSelection = useRef(false); // Prevent duplicate processing
 
   useEffect(() => {
     // Immediate selection handler without delay
     const handleSelection = () => {
+      // Prevent duplicate processing
+      if (isProcessingSelection.current) return;
+
+      isProcessingSelection.current = true;
+
       // Clear any existing timeout
       if (selectionTimeoutRef.current) {
         clearTimeout(selectionTimeoutRef.current);
@@ -57,6 +63,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       } else {
         setShowButton(false);
       }
+
+      // Reset processing flag after a short delay
+      setTimeout(() => {
+        isProcessingSelection.current = false;
+      }, 100);
     };
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -153,6 +164,26 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
+    // Mouse down handler for immediate response on desktop
+    const handleMouseDown = (e: MouseEvent) => {
+      // Check if there's already selected text when mouse is pressed
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        // Prevent any context menu from appearing
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
+    };
+
+    // Mouse up handler for immediate response on desktop
+    const handleMouseUp = (e: MouseEvent) => {
+      // Process selection immediately when mouse is released
+      setTimeout(handleSelection, 0);
+    };
+
     // Touch move handler to prevent context menu during selection
     const handleTouchMove = (e: TouchEvent) => {
       const selection = window.getSelection();
@@ -181,9 +212,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     // Use selectionchange as the primary event for immediate response
     document.addEventListener('selectionchange', handleSelectionChange);
 
+    // AGGRESSIVE desktop event handling for immediate response
+    document.addEventListener('mousedown', handleMouseDown, true); // Capture phase
+    document.addEventListener('mouseup', handleMouseUp, true); // Capture phase
+
     // Additional events for comprehensive coverage
-    document.addEventListener('mouseup', handleSelection);
-    document.addEventListener('touchend', handleSelection);
     document.addEventListener('click', handleClickOutside);
 
     // AGGRESSIVE context menu blocking
@@ -206,6 +239,8 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       mainContent.addEventListener('touchmove', handleTouchMove as any, { passive: false });
       mainContent.addEventListener('touchcancel', handleTouchContextMenu as any, true);
       mainContent.addEventListener('selectionchange', handleSelectionChange);
+      mainContent.addEventListener('mousedown', handleMouseDown, true);
+      mainContent.addEventListener('mouseup', handleMouseUp, true);
     }
 
     return () => {
@@ -216,8 +251,8 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       // Remove all event listeners
       document.removeEventListener('selectionchange', handleSelectionChange);
-      document.removeEventListener('mouseup', handleSelection);
-      document.removeEventListener('touchend', handleSelection);
+      document.removeEventListener('mousedown', handleMouseDown, true);
+      document.removeEventListener('mouseup', handleMouseUp, true);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
@@ -234,6 +269,8 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         mainContent.removeEventListener('touchmove', handleTouchMove as any);
         mainContent.removeEventListener('touchcancel', handleTouchContextMenu as any);
         mainContent.removeEventListener('selectionchange', handleSelectionChange);
+        mainContent.removeEventListener('mousedown', handleMouseDown, true);
+        mainContent.removeEventListener('mouseup', handleMouseUp, true);
       }
     };
   }, []);
