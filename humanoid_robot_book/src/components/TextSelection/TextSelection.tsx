@@ -54,30 +54,66 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Disable default context menu on text selection
+    // Disable default context menu on text selection - AGGRESSIVE BLOCKING
     const handleContextMenu = (e: MouseEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      // If there's selected text, BLOCK default context menu completely
+      // If there's ANY selected text, COMPLETELY BLOCK default context menu
       if (text && text.length > 0) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+
+        // Force return false for older browsers
+        if (e.cancelable) {
+          e.preventDefault();
+        }
+
         return false;
+      }
+    };
+
+    // Additional blocking for specific content areas
+    const handleContentContextMenu = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Block context menu in main content and docs areas
+      if (target.closest('.markdown, article, .theme-doc-markdown, main')) {
+        const selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
       }
     };
 
     // Only use mouseup - selectionchange fires too early and causes issues
     document.addEventListener('mouseup', handleSelection);
     document.addEventListener('click', handleClickOutside);
-    // Use capture phase to block context menu early
-    document.addEventListener('contextmenu', handleContextMenu, true);
+
+    // MULTIPLE LAYERS of context menu blocking - capture phase + bubble phase
+    document.addEventListener('contextmenu', handleContextMenu, true); // Capture
+    document.addEventListener('contextmenu', handleContentContextMenu, true); // Capture
+    document.addEventListener('contextmenu', handleContextMenu, false); // Bubble
+
+    // Also block on main content element if it exists
+    const mainContent = document.querySelector('main, article, [role="main"]');
+    if (mainContent) {
+      mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
+    }
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('contextmenu', handleContextMenu, true);
+      document.removeEventListener('contextmenu', handleContentContextMenu, true);
+      document.removeEventListener('contextmenu', handleContextMenu, false);
+
+      if (mainContent) {
+        mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
+      }
     };
   }, []);
 

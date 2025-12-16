@@ -258,3 +258,20 @@ a:hover {
 .navbar__toggle svg {
     stroke: #ffffff !important;
 }
+
+/* Disable default context menu styles in content areas when text is selected */
+.markdown::selection,
+article::selection,
+.theme-doc-markdown::selection,
+main::selection {
+    /* Keep selection visible but prepare for custom context menu */
+    background-color: rgba(32, 72, 96, 0.3);
+}
+
+/* Prevent context menu from appearing (backup CSS method) */
+.markdown,
+article,
+.theme-doc-markdown,
+main {
+    -webkit-touch-callout: none;
+}
