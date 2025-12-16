@@ -4,7 +4,7 @@
  * SAFE: Non-breaking, optional feature
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styles from './TextSelection.module.css';
 
 interface TextSelectionProps {
@@ -15,32 +15,41 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   const [selectedText, setSelectedText] = useState('');
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
   const [showButton, setShowButton] = useState(false);
+  const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Immediate selection handler without delay
     const handleSelection = () => {
-      // Shorter delay for immediate button appearance
-      // Immediate check without delay to show button immediately
+      // Clear any existing timeout
+      if (selectionTimeoutRef.current) {
+        clearTimeout(selectionTimeoutRef.current);
+        selectionTimeoutRef.current = null;
+      }
+
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
       if (text && text.length > 5) {
         try {
           const range = selection?.getRangeAt(0);
-          const rect = range?.getBoundingClientRect();
+          if (range) {
+            const rect = range.getBoundingClientRect();
 
-          if (rect && rect.width > 0 && rect.height > 0) {
-            setSelectedText(text);
+            if (rect && rect.width > 0 && rect.height > 0) {
+              setSelectedText(text);
 
-            // Calculate position to appear immediately without requiring scroll
-            // Use viewport-relative coordinates for immediate visibility
-            const buttonTop = rect.top + window.scrollY - 40; // Position above selection
-            const buttonLeft = rect.left + rect.width / 2 + window.scrollX;
+              // Calculate position to appear immediately
+              const buttonTop = rect.top + window.scrollY - 40; // Position above selection
+              const buttonLeft = rect.left + rect.width / 2 + window.scrollX;
 
-            setButtonPosition({
-              top: buttonTop,
-              left: buttonLeft,
-            });
-            setShowButton(true);
+              setButtonPosition({
+                top: buttonTop,
+                left: buttonLeft,
+              });
+
+              // Show button immediately without delay
+              setShowButton(true);
+            }
           }
         } catch (e) {
           console.error('Error getting selection range:', e);
@@ -58,54 +67,30 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Disable default context menu on text selection - AGGRESSIVE BLOCKING (Desktop + Mobile)
+    // AGGRESSIVE context menu blocking - IMMEDIATE response
     const handleContextMenu = (e: MouseEvent | TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      // If there's ANY selected text, COMPLETELY BLOCK default context menu
+      // BLOCK IMMEDIATELY if there's any selected text
       if (text && text.length > 0) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
 
-        // Force return false for older browsers
-        if (e.cancelable) {
-          e.preventDefault();
-        }
+        // Handle selection immediately
+        setTimeout(handleSelection, 0);
 
         return false;
       }
     };
 
-    // Additional mobile-specific long-press blocking
-    const handleTouchStart = (e: TouchEvent) => {
-      // Prevent mobile long-press context menu
-      const target = e.target as HTMLElement;
-      if (target.closest('.markdown, article, .theme-doc-markdown, main')) {
-        // Allow text selection but prevent context menu
-        target.style.webkitUserSelect = 'text';
-        target.style.userSelect = 'text';
-        target.style.webkitTouchCallout = 'none';
-      }
-    };
-
-    // Prevent mobile selection menu (copy, search, etc.) from appearing
-    const handleSelectionChange = () => {
+    // Prevent context menu on content areas
+    const handleContentContextMenu = (e: MouseEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      // If text is selected, immediately prevent default menu
       if (text && text.length > 0) {
-        // Trigger our custom selection handler
-        handleSelection();
-      }
-    };
-
-    // Block mobile text selection toolbar/menu
-    const preventMobileMenu = (e: Event) => {
-      const selection = window.getSelection();
-      if (selection && selection.toString().trim().length > 0) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
@@ -113,105 +98,142 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Additional blocking for specific content areas
-    const handleContentContextMenu = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      // Block context menu in main content and docs areas
-      if (target.closest('.markdown, article, .theme-doc-markdown, main')) {
-        const selection = window.getSelection();
-        if (selection && selection.toString().trim().length > 0) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
-          return false;
-        }
+    // Touch start handler to prevent context menu
+    const handleTouchStart = (e: TouchEvent) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
       }
     };
 
-    // Use mouseup for desktop and touchend for mobile
-    document.addEventListener('mouseup', handleSelection);
-    document.addEventListener('touchend', handleSelection); // Mobile touch support
-    document.addEventListener('click', handleClickOutside);
+    // SELECTION CHANGE handler - MOST IMPORTANT for immediate response
+    const handleSelectionChange = () => {
+      // CRITICAL: Handle selection immediately without any delay
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
 
-    // Mobile: Prevent long-press context menu at touchstart
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+      if (text && text.length > 0) {
+        // For very short text, we might want to wait a tiny bit to ensure it's a real selection
+        if (text.length > 5) {
+          handleSelection();
+        } else {
+          // For shorter text, still check but with a minimal delay to avoid flickering
+          if (selectionTimeoutRef.current) {
+            clearTimeout(selectionTimeoutRef.current);
+          }
+          selectionTimeoutRef.current = setTimeout(() => {
+            handleSelection();
+          }, 50); // Very minimal delay
+        }
+      } else {
+        // If no text is selected, hide the button immediately
+        setShowButton(false);
+      }
+    };
 
-    // Listen to selectionchange for immediate response
+    // Prevent selection start that could lead to context menu
+    const handleSelectStart = (e: Event) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        // Prevent default to avoid context menu, but handle our own selection
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        // Process selection immediately
+        setTimeout(handleSelection, 0);
+
+        return false;
+      }
+    };
+
+    // Touch move handler to prevent context menu during selection
+    const handleTouchMove = (e: TouchEvent) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }
+    };
+
+    // Touch context menu handler
+    const handleTouchContextMenu = (e: TouchEvent) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    };
+
+    // Use selectionchange as the primary event for immediate response
     document.addEventListener('selectionchange', handleSelectionChange);
 
-    // Prevent mobile selection menu/toolbar
-    document.addEventListener('selectstart', preventMobileMenu as any);
-    document.addEventListener('selectionchange', preventMobileMenu as any);
+    // Additional events for comprehensive coverage
+    document.addEventListener('mouseup', handleSelection);
+    document.addEventListener('touchend', handleSelection);
+    document.addEventListener('click', handleClickOutside);
 
-    // MULTIPLE LAYERS of context menu blocking - capture phase + bubble phase
+    // AGGRESSIVE context menu blocking
     document.addEventListener('contextmenu', handleContextMenu as any, true); // Capture
     document.addEventListener('contextmenu', handleContentContextMenu, true); // Capture
     document.addEventListener('contextmenu', handleContextMenu as any, false); // Bubble
 
-    // Also block on main content element if it exists
-    const mainContent = document.querySelector('main, article, [role="main"]');
+    // Selection and touch event blocking
+    document.addEventListener('selectstart', handleSelectStart as any);
+    document.addEventListener('touchstart', handleTouchStart as any, { passive: false });
+    document.addEventListener('touchmove', handleTouchMove as any, { passive: false });
+    document.addEventListener('touchcancel', handleTouchContextMenu as any, true);
+
+    // Apply to main content areas as well
+    const mainContent = document.querySelector('main, article, [role="main"], .markdown, .theme-doc-markdown');
     if (mainContent) {
       mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
       mainContent.addEventListener('touchstart', handleTouchStart as any, { passive: false });
-      mainContent.addEventListener('selectstart', preventMobileMenu as any);
-    }
-
-    // Enhanced mobile-specific handlers to prevent default menu
-    const handleTouchMove = (e: TouchEvent) => {
-      // Prevent context menu during touch movement when text is selected
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-      }
-    };
-
-    const handleTouchContextMenu = (e: TouchEvent) => {
-      // Additional touch context menu prevention
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
-      }
-    };
-
-    // Add mobile-specific event listeners
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchcancel', handleTouchContextMenu as any, true);
-
-    // Update main content listeners for mobile
-    if (mainContent) {
+      mainContent.addEventListener('selectstart', handleSelectStart as any);
       mainContent.addEventListener('touchmove', handleTouchMove as any, { passive: false });
       mainContent.addEventListener('touchcancel', handleTouchContextMenu as any, true);
+      mainContent.addEventListener('selectionchange', handleSelectionChange);
     }
 
     return () => {
+      // Clear timeout on cleanup
+      if (selectionTimeoutRef.current) {
+        clearTimeout(selectionTimeoutRef.current);
+      }
+
+      // Remove all event listeners
+      document.removeEventListener('selectionchange', handleSelectionChange);
       document.removeEventListener('mouseup', handleSelection);
       document.removeEventListener('touchend', handleSelection);
       document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('touchstart', handleTouchStart as any);
-      document.removeEventListener('selectionchange', handleSelectionChange);
-      document.removeEventListener('selectstart', preventMobileMenu as any);
-      document.removeEventListener('selectionchange', preventMobileMenu as any);
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
       document.removeEventListener('contextmenu', handleContextMenu as any, false);
+      document.removeEventListener('selectstart', handleSelectStart as any);
+      document.removeEventListener('touchstart', handleTouchStart as any);
       document.removeEventListener('touchmove', handleTouchMove as any);
       document.removeEventListener('touchcancel', handleTouchContextMenu as any);
 
       if (mainContent) {
         mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
         mainContent.removeEventListener('touchstart', handleTouchStart as any);
-        mainContent.removeEventListener('selectstart', preventMobileMenu as any);
+        mainContent.removeEventListener('selectstart', handleSelectStart as any);
         mainContent.removeEventListener('touchmove', handleTouchMove as any);
         mainContent.removeEventListener('touchcancel', handleTouchContextMenu as any);
+        mainContent.removeEventListener('selectionchange', handleSelectionChange);
       }
     };
   }, []);
@@ -228,7 +250,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
   return (
     <button
-      className={styles.askButton}
+      className={`${styles.askButton} ${styles.show}`}
       style={{
         position: 'fixed',
         top: `${buttonPosition.top}px`,
