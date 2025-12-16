@@ -17,6 +17,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   const [showButton, setShowButton] = useState(false);
   const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isProcessingSelection = useRef(false); // Prevent duplicate processing
+  const lastSelection = useRef<string>(''); // Track last selection to detect changes
 
   useEffect(() => {
     // Immediate selection handler without delay
@@ -43,6 +44,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
             if (rect && rect.width > 0 && rect.height > 0) {
               setSelectedText(text);
+              lastSelection.current = text; // Track this selection
 
               // Calculate position to appear immediately
               const buttonTop = rect.top + window.scrollY - 40; // Position above selection
@@ -61,7 +63,9 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
           console.error('Error getting selection range:', e);
         }
       } else {
+        // If no text is selected, hide the button immediately
         setShowButton(false);
+        lastSelection.current = ''; // Clear last selection
       }
 
       // Reset processing flag after a short delay
@@ -74,7 +78,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       // Don't hide if clicking the button itself
       const target = e.target as HTMLElement;
       if (!target.closest('[data-text-selection-button]')) {
-        setShowButton(false);
+        // Hide button when clicking outside, but only if no new selection is made
+        const currentSelection = window.getSelection()?.toString().trim();
+        if (!currentSelection || currentSelection.length === 0) {
+          setShowButton(false);
+        }
       }
     };
 
@@ -143,6 +151,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       } else {
         // If no text is selected, hide the button immediately
         setShowButton(false);
+        lastSelection.current = ''; // Clear last selection
       }
     };
 
@@ -184,6 +193,28 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       setTimeout(handleSelection, 0);
     };
 
+    // Click handler to detect when user clicks elsewhere to deselect
+    const handleClick = (e: MouseEvent) => {
+      // Check if the click is outside of selected text and the ask button
+      const target = e.target as HTMLElement;
+      const selection = window.getSelection();
+      const currentText = selection?.toString().trim();
+
+      // If there's no selection or the selection is empty, hide the button
+      if (!currentText || currentText.length === 0) {
+        setShowButton(false);
+      }
+
+      // If user clicks somewhere that's not the ask button or selected text, hide the button
+      if (!target.closest('[data-text-selection-button]') &&
+          !target.closest('a, button, input, textarea')) { // Don't hide if clicking on interactive elements
+        // But only hide if there's no new selection
+        if (!currentText || currentText.length === 0) {
+          setShowButton(false);
+        }
+      }
+    };
+
     // Touch move handler to prevent context menu during selection
     const handleTouchMove = (e: TouchEvent) => {
       const selection = window.getSelection();
@@ -217,6 +248,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     document.addEventListener('mouseup', handleMouseUp, true); // Capture phase
 
     // Additional events for comprehensive coverage
+    document.addEventListener('click', handleClick);
     document.addEventListener('click', handleClickOutside);
 
     // AGGRESSIVE context menu blocking
@@ -241,6 +273,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       mainContent.addEventListener('selectionchange', handleSelectionChange);
       mainContent.addEventListener('mousedown', handleMouseDown, true);
       mainContent.addEventListener('mouseup', handleMouseUp, true);
+      mainContent.addEventListener('click', handleClick);
     }
 
     return () => {
@@ -253,6 +286,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       document.removeEventListener('selectionchange', handleSelectionChange);
       document.removeEventListener('mousedown', handleMouseDown, true);
       document.removeEventListener('mouseup', handleMouseUp, true);
+      document.removeEventListener('click', handleClick);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
@@ -271,6 +305,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         mainContent.removeEventListener('selectionchange', handleSelectionChange);
         mainContent.removeEventListener('mousedown', handleMouseDown, true);
         mainContent.removeEventListener('mouseup', handleMouseUp, true);
+        mainContent.removeEventListener('click', handleClick);
       }
     };
   }, []);
@@ -282,6 +317,22 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       setShowButton(false);
     }
   };
+
+  // Also hide the button when clicking anywhere if selection is cleared
+  useEffect(() => {
+    const handleGlobalClick = () => {
+      const selection = window.getSelection();
+      const currentText = selection?.toString().trim();
+      if (!currentText || currentText.length === 0) {
+        setShowButton(false);
+      }
+    };
+
+    document.addEventListener('click', handleGlobalClick);
+    return () => {
+      document.removeEventListener('click', handleGlobalClick);
+    };
+  }, []);
 
   if (!showButton) return null;
 
