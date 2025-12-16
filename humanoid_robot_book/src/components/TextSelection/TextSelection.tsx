@@ -89,8 +89,9 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Only use mouseup - selectionchange fires too early and causes issues
+    // Use mouseup for desktop and touchend for mobile - selectionchange fires too early and causes issues
     document.addEventListener('mouseup', handleSelection);
+    document.addEventListener('touchend', handleSelection); // Mobile touch support
     document.addEventListener('click', handleClickOutside);
 
     // MULTIPLE LAYERS of context menu blocking - capture phase + bubble phase
@@ -106,6 +107,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
+      document.removeEventListener('touchend', handleSelection); // Mobile touch cleanup
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('contextmenu', handleContextMenu, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);

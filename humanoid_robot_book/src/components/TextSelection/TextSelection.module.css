@@ -47,3 +47,30 @@
 .askButton svg {
   flex-shrink: 0;
 }
+
+/* Mobile Optimization for Ask Me Button */
+@media (max-width: 996px) {
+  .askButton {
+    /* Larger touch-friendly size */
+    padding: 14px 24px;
+    font-size: 16px;
+    border-width: 3px;
+    gap: 10px;
+    /* Ensure it's above everything on mobile */
+    z-index: 999999;
+    /* Better mobile shadow */
+    box-shadow: 0 8px 28px rgba(32, 72, 96, 0.6), 0 0 0 5px rgba(32, 72, 96, 0.15);
+    /* Prevent accidental scrolling */
+    touch-action: none;
+  }
+
+  .askButton svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Mobile tap states */
+  .askButton:active {
+    transform: translateX(-50%) scale(0.92);
+  }
+}

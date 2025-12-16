@@ -233,12 +233,29 @@ a:hover {
 
 /* Mobile Menu Items - Force White (MOBILE ONLY) */
 @media (max-width: 996px) {
+    /* All menu links and items white */
     .menu__link,
-    .navbar-sidebar__item {
+    .navbar-sidebar__item,
+    .navbar-sidebar__item a,
+    .menu__list-item a,
+    .theme-doc-sidebar-item-link,
+    .menu__list-item-collapsible a,
+    .theme-doc-sidebar-menu .menu__link {
         color: #ffffff !important;
     }
 
     .navbar-sidebar__items {
+        color: #ffffff !important;
+    }
+
+    /* Active menu item bhi white with subtle background */
+    .menu__link--active {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Category titles white */
+    .menu__list-item-collapsible .menu__link {
         color: #ffffff !important;
     }
 }
@@ -274,4 +291,25 @@ article,
 .theme-doc-markdown,
 main {
     -webkit-touch-callout: none;
+}
+
+/* Mobile: Book Page Background White (Same as Desktop) */
+@media (max-width: 996px) {
+    /* Force white background on mobile for book pages */
+    .main-wrapper,
+    main,
+    article,
+    .theme-doc-markdown,
+    .markdown {
+        background-color: #ffffff !important;
+    }
+
+    /* Dark mode bhi white (consistent with desktop) */
+    [data-theme="dark"] .main-wrapper,
+    [data-theme="dark"] main,
+    [data-theme="dark"] article,
+    [data-theme="dark"] .theme-doc-markdown,
+    [data-theme="dark"] .markdown {
+        background-color: #1a1a1a !important;
+    }
 }
