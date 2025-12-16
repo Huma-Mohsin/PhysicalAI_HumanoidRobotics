@@ -371,13 +371,21 @@
   }
 
   .chatbotContainer {
-    bottom: 16px;
-    right: 16px;
+    bottom: 24px; /* Increased from 16px to prevent menu overlap */
+    right: 20px;
   }
 
   .chatButton {
     width: 56px;
     height: 56px;
+  }
+}
+
+/* Additional spacing for tablets and larger phones */
+@media (min-width: 481px) and (max-width: 996px) {
+  .chatbotContainer {
+    bottom: 28px; /* Extra spacing for tablets */
+    right: 24px;
   }
 }
 

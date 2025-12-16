@@ -334,4 +334,32 @@ main {
     [data-theme="dark"] .markdown {
         background-color: #1a1a1a !important;
     }
+
+    /* Mobile Font Size Optimization - Prevent Auto-Zoom */
+    :root {
+        --ifm-font-size-base: 1.0rem !important; /* Reduced from 1.1rem */
+        --ifm-h1-font-size: 2.0rem !important; /* Reduced from 2.2rem */
+        --ifm-h2-font-size: 1.6rem !important; /* Reduced from 1.8rem */
+        --ifm-h3-font-size: 1.4rem !important; /* Reduced from 1.5rem */
+    }
+
+    [data-theme="dark"] {
+        --ifm-font-size-base: 1.0rem !important;
+        --ifm-h1-font-size: 2.0rem !important;
+        --ifm-h2-font-size: 1.6rem !important;
+        --ifm-h3-font-size: 1.4rem !important;
+    }
+
+    /* Content font sizes */
+    .markdown {
+        font-size: 1.0rem !important;
+    }
+
+    .markdown p {
+        font-size: 1.0rem !important;
+    }
+
+    .markdown li {
+        font-size: 1.0rem !important;
+    }
 }
