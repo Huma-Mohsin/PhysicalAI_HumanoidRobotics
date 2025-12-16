@@ -87,7 +87,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Context menu blocking - BALANCED approach (only when text is selected)
+    // Context menu blocking - MINIMAL approach (only when text is selected)
     const handleContextMenu = (e: MouseEvent | TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
@@ -95,15 +95,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       // BLOCK ONLY if there's selected text (this prevents the mini menu)
       if (text && text.length > 0) {
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
 
         // Handle selection immediately
         setTimeout(() => {
           handleSelection();
         }, 1);
-
-        return false;
       }
     };
 
@@ -114,13 +110,10 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       if (text && text.length > 0) {
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        return false;
       }
     };
 
-    // Touch start handler - BALANCED (only prevent default when text is selected)
+    // Touch start handler - MINIMAL (only prevent default when text is selected)
     const handleTouchStart = (e: TouchEvent) => {
       const target = e.target as HTMLElement;
       if (target.closest('.markdown, article, .theme-doc-markdown, main, p, div, span, h1, h2, h3, h4, h5, h6, li, td, th')) {
@@ -130,8 +123,6 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         // Only prevent default if there's already selected text
         if (currentText && currentText.length > 0) {
           e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
         }
       }
     };
@@ -163,15 +154,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       if (text && text.length > 0) {
         // Prevent default to avoid context menu, but handle our own selection
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
 
         // Process selection immediately
         setTimeout(() => {
           handleSelection();
         }, 1);
-
-        return false;
       }
     };
 
@@ -184,8 +171,6 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       if (text && text.length > 0) {
         // Prevent any context menu from appearing
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
       }
     };
 
@@ -234,8 +219,6 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       if (text && text.length > 0) {
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
       }
     };
 
@@ -246,13 +229,10 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       if (text && text.length > 0) {
         e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
         // Process selection immediately to show Ask Me button
         setTimeout(() => {
           handleSelection();
         }, 1);
-        return false;
       }
     };
 
@@ -333,7 +313,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   }, []);
 
   const handleAskClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+    // Only stop propagation, don't prevent default to maintain page responsiveness
     e.stopPropagation();
     if (selectedText) {
       // Temporarily disable selection processing to avoid conflicts
@@ -345,9 +325,6 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         selection.removeAllRanges();
       }
 
-      // Call the parent callback to handle the question
-      onAskAboutSelection(selectedText);
-
       // Hide the button immediately
       setShowButton(false);
       setSelectedText(''); // Clear the selected text state
@@ -357,6 +334,12 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       setTimeout(() => {
         isProcessingSelection.current = false;
       }, 50);
+
+      // Call the parent callback to handle the question after a brief delay
+      // to ensure UI updates complete first
+      setTimeout(() => {
+        onAskAboutSelection(selectedText);
+      }, 10);
     }
   };
 
