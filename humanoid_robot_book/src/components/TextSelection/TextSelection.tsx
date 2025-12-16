@@ -18,7 +18,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
   useEffect(() => {
     const handleSelection = () => {
-      // Small delay to ensure selection is properly captured
+      // Longer delay for mobile to ensure selection is properly captured
       setTimeout(() => {
         const selection = window.getSelection();
         const text = selection?.toString().trim();
@@ -43,7 +43,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         } else {
           setShowButton(false);
         }
-      }, 50);
+      }, 150); // Increased delay for mobile touch events
     };
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -54,8 +54,8 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Disable default context menu on text selection - AGGRESSIVE BLOCKING
-    const handleContextMenu = (e: MouseEvent) => {
+    // Disable default context menu on text selection - AGGRESSIVE BLOCKING (Desktop + Mobile)
+    const handleContextMenu = (e: MouseEvent | TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
@@ -71,6 +71,18 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         }
 
         return false;
+      }
+    };
+
+    // Additional mobile-specific long-press blocking
+    const handleTouchStart = (e: TouchEvent) => {
+      // Prevent mobile long-press context menu
+      const target = e.target as HTMLElement;
+      if (target.closest('.markdown, article, .theme-doc-markdown, main')) {
+        // Allow text selection but prevent context menu
+        target.style.webkitUserSelect = 'text';
+        target.style.userSelect = 'text';
+        target.style.webkitTouchCallout = 'none';
       }
     };
 
@@ -94,27 +106,33 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     document.addEventListener('touchend', handleSelection); // Mobile touch support
     document.addEventListener('click', handleClickOutside);
 
+    // Mobile: Prevent long-press context menu at touchstart
+    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+
     // MULTIPLE LAYERS of context menu blocking - capture phase + bubble phase
-    document.addEventListener('contextmenu', handleContextMenu, true); // Capture
+    document.addEventListener('contextmenu', handleContextMenu as any, true); // Capture
     document.addEventListener('contextmenu', handleContentContextMenu, true); // Capture
-    document.addEventListener('contextmenu', handleContextMenu, false); // Bubble
+    document.addEventListener('contextmenu', handleContextMenu as any, false); // Bubble
 
     // Also block on main content element if it exists
     const mainContent = document.querySelector('main, article, [role="main"]');
     if (mainContent) {
       mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
+      mainContent.addEventListener('touchstart', handleTouchStart as any, { passive: false });
     }
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
       document.removeEventListener('touchend', handleSelection); // Mobile touch cleanup
       document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('contextmenu', handleContextMenu, true);
+      document.removeEventListener('touchstart', handleTouchStart as any);
+      document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
-      document.removeEventListener('contextmenu', handleContextMenu, false);
+      document.removeEventListener('contextmenu', handleContextMenu as any, false);
 
       if (mainContent) {
         mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
+        mainContent.removeEventListener('touchstart', handleTouchStart as any);
       }
     };
   }, []);

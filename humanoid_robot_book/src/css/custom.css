@@ -285,12 +285,34 @@ main::selection {
     background-color: rgba(32, 72, 96, 0.3);
 }
 
-/* Prevent context menu from appearing (backup CSS method) */
+/* Desktop + Mobile: Allow text selection but prevent context menu */
 .markdown,
 article,
 .theme-doc-markdown,
 main {
-    -webkit-touch-callout: none;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: none; /* Disable iOS callout menu */
+}
+
+/* Mobile-specific: Enable text selection with long-press */
+@media (max-width: 996px) {
+    .markdown,
+    article,
+    .theme-doc-markdown,
+    main,
+    .markdown p,
+    article p,
+    .theme-doc-markdown p,
+    main p {
+        -webkit-user-select: text !important;
+        -moz-user-select: text !important;
+        -ms-user-select: text !important;
+        user-select: text !important;
+        -webkit-touch-callout: none !important; /* Prevent iOS context menu */
+    }
 }
 
 /* Mobile: Book Page Background White (Same as Desktop) */
