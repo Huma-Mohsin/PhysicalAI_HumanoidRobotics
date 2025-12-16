@@ -20,7 +20,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   const lastSelection = useRef<string>(''); // Track last selection to detect changes
 
   useEffect(() => {
-    // Selection handler with balanced approach
+    // Selection handler with mobile-first approach
     const handleSelection = () => {
       // Prevent duplicate processing
       if (isProcessingSelection.current) return;
@@ -72,59 +72,23 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       // Reset processing flag quickly to allow new selections
       setTimeout(() => {
         isProcessingSelection.current = false;
-      }, 50); // Balanced timeout
+      }, 100); // Slightly longer timeout to ensure mobile stability
     };
 
-    const handleClickOutside = (e: MouseEvent) => {
-      // Don't hide if clicking the button itself
-      const target = e.target as HTMLElement;
-      if (!target.closest('[data-text-selection-button]')) {
-        // Hide button when clicking outside, but only if no new selection is made
-        const currentSelection = window.getSelection()?.toString().trim();
-        if (!currentSelection || currentSelection.length === 0) {
-          setShowButton(false);
-        }
-      }
+    // Touch end handler for immediate response on mobile
+    const handleTouchEnd = (e: TouchEvent) => {
+      // Process selection immediately when touch ends
+      setTimeout(() => {
+        handleSelection();
+      }, 10); // Slightly delayed to allow other touch events to process
     };
 
-    // Context menu blocking - MINIMAL approach (only when text is selected)
-    const handleContextMenu = (e: MouseEvent | TouchEvent) => {
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      // BLOCK ONLY if there's selected text (this prevents the mini menu)
-      if (text && text.length > 0) {
-        e.preventDefault();
-
-        // Handle selection immediately
-        setTimeout(() => {
-          handleSelection();
-        }, 1);
-      }
-    };
-
-    // Prevent context menu on content areas when text is selected
-    const handleContentContextMenu = (e: MouseEvent) => {
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        e.preventDefault();
-      }
-    };
-
-    // Touch start handler - MINIMAL (only prevent default when text is selected)
-    const handleTouchStart = (e: TouchEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest('.markdown, article, .theme-doc-markdown, main, p, div, span, h1, h2, h3, h4, h5, h6, li, td, th')) {
-        const selection = window.getSelection();
-        const currentText = selection?.toString().trim();
-
-        // Only prevent default if there's already selected text
-        if (currentText && currentText.length > 0) {
-          e.preventDefault();
-        }
-      }
+    // Mouse up handler for immediate response on desktop
+    const handleMouseUp = (e: MouseEvent) => {
+      // Process selection immediately when mouse is released
+      setTimeout(() => {
+        handleSelection();
+      }, 10); // Slightly delayed to allow other events to process
     };
 
     // SELECTION CHANGE handler - PRIMARY for immediate response
@@ -136,7 +100,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      if (text && text.length > 0) {
+      if (text && text.length > 5) { // Increased threshold to avoid showing button for small selections
         // For immediate response, handle selection right away
         handleSelection();
       } else {
@@ -146,93 +110,15 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Prevent selection start that could lead to context menu
-    const handleSelectStart = (e: Event) => {
+    // Mobile-optimized context menu handler
+    const handleContextMenu = (e: MouseEvent | TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      if (text && text.length > 0) {
-        // Prevent default to avoid context menu, but handle our own selection
+      // BLOCK ONLY if there's selected text (this prevents the mini menu)
+      // But be minimal to not interfere with other mobile gestures
+      if (text && text.length > 5) {
         e.preventDefault();
-
-        // Process selection immediately
-        setTimeout(() => {
-          handleSelection();
-        }, 1);
-      }
-    };
-
-    // Mouse down handler for immediate response on desktop
-    const handleMouseDown = (e: MouseEvent) => {
-      // Check if there's already selected text when mouse is pressed
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        // Prevent any context menu from appearing
-        e.preventDefault();
-      }
-    };
-
-    // Mouse up handler for immediate response on desktop
-    const handleMouseUp = (e: MouseEvent) => {
-      // Process selection immediately when mouse is released
-      setTimeout(() => {
-        handleSelection();
-      }, 1);
-    };
-
-    // Touch end handler for immediate response on mobile
-    const handleTouchEnd = (e: TouchEvent) => {
-      // Process selection immediately when touch ends
-      setTimeout(() => {
-        handleSelection();
-      }, 1);
-    };
-
-    // Click handler to detect when user clicks elsewhere to deselect
-    const handleClick = (e: MouseEvent) => {
-      // Check if the click is outside of selected text and the ask button
-      const target = e.target as HTMLElement;
-      const selection = window.getSelection();
-      const currentText = selection?.toString().trim();
-
-      // If there's no selection or the selection is empty, hide the button
-      if (!currentText || currentText.length === 0) {
-        setShowButton(false);
-      }
-
-      // If user clicks somewhere that's not the ask button or selected text, hide the button
-      if (!target.closest('[data-text-selection-button]') &&
-          !target.closest('a, button, input, textarea')) { // Don't hide if clicking on interactive elements
-        // But only hide if there's no new selection
-        if (!currentText || currentText.length === 0) {
-          setShowButton(false);
-        }
-      }
-    };
-
-    // Touch move handler to prevent context menu during selection
-    const handleTouchMove = (e: TouchEvent) => {
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        e.preventDefault();
-      }
-    };
-
-    // Touch context menu handler
-    const handleTouchContextMenu = (e: TouchEvent) => {
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
-
-      if (text && text.length > 0) {
-        e.preventDefault();
-        // Process selection immediately to show Ask Me button
-        setTimeout(() => {
-          handleSelection();
-        }, 1);
       }
     };
 
@@ -240,40 +126,19 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     document.addEventListener('selectionchange', handleSelectionChange);
 
     // Desktop event handling
-    document.addEventListener('mousedown', handleMouseDown, true); // Capture phase
     document.addEventListener('mouseup', handleMouseUp, true); // Capture phase
 
-    // Mobile event handling - BALANCED approach
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd, { passive: false });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchcancel', handleTouchContextMenu, true);
-
-    // Additional events for comprehensive coverage
-    document.addEventListener('click', handleClick);
-    document.addEventListener('click', handleClickOutside);
-
-    // Context menu blocking - only when text is selected
+    // Mobile event handling - MINIMAL approach
+    document.addEventListener('touchend', handleTouchEnd, { passive: true }); // Use passive for better mobile performance
     document.addEventListener('contextmenu', handleContextMenu as any, true); // Capture
-    document.addEventListener('contextmenu', handleContentContextMenu, true); // Capture
-    document.addEventListener('contextmenu', handleContextMenu as any, false); // Bubble
 
-    // Selection and touch event blocking
-    document.addEventListener('selectstart', handleSelectStart as any);
-
-    // Apply to main content areas as well
+    // Apply to main content areas as well with minimal event listeners
     const mainContent = document.querySelector('main, article, [role="main"], .markdown, .theme-doc-markdown');
     if (mainContent) {
-      mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
-      mainContent.addEventListener('touchstart', handleTouchStart, { passive: false });
-      mainContent.addEventListener('touchend', handleTouchEnd, { passive: false });
-      mainContent.addEventListener('touchmove', handleTouchMove, { passive: false });
-      mainContent.addEventListener('touchcancel', handleTouchContextMenu, true);
-      mainContent.addEventListener('selectstart', handleSelectStart);
       mainContent.addEventListener('selectionchange', handleSelectionChange);
-      mainContent.addEventListener('mousedown', handleMouseDown, true);
       mainContent.addEventListener('mouseup', handleMouseUp, true);
-      mainContent.addEventListener('click', handleClick);
+      mainContent.addEventListener('touchend', handleTouchEnd, { passive: true });
+      mainContent.addEventListener('contextmenu', handleContextMenu as any, true);
     }
 
     return () => {
@@ -284,36 +149,21 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       // Remove all event listeners - use same options as when adding
       document.removeEventListener('selectionchange', handleSelectionChange);
-      document.removeEventListener('mousedown', handleMouseDown, true);
       document.removeEventListener('mouseup', handleMouseUp, true);
-      document.removeEventListener('touchstart', handleTouchStart, { passive: false });
-      document.removeEventListener('touchend', handleTouchEnd, { passive: false });
-      document.removeEventListener('touchmove', handleTouchMove, { passive: false });
-      document.removeEventListener('touchcancel', handleTouchContextMenu, true);
-      document.removeEventListener('click', handleClick);
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('touchend', handleTouchEnd, { passive: true });
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
-      document.removeEventListener('contextmenu', handleContentContextMenu, true);
-      document.removeEventListener('contextmenu', handleContextMenu as any, false);
-      document.removeEventListener('selectstart', handleSelectStart);
 
       if (mainContent) {
-        mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
-        mainContent.removeEventListener('touchstart', handleTouchStart, { passive: false });
-        mainContent.removeEventListener('touchend', handleTouchEnd, { passive: false });
-        mainContent.removeEventListener('touchmove', handleTouchMove, { passive: false });
-        mainContent.removeEventListener('touchcancel', handleTouchContextMenu, true);
-        mainContent.removeEventListener('selectstart', handleSelectStart);
         mainContent.removeEventListener('selectionchange', handleSelectionChange);
-        mainContent.removeEventListener('mousedown', handleMouseDown, true);
         mainContent.removeEventListener('mouseup', handleMouseUp, true);
-        mainContent.removeEventListener('click', handleClick);
+        mainContent.removeEventListener('touchend', handleTouchEnd, { passive: true });
+        mainContent.removeEventListener('contextmenu', handleContextMenu as any, true);
       }
     };
   }, []);
 
   const handleAskClick = (e: React.MouseEvent) => {
-    // Only stop propagation, don't prevent default to maintain page responsiveness
+    // Minimal event handling to preserve mobile functionality
     e.stopPropagation();
     if (selectedText) {
       // Temporarily disable selection processing to avoid conflicts
@@ -333,13 +183,13 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       // Reset processing flag quickly to allow other events to process
       setTimeout(() => {
         isProcessingSelection.current = false;
-      }, 50);
+      }, 100); // Slightly longer timeout for mobile stability
 
       // Call the parent callback to handle the question after a brief delay
       // to ensure UI updates complete first
       setTimeout(() => {
         onAskAboutSelection(selectedText);
-      }, 10);
+      }, 50); // Slightly longer delay to ensure proper cleanup
     }
   };
 
