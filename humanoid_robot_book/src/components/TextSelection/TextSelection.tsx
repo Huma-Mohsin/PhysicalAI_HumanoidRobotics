@@ -33,6 +33,8 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
           -moz-user-select: text !important;
           -ms-user-select: text !important;
           user-select: text !important;
+          -webkit-tap-highlight-color: transparent !important;
+          -webkit-highlight: none !important;
         }
 
         /* Disable the default text selection context menu */
@@ -54,6 +56,24 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
           -moz-user-select: text !important;
           -ms-user-select: text !important;
           user-select: text !important;
+          -webkit-tap-highlight-color: transparent !important;
+          -webkit-highlight: none !important;
+        }
+
+        /* MOST AGGRESSIVE MOBILE MENU BLOCKING */
+        .markdown *, article *, .theme-doc-markdown *, main * {
+          -webkit-touch-callout: none !important;
+          -webkit-user-select: text !important;
+          -moz-user-select: text !important;
+          -ms-user-select: text !important;
+          user-select: text !important;
+          -webkit-tap-highlight-color: transparent !important;
+          -webkit-highlight: none !important;
+        }
+
+        /* Disable any potential popup menus */
+        *[data-text-selection-button] {
+          pointer-events: auto !important;
         }
       `;
       document.head.appendChild(style);
@@ -67,7 +87,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     // Call the function to disable default text selection menu
     const cleanupStyle = disableTextSelectionMenu();
 
-    // Immediate selection handler without delay - MOBILE OPTIMIZED
+    // MOST AGGRESSIVE selection handler for mobile
     const handleSelection = () => {
       // Prevent duplicate processing
       if (isProcessingSelection.current) return;
@@ -119,7 +139,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       // Reset processing flag quickly to allow new selections
       setTimeout(() => {
         isProcessingSelection.current = false;
-      }, 10); // Even faster timeout for mobile
+      }, 1); // Fastest possible timeout
     };
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -134,22 +154,36 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // AGGRESSIVE context menu blocking - IMMEDIATE response on MOBILE
+    // ULTRA AGGRESSIVE context menu blocking - IMMEDIATE response on MOBILE
     const handleContextMenu = (e: MouseEvent | TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
-      // BLOCK IMMEDIATELY if there's any selected text - MORE AGGRESSIVE for mobile
+      // BLOCK IMMEDIATELY if there's any selected text - ULTRA AGGRESSIVE for mobile
       if (text && text.length > 0) {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        e.stopImmediatePropagation();
 
         // Handle selection immediately
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           handleSelection();
-        }, 1); // Minimal delay to ensure event processing
+        });
 
+        return false;
+      }
+    };
+
+    // Ultra aggressive context menu blocking
+    const handleUltraAggressiveContextMenu = (e: Event) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         return false;
       }
     };
@@ -163,25 +197,32 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        e.stopImmediatePropagation();
         return false;
       }
     };
 
-    // MORE AGGRESSIVE touch start handler to prevent context menu on mobile
+    // ULTRA AGGRESSIVE touch start handler to prevent context menu on mobile
     const handleTouchStart = (e: TouchEvent) => {
       touchStartTimeRef.current = Date.now(); // Track touch start time
 
-      // Prevent default behavior for text selection areas to stop context menu
+      // Prevent ALL default behavior for text selection areas to stop context menu
       const target = e.target as HTMLElement;
       if (target.closest('.markdown, article, .theme-doc-markdown, main, p, div, span, h1, h2, h3, h4, h5, h6, li, td, th')) {
+        // Always prevent default on touch start to block any context menu
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
         const selection = window.getSelection();
         const currentText = selection?.toString().trim();
 
-        // If there's already selected text, we're in a selection operation - prevent default
+        // If there's already selected text, we're in a selection operation
         if (currentText && currentText.length > 0) {
-          e.preventDefault();
-          e.stopPropagation();
-          e.stopImmediatePropagation();
+          // Process selection immediately
+          requestAnimationFrame(() => {
+            handleSelection();
+          });
         }
       }
     };
@@ -194,7 +235,9 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       if (text && text.length > 0) {
         // For immediate response on mobile, handle selection right away
-        handleSelection();
+        requestAnimationFrame(() => {
+          handleSelection();
+        });
       } else {
         // If no text is selected, hide the button immediately
         setShowButton(false);
@@ -202,21 +245,22 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Prevent selection start that could lead to context menu
+    // Ultra aggressive selection start blocking
     const handleSelectStart = (e: Event) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
 
       if (text && text.length > 0) {
-        // Prevent default to avoid context menu, but handle our own selection
+        // Ultra aggressive blocking
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        e.stopImmediatePropagation();
 
         // Process selection immediately
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           handleSelection();
-        }, 1); // Minimal delay
+        });
 
         return false;
       }
@@ -239,28 +283,25 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     // Mouse up handler for immediate response on desktop
     const handleMouseUp = (e: MouseEvent) => {
       // Process selection immediately when mouse is released
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         handleSelection();
-      }, 1); // Minimal delay
+      });
     };
 
     // Touch end handler for immediate response on mobile
     const handleTouchEnd = (e: TouchEvent) => {
-      // Calculate touch duration to determine if it was a selection vs tap
-      const touchDuration = Date.now() - touchStartTimeRef.current;
-
       // Process selection immediately when touch ends
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         handleSelection();
-      }, 1); // Minimal delay
+      });
     };
 
     // Touch force change handler for immediate response on mobile (for 3D Touch devices)
     const handleTouchForceChange = (e: TouchEvent) => {
       // Process selection immediately when touch force changes
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         handleSelection();
-      }, 1); // Minimal delay
+      });
     };
 
     // Click handler to detect when user clicks elsewhere to deselect
@@ -297,7 +338,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
-    // Touch context menu handler - MORE AGGRESSIVE for mobile
+    // Touch context menu handler - ULTRA AGGRESSIVE for mobile
     const handleTouchContextMenu = (e: TouchEvent) => {
       const selection = window.getSelection();
       const text = selection?.toString().trim();
@@ -306,10 +347,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        e.stopImmediatePropagation();
         // Process selection immediately to show Ask Me button
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           handleSelection();
-        }, 1); // Minimal delay
+        });
         return false;
       }
     };
@@ -321,7 +363,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     document.addEventListener('mousedown', handleMouseDown, true); // Capture phase
     document.addEventListener('mouseup', handleMouseUp, true); // Capture phase
 
-    // AGGRESSIVE mobile event handling for immediate response
+    // ULTRA AGGRESSIVE mobile event handling for immediate response
     document.addEventListener('touchstart', handleTouchStart, { passive: false });
     document.addEventListener('touchend', handleTouchEnd, { passive: false });
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -332,10 +374,11 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     document.addEventListener('click', handleClick);
     document.addEventListener('click', handleClickOutside);
 
-    // AGGRESSIVE context menu blocking
+    // ULTRA AGGRESSIVE context menu blocking
     document.addEventListener('contextmenu', handleContextMenu as any, true); // Capture
     document.addEventListener('contextmenu', handleContentContextMenu, true); // Capture
     document.addEventListener('contextmenu', handleContextMenu as any, false); // Bubble
+    document.addEventListener('contextmenu', handleUltraAggressiveContextMenu, true); // Extra layer
 
     // Selection and touch event blocking
     document.addEventListener('selectstart', handleSelectStart as any);
@@ -344,6 +387,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
     const mainContent = document.querySelector('main, article, [role="main"], .markdown, .theme-doc-markdown');
     if (mainContent) {
       mainContent.addEventListener('contextmenu', handleContentContextMenu, true);
+      mainContent.addEventListener('contextmenu', handleUltraAggressiveContextMenu, true);
       mainContent.addEventListener('touchstart', handleTouchStart, { passive: false });
       mainContent.addEventListener('touchend', handleTouchEnd, { passive: false });
       mainContent.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -376,10 +420,12 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
       document.removeEventListener('contextmenu', handleContentContextMenu, true);
       document.removeEventListener('contextmenu', handleContextMenu as any, false);
+      document.removeEventListener('contextmenu', handleUltraAggressiveContextMenu, true);
       document.removeEventListener('selectstart', handleSelectStart);
 
       if (mainContent) {
         mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
+        mainContent.removeEventListener('contextmenu', handleUltraAggressiveContextMenu, true);
         mainContent.removeEventListener('touchstart', handleTouchStart);
         mainContent.removeEventListener('touchend', handleTouchEnd);
         mainContent.removeEventListener('touchmove', handleTouchMove);
@@ -433,8 +479,14 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         left: `${buttonPosition.left}px`,
       }}
       onClick={handleAskClick}
-      onTouchStart={(e) => e.stopPropagation()} // Prevent touch interference
-      onTouchEnd={(e) => e.stopPropagation()}   // Prevent touch interference
+      onTouchStart={(e) => {
+        e.stopPropagation();
+        e.preventDefault(); // Additional prevention for touch
+      }}
+      onTouchEnd={(e) => {
+        e.stopPropagation();
+        e.preventDefault(); // Additional prevention for touch
+      }}
       title="Ask chatbot about this selection"
       data-text-selection-button="true"
     >
