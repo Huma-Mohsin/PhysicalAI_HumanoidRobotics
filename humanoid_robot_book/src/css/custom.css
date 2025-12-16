@@ -276,6 +276,44 @@ a:hover {
     stroke: #ffffff !important;
 }
 
+/* Theme Toggle Icon (System Mode) - Both Desktop and Mobile */
+.navbar__items--right .clean-btn,
+.theme-toggle,
+.toggleButton {
+    color: white !important;
+}
+
+.navbar__items--right .clean-btn svg,
+.theme-toggle svg,
+.toggleButton svg {
+    color: white !important;
+    fill: white !important;
+    stroke: white !important;
+}
+
+[data-theme="dark"] .navbar__items--right .clean-btn svg,
+[data-theme="dark"] .theme-toggle svg,
+[data-theme="dark"] .toggleButton svg {
+    color: white !important;
+    fill: white !important;
+    stroke: white !important;
+}
+
+/* Additional specificity for theme toggle button */
+button[class*="toggle"],
+.theme-color-mode-toggle,
+.navbar__item .clean-btn {
+    color: white !important;
+}
+
+button[class*="toggle"] svg,
+.theme-color-mode-toggle svg,
+.navbar__item .clean-btn svg {
+    color: white !important;
+    fill: white !important;
+    stroke: white !important;
+}
+
 /* Disable default context menu styles in content areas when text is selected */
 .markdown::selection,
 article::selection,
