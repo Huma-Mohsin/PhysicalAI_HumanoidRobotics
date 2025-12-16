@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { createAuthClient, getCurrentSession } from 'better-auth/react';
+import { createAuthClient } from 'better-auth/react';
 
 // Define types for user and hardware profile
 interface HardwareProfile {
@@ -55,10 +55,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const session = await getCurrentSession(authClient);
-        if (session?.user) {
+        // Use authClient.getSession() instead of getCurrentSession
+        const session = await authClient.getSession();
+        if (session?.session) {
           // Fetch user profile including hardware profile
-          const userProfile = await fetchUserProfile(session.user.id);
+          const userProfile = await fetchUserProfile(session.session.userId);
           setUser(userProfile);
         }
       } catch (error) {
