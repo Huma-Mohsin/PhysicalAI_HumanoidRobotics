@@ -20,6 +20,43 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   const lastSelection = useRef<string>(''); // Track last selection to detect changes
 
   useEffect(() => {
+    // Disable browser's default text selection mini menu and context menus
+    const disableTextSelectionMenu = () => {
+      // Add styles to disable text selection menu
+      const style = document.createElement('style');
+      style.textContent = `
+        * {
+          -webkit-touch-callout: none;
+          -webkit-user-select: text;
+          -khtml-user-select: text;
+          -moz-user-select: text;
+          -ms-user-select: text;
+          user-select: text;
+        }
+
+        /* Disable the default text selection context menu */
+        ::selection {
+          background: auto;
+        }
+
+        /* Prevent the default selection toolbar on mobile */
+        input[type="text"], textarea, *[contenteditable="true"] {
+          -webkit-touch-callout: default;
+          -webkit-user-select: auto;
+          user-select: auto;
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Return cleanup function
+      return () => {
+        document.head.removeChild(style);
+      };
+    };
+
+    // Call the function to disable default text selection menu
+    const cleanupStyle = disableTextSelectionMenu();
+
     // Immediate selection handler without delay
     const handleSelection = () => {
       // Prevent duplicate processing
@@ -307,6 +344,9 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         mainContent.removeEventListener('mouseup', handleMouseUp, true);
         mainContent.removeEventListener('click', handleClick);
       }
+
+      // Cleanup the style element
+      cleanupStyle && cleanupStyle();
     };
   }, []);
 
