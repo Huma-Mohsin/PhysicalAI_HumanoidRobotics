@@ -220,13 +220,15 @@ a:hover {
     color: #ffffff !important;
 }
 
-/* Desktop Sidebar - Ensure Visibility */
+/* Desktop Sidebar - Teal Color for Visibility */
 .menu__link {
-    color: var(--ifm-font-color-base) !important;
+    color: #204860 !important;
+    font-weight: 500 !important;
 }
 
 [data-theme="dark"] .menu__link {
-    color: var(--ifm-font-color-base) !important;
+    color: #2a6582 !important;
+    font-weight: 500 !important;
 }
 
 /* Mobile Menu Items - Force White (MOBILE ONLY) */
