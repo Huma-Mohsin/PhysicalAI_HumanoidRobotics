@@ -18,25 +18,32 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
   useEffect(() => {
     const handleSelection = () => {
-      const selection = window.getSelection();
-      const text = selection?.toString().trim();
+      // Small delay to ensure selection is properly captured
+      setTimeout(() => {
+        const selection = window.getSelection();
+        const text = selection?.toString().trim();
 
-      if (text && text.length > 5) {
-        // Only show if substantial text selected (reduced from 10 to 5 for better UX)
-        const range = selection?.getRangeAt(0);
-        const rect = range?.getBoundingClientRect();
+        if (text && text.length > 5) {
+          // Only show if substantial text selected
+          try {
+            const range = selection?.getRangeAt(0);
+            const rect = range?.getBoundingClientRect();
 
-        if (rect) {
-          setSelectedText(text);
-          setButtonPosition({
-            top: rect.top - 50, // Increased offset for better visibility
-            left: rect.left + rect.width / 2,
-          });
-          setShowButton(true);
+            if (rect && rect.width > 0 && rect.height > 0) {
+              setSelectedText(text);
+              setButtonPosition({
+                top: rect.top + window.scrollY - 50,
+                left: rect.left + rect.width / 2,
+              });
+              setShowButton(true);
+            }
+          } catch (e) {
+            console.error('Error getting selection range:', e);
+          }
+        } else {
+          setShowButton(false);
         }
-      } else {
-        setShowButton(false);
-      }
+      }, 50);
     };
 
     const handleClickOutside = (e: MouseEvent) => {
@@ -47,12 +54,30 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
       }
     };
 
+    // Disable default context menu on text selection
+    const handleContextMenu = (e: MouseEvent) => {
+      const selection = window.getSelection();
+      const text = selection?.toString().trim();
+
+      // If there's selected text, BLOCK default context menu completely
+      if (text && text.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        return false;
+      }
+    };
+
+    // Only use mouseup - selectionchange fires too early and causes issues
     document.addEventListener('mouseup', handleSelection);
     document.addEventListener('click', handleClickOutside);
+    // Use capture phase to block context menu early
+    document.addEventListener('contextmenu', handleContextMenu, true);
 
     return () => {
       document.removeEventListener('mouseup', handleSelection);
       document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('contextmenu', handleContextMenu, true);
     };
   }, []);
 
