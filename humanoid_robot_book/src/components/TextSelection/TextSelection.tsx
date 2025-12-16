@@ -138,6 +138,9 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
     // SELECTION CHANGE handler - PRIMARY for immediate response
     const handleSelectionChange = () => {
+      // Prevent duplicate processing
+      if (isProcessingSelection.current) return;
+
       // CRITICAL: Handle selection immediately without any delay
       const selection = window.getSelection();
       const text = selection?.toString().trim();
@@ -299,14 +302,14 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         clearTimeout(selectionTimeoutRef.current);
       }
 
-      // Remove all event listeners
+      // Remove all event listeners - use same options as when adding
       document.removeEventListener('selectionchange', handleSelectionChange);
       document.removeEventListener('mousedown', handleMouseDown, true);
       document.removeEventListener('mouseup', handleMouseUp, true);
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchend', handleTouchEnd);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchcancel', handleTouchContextMenu);
+      document.removeEventListener('touchstart', handleTouchStart, { passive: false });
+      document.removeEventListener('touchend', handleTouchEnd, { passive: false });
+      document.removeEventListener('touchmove', handleTouchMove, { passive: false });
+      document.removeEventListener('touchcancel', handleTouchContextMenu, true);
       document.removeEventListener('click', handleClick);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('contextmenu', handleContextMenu as any, true);
@@ -316,10 +319,10 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
 
       if (mainContent) {
         mainContent.removeEventListener('contextmenu', handleContentContextMenu, true);
-        mainContent.removeEventListener('touchstart', handleTouchStart);
-        mainContent.removeEventListener('touchend', handleTouchEnd);
-        mainContent.removeEventListener('touchmove', handleTouchMove);
-        mainContent.removeEventListener('touchcancel', handleTouchContextMenu);
+        mainContent.removeEventListener('touchstart', handleTouchStart, { passive: false });
+        mainContent.removeEventListener('touchend', handleTouchEnd, { passive: false });
+        mainContent.removeEventListener('touchmove', handleTouchMove, { passive: false });
+        mainContent.removeEventListener('touchcancel', handleTouchContextMenu, true);
         mainContent.removeEventListener('selectstart', handleSelectStart);
         mainContent.removeEventListener('selectionchange', handleSelectionChange);
         mainContent.removeEventListener('mousedown', handleMouseDown, true);
@@ -330,16 +333,42 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
   }, []);
 
   const handleAskClick = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (selectedText) {
+      // Temporarily disable selection processing to avoid conflicts
+      isProcessingSelection.current = true;
+
+      // Clear selection to avoid any lingering selection state
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+      }
+
+      // Call the parent callback to handle the question
       onAskAboutSelection(selectedText);
+
+      // Hide the button immediately
       setShowButton(false);
+      setSelectedText(''); // Clear the selected text state
+      lastSelection.current = ''; // Clear the last selection reference
+
+      // Reset processing flag quickly to allow other events to process
+      setTimeout(() => {
+        isProcessingSelection.current = false;
+      }, 50);
     }
   };
 
   // Also hide the button when clicking anywhere if selection is cleared
   useEffect(() => {
-    const handleGlobalClick = () => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      // Don't hide if clicking the button itself
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-text-selection-button]')) {
+        return;
+      }
+
       const selection = window.getSelection();
       const currentText = selection?.toString().trim();
       if (!currentText || currentText.length === 0) {
