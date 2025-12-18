@@ -9,13 +9,13 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 
-from services.database_service import db_service
-from services.rag_service import rag_service
-from services.auth_service import get_auth_service
-from models.user_session import UserSessionCreate
-from models.conversation import ConversationCreate
-from models.message import MessageCreate, Message, MessageMetadata
-from utils.logger import logger
+from src.services.database_service import db_service
+from src.services.rag_service import rag_service
+from src.services.auth_service import get_auth_service
+from src.models.user_session import UserSessionCreate
+from src.models.conversation import ConversationCreate
+from src.models.message import MessageCreate, Message, MessageMetadata, TextSelection
+from src.utils.logger import logger
 
 
 # API Router
@@ -29,6 +29,7 @@ class ChatQueryRequest(BaseModel):
     conversation_id: Optional[UUID] = Field(default=None, description="Existing conversation ID")
     session_id: Optional[UUID] = Field(default=None, description="User session ID")
     user_id: Optional[str] = Field(default=None, description="Authenticated user ID from Better-Auth")
+    text_selection: Optional[TextSelection] = Field(default=None, description="User-highlighted text context")
 
 
 class ChunkMetadata(BaseModel):
@@ -173,12 +174,13 @@ async def chat_query(request: ChatQueryRequest):
         # ====================
         # Save Messages
         # ====================
-        # Save user message
+        # Save user message (with optional text selection)
         user_message = await db_service.create_message(
             MessageCreate(
                 conv_id=conversation_id,
                 role="user",
-                content=question
+                content=question,
+                text_selection=request.text_selection  # Include highlighted text context
             )
         )
 
