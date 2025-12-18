@@ -8,19 +8,19 @@
 
 ## User Scenarios & Testing
 
-### User Story 1 - Authorization Gate at Book Entry (Priority: P1) 🎯 MVP
+### User Story 1 - Optional Signup via Navbar Menu (Priority: P1) 🎯 MVP
 
-As a new visitor to the Physical AI book, I want to be prompted to sign up or log in BEFORE I start reading, so that my progress and hardware profile are saved to my account.
+As a visitor to the Physical AI book, I want to freely read the content without forced signup, with an OPTIONAL "Login" button in the navbar menu for those who want personalization features.
 
-**Why this priority**: Constitution requires "Auth & Survey (50 pts)" with signup flow capturing hardware background. Currently auth pages exist but are orphaned (not in book flow).
+**Why this priority**: Lower barrier to entry - users can explore content first, then decide to create account for personalization. Constitution requires "Auth & Survey (50 pts)" but doesn't mandate forced signup.
 
-**Independent Test**: Visit https://humanoidrobotbook.vercel.app/ → Redirected to /auth/signup → Sign up with email → Redirected back to book homepage → Can now read.
+**Independent Test**: Visit https://humanoidrobotbook.vercel.app/ → Can read book immediately → Click "Login" in navbar → Sign up/login → Navbar now shows user email + logout.
 
 **Acceptance Scenarios**:
 
-1. **Given** I am a new visitor (not logged in), **When** I visit the book homepage, **Then** I am redirected to `/auth/signup` page
-2. **Given** I am on the signup page, **When** I fill in email, password, name, and hardware details, **Then** my account is created and I am redirected to the book
-3. **Given** I am a returning user who previously signed up, **When** I visit the book, **Then** I am redirected to `/auth/login` instead of signup
+1. **Given** I am a new visitor (not logged in), **When** I visit the book homepage, **Then** I can read content freely AND see "Login" + "Sign Up" buttons in navbar
+2. **Given** I want to personalize my experience, **When** I click "Sign Up" in navbar, **Then** I am taken to signup page with hardware survey questions
+3. **Given** I completed signup, **When** I return to the book, **Then** navbar shows my email (e.g., "alice@test.com") with dropdown for logout
 
 ---
 
@@ -56,19 +56,20 @@ As the frontend auth system, I need backend API endpoints for signup, login, log
 
 ---
 
-### User Story 4 - Skip Auth for Anonymous Reading (Priority: P2)
+### User Story 4 - Dynamic Navbar User Menu (Priority: P1) 🎯 MVP
 
-As a visitor who just wants to browse, I want a "Continue as Guest" option, so that I can read the book without creating an account.
+As a user, I want to see my login status in the navbar, with my email displayed when logged in and a logout option, so I know which account I'm using.
 
-**Why this priority**: Lowers barrier to entry, improves user experience. Auth is optional for basic reading, required for personalization.
+**Why this priority**: Core UX requirement - users need visibility into their auth state and easy logout access.
 
-**Independent Test**: Visit book → See signup page → Click "Continue as Guest" → Redirected to book → Can read but cannot personalize → Banner shows "Sign up to unlock personalization".
+**Independent Test**: Log in as alice@test.com → Navbar shows "alice@test.com" with dropdown icon → Click dropdown → See "Logout" option → Click logout → Navbar reverts to "Login" + "Sign Up" buttons.
 
 **Acceptance Scenarios**:
 
-1. **Given** I am on the signup page, **When** I click "Continue as Guest", **Then** I can read the book without authentication
-2. **Given** I am reading as guest and click "Personalize" button, **Then** I see a prompt to sign up or log in
-3. **Given** I sign up later after reading as guest, **When** I log in, **Then** my guest reading progress is preserved (optional, nice-to-have)
+1. **Given** I am NOT logged in, **When** I visit the book, **Then** navbar shows "Login" and "Sign Up" buttons on the right
+2. **Given** I am logged in as "alice@test.com", **When** I view the navbar, **Then** it displays my email "alice@test.com" with a dropdown arrow
+3. **Given** I click on my email dropdown, **When** the menu opens, **Then** I see "Logout" option
+4. **Given** I click "Logout", **When** session is cleared, **Then** navbar reverts to showing "Login" + "Sign Up" buttons
 
 ---
 
@@ -92,16 +93,17 @@ As a visitor who just wants to browse, I want a "Continue as Guest" option, so t
 
 ### Functional Requirements
 
-- **FR-001**: System MUST redirect unauthenticated users to `/auth/signup` when visiting book homepage
-- **FR-002**: Signup form MUST capture: email, password, name, hardware_type (dropdown)
+- **FR-001**: Navbar MUST show "Login" + "Sign Up" buttons for unauthenticated users
+- **FR-002**: Signup form MUST capture: email, password, name, hardware_type (dropdown with: GPU Workstation, Edge Device, Cloud/Mac)
 - **FR-003**: Backend `/api/auth/signup` MUST create user in Neon database with hardware profile
 - **FR-004**: Backend `/api/auth/login` MUST validate credentials and return session token
 - **FR-005**: Backend `/api/auth/get-session` MUST return current user's profile for authenticated requests
 - **FR-006**: Backend `/api/auth/logout` MUST invalidate session token
 - **FR-007**: System MUST store session token in httpOnly cookie (secure)
-- **FR-008**: Authenticated users MUST be able to update hardware profile later (settings page)
-- **FR-009**: System MUST provide "Continue as Guest" option on auth pages
-- **FR-010**: Guest users MUST be prompted to sign up when accessing personalization features
+- **FR-008**: Navbar MUST show user email with dropdown menu when authenticated
+- **FR-009**: User dropdown menu MUST contain "Logout" option
+- **FR-010**: Book content MUST be freely accessible without authentication (no auth wall)
+- **FR-011**: Personalization features (future) MAY prompt user to sign up if not authenticated
 
 ### Key Entities
 
@@ -158,14 +160,14 @@ As a visitor who just wants to browse, I want a "Continue as Guest" option, so t
 ### Frontend Changes
 
 **Files to Modify**:
-1. `humanoid_robot_book/src/theme/Root.tsx` - Add auth gate
-2. `humanoid_robot_book/pages/auth/signup.tsx` - Add hardware dropdown
-3. `humanoid_robot_book/pages/auth/login.tsx` - Connect to backend
+1. `humanoid_robot_book/docusaurus.config.ts` - Replace static navbar items with dynamic UserMenu
+2. `humanoid_robot_book/src/pages/signup.tsx` - Add hardware dropdown to form
+3. `humanoid_robot_book/src/pages/login.tsx` - Connect to backend (already done!)
 4. `humanoid_robot_book/src/contexts/AuthContext.tsx` - Fix baseURL (already done!)
 
 **New Components**:
-- `AuthGate.tsx` - Wrapper that redirects unauthenticated users
-- `GuestModeButton.tsx` - "Continue as Guest" button
+- `src/theme/Navbar/Content/index.tsx` - Swizzled Docusaurus navbar with dynamic auth menu
+- `src/components/Auth/UserMenu.tsx` - User dropdown component (email + logout)
 
 ### Backend Changes (NEW)
 

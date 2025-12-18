@@ -739,3 +739,200 @@ T1 (DB) → T2 (Auth Service) → T4 (get-session) → T5 (signup fix) → T6 (l
 2. Update constitution compliance tracker
 3. Test Feature 006 (Text Selection) + Feature 007 together
 4. Optional: Implement auth gate at book start (Phase 2)
+
+---
+
+### T12: Frontend - Dynamic Navbar UserMenu ⏱️ 1 hour
+
+**Priority**: P1 (Core UX requirement)
+**Dependencies**: T10 (backend deployed), T11 (frontend verified)
+**Files**: 
+- `humanoid_robot_book/src/components/Auth/UserMenu.tsx` (NEW)
+- `humanoid_robot_book/docusaurus.config.ts` (MODIFY)
+
+**Description**: Replace static "Login" + "Sign Up" buttons in navbar with dynamic UserMenu component that shows user email when logged in.
+
+**UX Flow**:
+```
+NOT Logged In:  [Book] [Blog] [GitHub]  |  [Login] [Sign Up]
+Logged In:      [Book] [Blog] [GitHub]  |  [alice@test.com ▼]
+                                             └─> Logout
+```
+
+**Implementation Steps**:
+
+1. **Create UserMenu Component**:
+   ```tsx
+   // humanoid_robot_book/src/components/Auth/UserMenu.tsx
+   import React, { useState } from 'react';
+   import { useAuth } from '@site/src/contexts/AuthContext';
+   import './UserMenu.css';
+
+   export default function UserMenu() {
+     const { user, signOut } = useAuth();
+     const [isOpen, setIsOpen] = useState(false);
+
+     const handleLogout = async () => {
+       await signOut();
+       window.location.href = '/';
+     };
+
+     if (!user) {
+       // Not logged in - show Login + Sign Up buttons
+       return (
+         <div className="navbar-auth-buttons">
+           <a href="/login" className="navbar__link">Login</a>
+           <a href="/signup" className="navbar__link navbar__link--signup">Sign Up</a>
+         </div>
+       );
+     }
+
+     // Logged in - show email dropdown
+     return (
+       <div className="navbar-user-menu">
+         <button 
+           className="navbar-user-email"
+           onClick={() => setIsOpen(!isOpen)}
+         >
+           {user.email} ▼
+         </button>
+         {isOpen && (
+           <div className="user-dropdown">
+             <button onClick={handleLogout}>Logout</button>
+           </div>
+         )}
+       </div>
+     );
+   }
+   ```
+
+2. **Add CSS Styling**:
+   ```css
+   /* humanoid_robot_book/src/components/Auth/UserMenu.css */
+   .navbar-auth-buttons {
+     display: flex;
+     gap: 1rem;
+     align-items: center;
+   }
+
+   .navbar__link--signup {
+     background-color: var(--ifm-color-primary);
+     color: white;
+     padding: 0.5rem 1rem;
+     border-radius: 4px;
+   }
+
+   .navbar-user-menu {
+     position: relative;
+   }
+
+   .navbar-user-email {
+     background: none;
+     border: 1px solid var(--ifm-color-primary);
+     padding: 0.5rem 1rem;
+     border-radius: 4px;
+     cursor: pointer;
+     color: var(--ifm-font-color-base);
+   }
+
+   .user-dropdown {
+     position: absolute;
+     top: 100%;
+     right: 0;
+     margin-top: 0.5rem;
+     background: white;
+     border: 1px solid var(--ifm-color-emphasis-200);
+     border-radius: 4px;
+     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+     min-width: 150px;
+   }
+
+   .user-dropdown button {
+     width: 100%;
+     padding: 0.75rem 1rem;
+     border: none;
+     background: none;
+     cursor: pointer;
+     text-align: left;
+   }
+
+   .user-dropdown button:hover {
+     background-color: var(--ifm-color-emphasis-100);
+   }
+   ```
+
+3. **Swizzle Docusaurus Navbar** (to inject custom component):
+   ```bash
+   cd humanoid_robot_book
+   npm run swizzle @docusaurus/theme-classic Navbar -- --eject --typescript
+   ```
+
+4. **Modify Navbar to use UserMenu**:
+   - Find the navbar items rendering in swizzled component
+   - Replace static auth links with `<UserMenu />` import
+
+   OR **simpler approach** - use custom navbar items:
+   
+   Update `docusaurus.config.ts`:
+   ```typescript
+   navbar: {
+     title: 'Physical AI & Humanoid Robotics',
+     items: [
+       {
+         type: 'docSidebar',
+         sidebarId: 'physicalAISidebar',
+         position: 'left',
+         label: 'Book',
+       },
+       {to: '/blog', label: 'Blog', position: 'left'},
+       // REMOVE static Login/Sign Up buttons
+       // {to: '/login', label: 'Login', position: 'right'},  // ❌ DELETE
+       // {to: '/signup', label: 'Sign Up', position: 'right'}, // ❌ DELETE
+       {
+         type: 'custom',
+         position: 'right',
+         component: () => import('@site/src/components/Auth/UserMenu'),  // ✅ ADD
+       },
+       {
+         href: 'https://github.com/Huma-Mohsin/PhysicalAI_HumanoidRobotics',
+         label: 'GitHub',
+         position: 'right',
+       },
+     ],
+   },
+   ```
+
+**Acceptance Criteria**:
+- [ ] When NOT logged in: Navbar shows "Login" + "Sign Up" buttons
+- [ ] When logged in: Navbar shows user email (e.g., "alice@test.com")
+- [ ] Clicking email opens dropdown with "Logout" option
+- [ ] Clicking "Logout" calls `signOut()` and redirects to homepage
+- [ ] Navbar updates immediately after login/logout (reactive)
+- [ ] CSS matches Docusaurus theme (no styling conflicts)
+- [ ] Works on mobile (responsive)
+
+**Test Procedure**:
+```bash
+# 1. Start dev server
+cd humanoid_robot_book
+npm run start
+
+# 2. Visit http://localhost:3000
+# Expected: Shows "Login" + "Sign Up" in navbar
+
+# 3. Click "Sign Up" → Fill form → Submit
+# Expected: Navbar changes to show your email
+
+# 4. Click email dropdown → Click "Logout"
+# Expected: Navbar reverts to "Login" + "Sign Up"
+
+# 5. Test on mobile (Chrome DevTools mobile emulator)
+# Expected: Dropdown works properly
+```
+
+**Notes**:
+- If swizzling is too complex, use a simpler approach: inject via `<Root>` component
+- Ensure dropdown closes when clicking outside (add useEffect with document listener)
+- Consider adding loading state while checking session
+
+---

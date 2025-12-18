@@ -35,7 +35,17 @@ const config: Config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ur'],
+    localeConfigs: {
+      ur: {
+        label: 'اردو',
+        direction: 'rtl',
+      },
+      en: {
+        label: 'English',
+        direction: 'ltr',
+      },
+    },
   },
 
   presets: [
@@ -85,8 +95,6 @@ const config: Config = {
           label: 'Book',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
-        {to: '/login', label: 'Login', position: 'right'},
-        {to: '/signup', label: 'Sign Up', position: 'right'},
         {
           href: 'https://github.com/Huma-Mohsin/PhysicalAI_HumanoidRobotics',
           label: 'GitHub',
