@@ -17,7 +17,7 @@ class HardwareProfile(BaseModel):
 class UserSession(BaseModel):
     """User session model."""
     session_id: UUID = Field(..., description="Unique session identifier")
-    user_id: Optional[UUID] = Field(default=None, description="User ID from Better-Auth (null for anonymous)")
+    user_id: Optional[str] = Field(default=None, description="User ID from Better-Auth (null for anonymous)")
     hardware_profile: Optional[HardwareProfile] = Field(default=None, description="User's hardware profile")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Session creation timestamp")
     last_active: datetime = Field(default_factory=datetime.utcnow, description="Last activity timestamp")
@@ -40,5 +40,5 @@ class UserSession(BaseModel):
 class UserSessionCreate(BaseModel):
     """Schema for creating a new user session."""
     session_id: Optional[UUID] = None  # Optional: if provided, use it; otherwise generate new UUID
-    user_id: Optional[UUID] = None
+    user_id: Optional[str] = None  # Changed to str to match database VARCHAR(255)
     hardware_profile: Optional[HardwareProfile] = None

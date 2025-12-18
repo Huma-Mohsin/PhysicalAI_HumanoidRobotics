@@ -18,6 +18,7 @@ class UserProfile(BaseModel):
     """User profile with hardware information."""
     user_id: str = Field(..., description="User ID from Better-Auth")
     email: str = Field(..., description="User email")
+    password: Optional[str] = Field(default=None, description="User password (plaintext - TECH DEBT)")
     name: Optional[str] = Field(default=None, description="User's full name")
     hardware_type: Optional[str] = Field(
         default=None,
@@ -35,6 +36,7 @@ class UserProfileCreate(BaseModel):
     """Schema for creating a new user profile."""
     user_id: str
     email: str
+    password: str  # Required for signup
     name: Optional[str] = None
     hardware_type: Optional[str] = None
     hardware_details: Optional[HardwareDetails] = None
@@ -63,21 +65,23 @@ class AuthService:
                         INSERT INTO user_profiles (
                             user_id,
                             email,
+                            password,
                             name,
                             hardware_type,
                             hardware_details,
                             created_at,
                             updated_at
                         )
-                        VALUES ($1, $2, $3, $4, $5, $6, $7)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                         ON CONFLICT (user_id)
                         DO UPDATE SET
                             email = EXCLUDED.email,
+                            password = EXCLUDED.password,
                             name = EXCLUDED.name,
                             hardware_type = EXCLUDED.hardware_type,
                             hardware_details = EXCLUDED.hardware_details,
                             updated_at = EXCLUDED.updated_at
-                        RETURNING user_id, email, name, hardware_type, hardware_details, created_at, updated_at
+                        RETURNING user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
                     """
 
                     # Prepare hardware details for JSONB storage
@@ -95,6 +99,7 @@ class AuthService:
                         query,
                         profile_data.user_id,
                         profile_data.email,
+                        profile_data.password,  # Add password parameter
                         profile_data.name,
                         profile_data.hardware_type,
                         hardware_details_json,
@@ -116,6 +121,7 @@ class AuthService:
                     return UserProfile(
                         user_id=result['user_id'],
                         email=result['email'],
+                        password=result['password'],  # Include password in return
                         name=result['name'],
                         hardware_type=result['hardware_type'],
                         hardware_details=hardware_details,
@@ -131,7 +137,7 @@ class AuthService:
         try:
             async with self.db_pool.acquire() as conn:
                 query = """
-                    SELECT user_id, email, name, hardware_type, hardware_details, created_at, updated_at
+                    SELECT user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
                     FROM user_profiles
                     WHERE user_id = $1
                 """
@@ -155,6 +161,7 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
+                    password=result['password'],  # Include password
                     name=result['name'],
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
@@ -163,6 +170,45 @@ class AuthService:
                 )
         except Exception as e:
             logger.error(f"Error retrieving user profile: {str(e)}")
+            raise
+
+    async def get_user_by_email(self, email: str) -> Optional[UserProfile]:
+        """Retrieve a user profile by email address (for login)."""
+        try:
+            async with self.db_pool.acquire() as conn:
+                query = """
+                    SELECT user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
+                    FROM user_profiles
+                    WHERE email = $1
+                """
+                result = await conn.fetchrow(query, email)
+
+                if not result:
+                    return None
+
+                # Create HardwareDetails object from result
+                hardware_details = None
+                if result['hardware_details']:
+                    hardware_details = HardwareDetails(
+                        gpu_model=result['hardware_details'].get('gpu_model'),
+                        cpu_model=result['hardware_details'].get('cpu_model'),
+                        ram_size=result['hardware_details'].get('ram_size'),
+                        os_type=result['hardware_details'].get('os_type'),
+                        additional_notes=result['hardware_details'].get('additional_notes')
+                    )
+
+                return UserProfile(
+                    user_id=result['user_id'],
+                    email=result['email'],
+                    password=result['password'],  # INCLUDE password for login validation
+                    name=result['name'],
+                    hardware_type=result['hardware_type'],
+                    hardware_details=hardware_details,
+                    created_at=result['created_at'],
+                    updated_at=result['updated_at']
+                )
+        except Exception as e:
+            logger.error(f"Error retrieving user by email: {str(e)}")
             raise
 
     async def update_user_profile(self, user_id: str, profile_update: UserProfileUpdate) -> Optional[UserProfile]:
@@ -264,9 +310,13 @@ def init_auth_service(db_pool: asyncpg.Pool) -> AuthService:
     return auth_service
 
 
-def get_auth_service() -> AuthService:
-    """Get the global auth service instance."""
+async def get_auth_service() -> AuthService:
+    """Get the global auth service instance with lazy initialization."""
     global auth_service
     if not auth_service:
-        raise RuntimeError("Auth service not initialized. Call init_auth_service first.")
+        # Lazy initialization for serverless compatibility
+        from ..services.database_service import db_service
+        await db_service.ensure_connected()  # Ensure database pool exists
+        auth_service = AuthService(db_service.pool)
+        logger.info("Auth service initialized lazily")
     return auth_service

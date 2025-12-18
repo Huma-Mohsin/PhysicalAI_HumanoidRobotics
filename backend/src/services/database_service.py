@@ -9,11 +9,11 @@ from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
 
-from utils.config import settings
-from utils.logger import logger
-from models.user_session import UserSession, UserSessionCreate, HardwareProfile
-from models.conversation import Conversation, ConversationCreate
-from models.message import Message, MessageCreate
+from src.utils.config import settings
+from src.utils.logger import logger
+from src.models.user_session import UserSession, UserSessionCreate, HardwareProfile
+from src.models.conversation import Conversation, ConversationCreate
+from src.models.message import Message, MessageCreate
 
 
 class DatabaseService:
@@ -44,10 +44,16 @@ class DatabaseService:
             await self.pool.close()
             logger.info("Database connection pool closed")
 
+    async def ensure_connected(self):
+        """Ensure database connection pool is initialized (lazy initialization for serverless)."""
+        if self.pool is None:
+            await self.connect()
+
     # User Session operations
 
     async def create_session(self, session_data: UserSessionCreate) -> UserSession:
         """Create a new user session."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             hardware_profile_json = json.dumps(session_data.hardware_profile.dict()) if session_data.hardware_profile else None
 
@@ -79,6 +85,7 @@ class DatabaseService:
 
     async def get_session(self, session_id: UUID) -> Optional[UserSession]:
         """Fetch a user session by ID."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 "SELECT * FROM user_sessions WHERE session_id = $1",
@@ -89,16 +96,28 @@ class DatabaseService:
 
     async def update_session_activity(self, session_id: UUID):
         """Update last_active timestamp for a session."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             await conn.execute(
                 "UPDATE user_sessions SET last_active = NOW() WHERE session_id = $1",
                 session_id
             )
 
+    async def delete_session(self, session_id: UUID) -> bool:
+        """Delete a session from the database (for logout)."""
+        await self.ensure_connected()
+        async with self.pool.acquire() as conn:
+            result = await conn.fetchrow(
+                "DELETE FROM user_sessions WHERE session_id = $1 RETURNING session_id",
+                session_id
+            )
+            return result is not None
+
     # Conversation operations
 
     async def create_conversation(self, conv_data: ConversationCreate) -> Conversation:
         """Create a new conversation."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 """
@@ -114,6 +133,7 @@ class DatabaseService:
 
     async def get_conversation(self, conv_id: UUID) -> Optional[Conversation]:
         """Fetch a conversation by ID."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             row = await conn.fetchrow(
                 "SELECT * FROM conversations WHERE conv_id = $1",
@@ -126,6 +146,7 @@ class DatabaseService:
         self, session_id: UUID, limit: int = 20, offset: int = 0
     ) -> List[Conversation]:
         """Fetch conversations for a session."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 """
@@ -141,6 +162,7 @@ class DatabaseService:
 
     async def update_conversation_title(self, conv_id: UUID, title: str):
         """Update conversation title."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             await conn.execute(
                 "UPDATE conversations SET title = $1 WHERE conv_id = $2",
@@ -151,6 +173,7 @@ class DatabaseService:
 
     async def create_message(self, message_data: MessageCreate) -> Message:
         """Create a new message."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             text_selection_json = json.dumps(message_data.text_selection.dict()) if message_data.text_selection else None
             metadata_json = json.dumps(message_data.metadata.dict()) if message_data.metadata else None
@@ -174,6 +197,7 @@ class DatabaseService:
         self, conv_id: UUID, limit: int = 50
     ) -> List[Message]:
         """Fetch messages for a conversation."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 """
@@ -189,6 +213,7 @@ class DatabaseService:
 
     async def get_recent_messages(self, conv_id: UUID, limit: int = 5) -> List[Message]:
         """Fetch recent messages for conversation context."""
+        await self.ensure_connected()  # Lazy initialization
         async with self.pool.acquire() as conn:
             rows = await conn.fetch(
                 """
@@ -232,7 +257,7 @@ class DatabaseService:
 
     def _row_to_message(self, row) -> Message:
         """Convert database row to Message model."""
-        from models.message import TextSelection, MessageMetadata
+        from src.models.message import TextSelection, MessageMetadata
 
         text_selection = None
         if row["text_selection"]:
