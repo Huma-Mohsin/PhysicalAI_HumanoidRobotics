@@ -96,6 +96,10 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
+          type: 'custom-userMenu',
+          position: 'right',
+        },
+        {
           href: 'https://github.com/Huma-Mohsin/PhysicalAI_HumanoidRobotics',
           label: 'GitHub',
           position: 'right',
