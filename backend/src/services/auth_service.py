@@ -149,16 +149,23 @@ class AuthService:
                         datetime.utcnow()
                     )
 
-                    # Create HardwareDetails object from result
+                    # Parse JSONB fields (Neon returns them as strings)
                     hardware_details = None
                     if result['hardware_details']:
+                        # Parse JSON string to dict
+                        hw_dict = json.loads(result['hardware_details']) if isinstance(result['hardware_details'], str) else result['hardware_details']
                         hardware_details = HardwareDetails(
-                            gpu_model=result['hardware_details'].get('gpu_model'),
-                            cpu_model=result['hardware_details'].get('cpu_model'),
-                            ram_size=result['hardware_details'].get('ram_size'),
-                            os_type=result['hardware_details'].get('os_type'),
-                            additional_notes=result['hardware_details'].get('additional_notes')
+                            gpu_model=hw_dict.get('gpu_model'),
+                            cpu_model=hw_dict.get('cpu_model'),
+                            ram_size=hw_dict.get('ram_size'),
+                            os_type=hw_dict.get('os_type'),
+                            additional_notes=hw_dict.get('additional_notes')
                         )
+
+                    # Parse programming_languages JSON string
+                    programming_languages = None
+                    if result['programming_languages']:
+                        programming_languages = json.loads(result['programming_languages']) if isinstance(result['programming_languages'], str) else result['programming_languages']
 
                     return UserProfile(
                         user_id=result['user_id'],
@@ -166,7 +173,7 @@ class AuthService:
                         password_hash=result['password'],  # This is the hash from DB
                         name=result['name'],
                         software_experience=result['software_experience'],
-                        programming_languages=result['programming_languages'],
+                        programming_languages=programming_languages,
                         hardware_type=result['hardware_type'],
                         hardware_details=hardware_details,
                         hardware_experience=result['hardware_experience'],
@@ -193,16 +200,22 @@ class AuthService:
                 if not result:
                     return None
 
-                # Create HardwareDetails object from result
+                # Parse JSONB fields (Neon returns them as strings)
                 hardware_details = None
                 if result['hardware_details']:
+                    hw_dict = json.loads(result['hardware_details']) if isinstance(result['hardware_details'], str) else result['hardware_details']
                     hardware_details = HardwareDetails(
-                        gpu_model=result['hardware_details'].get('gpu_model'),
-                        cpu_model=result['hardware_details'].get('cpu_model'),
-                        ram_size=result['hardware_details'].get('ram_size'),
-                        os_type=result['hardware_details'].get('os_type'),
-                        additional_notes=result['hardware_details'].get('additional_notes')
+                        gpu_model=hw_dict.get('gpu_model'),
+                        cpu_model=hw_dict.get('cpu_model'),
+                        ram_size=hw_dict.get('ram_size'),
+                        os_type=hw_dict.get('os_type'),
+                        additional_notes=hw_dict.get('additional_notes')
                     )
+
+                # Parse programming_languages JSON string
+                programming_languages = None
+                if result['programming_languages']:
+                    programming_languages = json.loads(result['programming_languages']) if isinstance(result['programming_languages'], str) else result['programming_languages']
 
                 return UserProfile(
                     user_id=result['user_id'],
@@ -210,7 +223,7 @@ class AuthService:
                     password_hash=result['password'],  # This is the hash from DB
                     name=result['name'],
                     software_experience=result['software_experience'],
-                    programming_languages=result['programming_languages'],
+                    programming_languages=programming_languages,
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
                     hardware_experience=result['hardware_experience'],
@@ -236,16 +249,22 @@ class AuthService:
                 if not result:
                     return None
 
-                # Create HardwareDetails object from result
+                # Parse JSONB fields (Neon returns them as strings)
                 hardware_details = None
                 if result['hardware_details']:
+                    hw_dict = json.loads(result['hardware_details']) if isinstance(result['hardware_details'], str) else result['hardware_details']
                     hardware_details = HardwareDetails(
-                        gpu_model=result['hardware_details'].get('gpu_model'),
-                        cpu_model=result['hardware_details'].get('cpu_model'),
-                        ram_size=result['hardware_details'].get('ram_size'),
-                        os_type=result['hardware_details'].get('os_type'),
-                        additional_notes=result['hardware_details'].get('additional_notes')
+                        gpu_model=hw_dict.get('gpu_model'),
+                        cpu_model=hw_dict.get('cpu_model'),
+                        ram_size=hw_dict.get('ram_size'),
+                        os_type=hw_dict.get('os_type'),
+                        additional_notes=hw_dict.get('additional_notes')
                     )
+
+                # Parse programming_languages JSON string
+                programming_languages = None
+                if result['programming_languages']:
+                    programming_languages = json.loads(result['programming_languages']) if isinstance(result['programming_languages'], str) else result['programming_languages']
 
                 return UserProfile(
                     user_id=result['user_id'],
@@ -253,7 +272,7 @@ class AuthService:
                     password_hash=result['password'],  # This is the hash from DB
                     name=result['name'],
                     software_experience=result['software_experience'],
-                    programming_languages=result['programming_languages'],
+                    programming_languages=programming_languages,
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
                     hardware_experience=result['hardware_experience'],
