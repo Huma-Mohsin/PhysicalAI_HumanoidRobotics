@@ -3,12 +3,9 @@
  * Handles communication with the FastAPI backend for RAG chatbot
  */
 
-// Temporary: Always use production backend for testing
-const API_BASE_URL = 'https://humanoidbackend.vercel.app';
-// Original (will restore later):
-// const API_BASE_URL = process.env.NODE_ENV === 'production'
-//   ? 'https://humanoidbackend.vercel.app'
-//   : 'http://localhost:8000';
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://humanoid-robotics-backend.vercel.app'  // Backend API URL
+  : 'http://localhost:8000';  // Local development
 
 export interface ChatMessage {
   message_id: string;
@@ -74,6 +71,7 @@ export async function sendChatQuery(request: ChatQueryRequest): Promise<ChatMess
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // CRITICAL: Send cookies for authentication
       body: JSON.stringify(request),
     });
 
