@@ -144,7 +144,7 @@ async def chat_query(request: ChatQueryRequest):
         # ====================
         # T023: RAG Pipeline Execution (Feature 008: Software + Hardware Personalization)
         # ====================
-        # Get personalization data from authenticated user
+        # Initialize personalization variables with defaults
         hardware_profile = None
         software_experience = None
         programming_languages = None
@@ -160,11 +160,11 @@ async def chat_query(request: ChatQueryRequest):
                     # Software personalization (Feature 008)
                     software_experience = user_profile.software_experience
                     programming_languages = user_profile.programming_languages
-                    logger.info(f"Using personalization from authenticated user: hardware={hardware_profile}, experience={software_experience}")
+                    logger.info(f"Using personalization from authenticated user: hardware={hardware_profile}, experience={software_experience}, languages={programming_languages}")
             except Exception as e:
                 logger.error(f"Error fetching user profile for personalization: {str(e)}")
-                # Fallback to session hardware profile if available
-                hardware_profile = session.hardware_profile.type if session.hardware_profile else None
+                logger.exception(e)  # Log full traceback for debugging
+                # Keep defaults (None) on error
         else:
             # For anonymous users, use session hardware profile if available
             hardware_profile = session.hardware_profile.type if session.hardware_profile else None
