@@ -116,7 +116,8 @@ class AuthService:
                                   hardware_type, hardware_details, hardware_experience, created_at, updated_at
                     """
 
-                    # Prepare hardware details for JSONB storage (handle dict)
+                    # Prepare hardware details for JSONB storage
+                    # IMPORTANT: asyncpg with Neon Postgres requires JSON string, not dict
                     hardware_details_json = None
                     if profile_data.hardware_details:
                         if isinstance(profile_data.hardware_details, dict):
@@ -130,7 +131,7 @@ class AuthService:
                                 "additional_notes": profile_data.hardware_details.additional_notes
                             })
 
-                    # Ensure programming_languages is properly handled for JSONB
+                    # Convert programming_languages to JSON string for JSONB column
                     programming_languages_json = json.dumps(profile_data.programming_languages) if profile_data.programming_languages else None
 
                     result = await conn.fetchrow(
@@ -140,9 +141,9 @@ class AuthService:
                         password_hash,  # Store hashed password
                         profile_data.name,
                         profile_data.software_experience,
-                        programming_languages_json,
+                        programming_languages_json,  # JSON string for JSONB
                         profile_data.hardware_type,
-                        hardware_details_json,
+                        hardware_details_json,  # JSON string for JSONB
                         profile_data.hardware_experience,
                         profile_data.created_at if hasattr(profile_data, 'created_at') else datetime.utcnow(),
                         datetime.utcnow()
