@@ -142,17 +142,25 @@ async def chat_query(request: ChatQueryRequest):
             logger.info(f"Created new conversation: {conversation_id}")
 
         # ====================
-        # T023: RAG Pipeline Execution
+        # T023: RAG Pipeline Execution (Feature 008: Software + Hardware Personalization)
         # ====================
-        # First, try to get hardware profile from user_id (authenticated user)
+        # Get personalization data from authenticated user
         hardware_profile = None
+        software_experience = None
+        programming_languages = None
+
         if request.user_id:
             try:
-                auth_service = get_auth_service()
-                hardware_profile_data = await auth_service.get_hardware_profile(request.user_id)
-                if hardware_profile_data and hardware_profile_data.get("type"):
-                    hardware_profile = hardware_profile_data["type"]
-                    logger.info(f"Using hardware profile from authenticated user: {hardware_profile}")
+                auth_service = await get_auth_service()
+                # Get full user profile with software + hardware background
+                user_profile = await auth_service.get_user_profile(request.user_id)
+                if user_profile:
+                    # Hardware personalization
+                    hardware_profile = user_profile.hardware_type
+                    # Software personalization (Feature 008)
+                    software_experience = user_profile.software_experience
+                    programming_languages = user_profile.programming_languages
+                    logger.info(f"Using personalization from authenticated user: hardware={hardware_profile}, experience={software_experience}")
             except Exception as e:
                 logger.error(f"Error fetching user profile for personalization: {str(e)}")
                 # Fallback to session hardware profile if available
@@ -164,7 +172,9 @@ async def chat_query(request: ChatQueryRequest):
         rag_result = rag_service.query_book(
             question=question,
             conversation_history=conversation_history,
-            hardware_profile=hardware_profile
+            hardware_profile=hardware_profile,
+            software_experience=software_experience,
+            programming_languages=programming_languages
         )
 
         response_text = rag_result["response"]

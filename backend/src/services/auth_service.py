@@ -6,7 +6,9 @@ Handles user profile management and hardware profile association.
 from typing import Optional, Dict, Any
 from datetime import datetime
 from uuid import UUID
+import json
 import asyncpg
+import bcrypt
 from pydantic import BaseModel, Field
 
 from ..models.user_profile import HardwareDetails
@@ -18,7 +20,7 @@ class UserProfile(BaseModel):
     """User profile with hardware information."""
     user_id: str = Field(..., description="User ID from Better-Auth")
     email: str = Field(..., description="User email")
-    password: Optional[str] = Field(default=None, description="User password (plaintext - TECH DEBT)")
+    password_hash: Optional[str] = Field(default=None, description="User password hash (bcrypt)")
     name: Optional[str] = Field(default=None, description="User's full name")
     # Software background (Feature 008)
     software_experience: Optional[str] = Field(default=None, description="Software experience level")
@@ -65,9 +67,22 @@ class AuthService:
     def __init__(self, db_pool: asyncpg.Pool):
         self.db_pool = db_pool
 
+    def hash_password(self, password: str) -> str:
+        """Hash a password using bcrypt."""
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed.decode('utf-8')
+
+    def verify_password(self, password: str, password_hash: str) -> bool:
+        """Verify a password against its hash."""
+        return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
+
     async def create_user_profile(self, profile_data: UserProfileCreate) -> UserProfile:
         """Create a new user profile with hardware information."""
         try:
+            # Hash the password
+            password_hash = self.hash_password(profile_data.password)
+
             async with self.db_pool.acquire() as conn:
                 async with conn.transaction():
                     # Insert user profile
@@ -105,24 +120,24 @@ class AuthService:
                     hardware_details_json = None
                     if profile_data.hardware_details:
                         if isinstance(profile_data.hardware_details, dict):
-                            hardware_details_json = profile_data.hardware_details
+                            hardware_details_json = json.dumps(profile_data.hardware_details)
                         else:
-                            hardware_details_json = {
+                            hardware_details_json = json.dumps({
                                 "gpu_model": profile_data.hardware_details.gpu_model,
                                 "cpu_model": profile_data.hardware_details.cpu_model,
                                 "ram_size": profile_data.hardware_details.ram_size,
                                 "os_type": profile_data.hardware_details.os_type,
                                 "additional_notes": profile_data.hardware_details.additional_notes
-                            }
+                            })
 
                     # Ensure programming_languages is properly handled for JSONB
-                    programming_languages_json = profile_data.programming_languages if profile_data.programming_languages else None
+                    programming_languages_json = json.dumps(profile_data.programming_languages) if profile_data.programming_languages else None
 
                     result = await conn.fetchrow(
                         query,
                         profile_data.user_id,
                         profile_data.email,
-                        profile_data.password,
+                        password_hash,  # Store hashed password
                         profile_data.name,
                         profile_data.software_experience,
                         programming_languages_json,
@@ -147,7 +162,7 @@ class AuthService:
                     return UserProfile(
                         user_id=result['user_id'],
                         email=result['email'],
-                        password=result['password'],
+                        password_hash=result['password'],  # This is the hash from DB
                         name=result['name'],
                         software_experience=result['software_experience'],
                         programming_languages=result['programming_languages'],
@@ -191,7 +206,7 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
-                    password=result['password'],
+                    password_hash=result['password'],  # This is the hash from DB
                     name=result['name'],
                     software_experience=result['software_experience'],
                     programming_languages=result['programming_languages'],
@@ -234,7 +249,7 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
-                    password=result['password'],
+                    password_hash=result['password'],  # This is the hash from DB
                     name=result['name'],
                     software_experience=result['software_experience'],
                     programming_languages=result['programming_languages'],
@@ -264,13 +279,13 @@ class AuthService:
                     # Prepare hardware details for JSONB storage
                     hardware_details_json = None
                     if profile_update.hardware_details:
-                        hardware_details_json = {
+                        hardware_details_json = json.dumps({
                             "gpu_model": profile_update.hardware_details.gpu_model,
                             "cpu_model": profile_update.hardware_details.cpu_model,
                             "ram_size": profile_update.hardware_details.ram_size,
                             "os_type": profile_update.hardware_details.os_type,
                             "additional_notes": profile_update.hardware_details.additional_notes
-                        }
+                        })
 
                     update_fields.append("hardware_type = $3, hardware_details = $4")
                     update_values.append(profile_update.hardware_type)
@@ -309,9 +324,13 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
+                    password_hash=None,
                     name=result['name'],
+                    software_experience=None,
+                    programming_languages=None,
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
+                    hardware_experience=False,
                     created_at=result['created_at'],
                     updated_at=result['updated_at']
                 )

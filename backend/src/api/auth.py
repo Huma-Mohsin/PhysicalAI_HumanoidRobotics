@@ -131,8 +131,8 @@ async def login(request: Request, data: LoginRequest):
                 detail={"error": "Unauthorized", "message": "Invalid email or password"}
             )
 
-        # Validate password (plaintext comparison - TECH DEBT)
-        if user_profile.password != data.password:
+        # Validate password using bcrypt
+        if not auth_service.verify_password(data.password, user_profile.password_hash):
             raise HTTPException(
                 status_code=401,
                 detail={"error": "Unauthorized", "message": "Invalid email or password"}
@@ -144,7 +144,7 @@ async def login(request: Request, data: LoginRequest):
             UserSessionCreate(user_id=user_profile.user_id)
         )
 
-        # Return success response with session cookie
+        # Return success response with session cookie (include background data!)
         response = JSONResponse(
             status_code=200,
             content={
@@ -153,7 +153,13 @@ async def login(request: Request, data: LoginRequest):
                 "user": {
                     "id": user_profile.user_id,
                     "email": user_profile.email,
-                    "name": user_profile.name
+                    "name": user_profile.name,
+                    # Software background
+                    "softwareExperience": user_profile.software_experience,
+                    "programmingLanguages": user_profile.programming_languages or [],
+                    # Hardware background
+                    "hardwareType": user_profile.hardware_type,
+                    "hardwareExperience": user_profile.hardware_experience
                 }
             }
         )

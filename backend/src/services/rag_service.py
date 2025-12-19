@@ -7,11 +7,11 @@ from typing import List, Dict, Any, Optional
 import cohere
 import time
 
-from utils.config import settings
-from utils.logger import logger
-from services.embedding_service import embedding_service
-from services.qdrant_service import qdrant_service
-from models.message import MessageMetadata
+from src.utils.config import settings
+from src.utils.logger import logger
+from src.services.embedding_service import embedding_service
+from src.services.qdrant_service import qdrant_service
+from src.models.message import MessageMetadata
 
 
 class RAGService:
@@ -37,6 +37,8 @@ class RAGService:
         question: str,
         conversation_history: Optional[List[Dict[str, str]]] = None,
         hardware_profile: Optional[str] = None,
+        software_experience: Optional[str] = None,
+        programming_languages: Optional[List[str]] = None,
         chapter_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """
@@ -46,6 +48,8 @@ class RAGService:
             question: User's question
             conversation_history: Previous messages for context (list of {role, content})
             hardware_profile: User's hardware type (GPU/Edge/Cloud)
+            software_experience: User's software experience level (beginner/intermediate/expert)
+            programming_languages: User's preferred programming languages
             chapter_id: Filter by specific chapter (for text selection queries)
 
         Returns:
@@ -83,7 +87,9 @@ class RAGService:
         context = self._assemble_context(
             retrieved_chunks=retrieved_chunks,
             conversation_history=conversation_history or [],
-            hardware_profile=hardware_profile
+            hardware_profile=hardware_profile,
+            software_experience=software_experience,
+            programming_languages=programming_languages
         )
 
         # Step 3: Generate Response
@@ -92,7 +98,9 @@ class RAGService:
         response, tokens_used = self._generate_response(
             question=question,
             context=context,
-            conversation_history=conversation_history or []
+            conversation_history=conversation_history or [],
+            software_experience=software_experience,
+            programming_languages=programming_languages
         )
 
         llm_time = int((time.time() - llm_start) * 1000)
@@ -123,7 +131,9 @@ class RAGService:
         self,
         retrieved_chunks: List[Dict[str, Any]],
         conversation_history: List[Dict[str, str]],
-        hardware_profile: Optional[str]
+        hardware_profile: Optional[str],
+        software_experience: Optional[str] = None,
+        programming_languages: Optional[List[str]] = None
     ) -> str:
         """
         Assemble context from retrieved chunks and conversation history.
@@ -132,6 +142,8 @@ class RAGService:
             retrieved_chunks: Chunks from Qdrant
             conversation_history: Previous messages
             hardware_profile: User's hardware type
+            software_experience: User's software experience level
+            programming_languages: User's preferred programming languages
 
         Returns:
             Formatted context string
@@ -156,9 +168,14 @@ class RAGService:
                 content = msg.get("content", "")
                 context_parts.append(f"**{role}**: {content}\n")
 
-        # Add hardware profile context
+        # Add user profile context (Feature 008: Software + Hardware personalization)
+        context_parts.append("\n# User Profile\n")
         if hardware_profile:
-            context_parts.append(f"\n# User Hardware Profile: {hardware_profile}\n")
+            context_parts.append(f"**Hardware**: {hardware_profile}\n")
+        if software_experience:
+            context_parts.append(f"**Experience Level**: {software_experience}\n")
+        if programming_languages:
+            context_parts.append(f"**Programming Languages**: {', '.join(programming_languages)}\n")
 
         return "\n".join(context_parts)
 
@@ -166,7 +183,9 @@ class RAGService:
         self,
         question: str,
         context: str,
-        conversation_history: List[Dict[str, str]]
+        conversation_history: List[Dict[str, str]],
+        software_experience: Optional[str] = None,
+        programming_languages: Optional[List[str]] = None
     ) -> tuple[str, int]:
         """
         Generate response using Cohere or OpenAI.
@@ -175,18 +194,21 @@ class RAGService:
             question: User's question
             context: Assembled context
             conversation_history: Previous messages
+            software_experience: User's software experience level
+            programming_languages: User's preferred programming languages
 
         Returns:
             Tuple of (response_text, tokens_used)
         """
-        # Build system prompt
+        # Build system prompt with personalization (Feature 008)
         system_prompt = """You are an AI assistant for the "Physical AI & Humanoid Robotics" book. Your role is to:
 
 1. Answer questions based on the book content provided in the context
 2. Provide accurate, detailed explanations about ROS 2, Gazebo, NVIDIA Isaac, and humanoid robotics
 3. Adapt responses based on the user's hardware setup (GPU Workstation, Edge Device, or Cloud/Mac)
-4. Use markdown formatting for code blocks, lists, and emphasis
-5. If the book doesn't cover a topic, politely say so and suggest related content
+4. Adapt responses based on the user's software experience level and programming background
+5. Use markdown formatting for code blocks, lists, and emphasis
+6. If the book doesn't cover a topic, politely say so and suggest related content
 
 When answering:
 - Quote specific sections from the book when relevant
@@ -194,6 +216,19 @@ When answering:
 - Tailor hardware recommendations to the user's profile
 - Be concise but thorough
 """
+
+        # Add personalization based on software experience (Feature 008)
+        if software_experience == "beginner":
+            system_prompt += "\n**IMPORTANT**: This user is a BEGINNER. Provide detailed, step-by-step explanations. Avoid jargon. Explain basic concepts clearly. Include more context and background information."
+        elif software_experience == "intermediate":
+            system_prompt += "\n**IMPORTANT**: This user is INTERMEDIATE level. Provide balanced explanations with some technical depth. You can use technical terms but explain them briefly."
+        elif software_experience == "expert":
+            system_prompt += "\n**IMPORTANT**: This user is an EXPERT. Provide concise, technical explanations. Focus on advanced concepts and skip basic explanations. Use technical terminology freely."
+
+        # Add programming language preferences (Feature 008)
+        if programming_languages and len(programming_languages) > 0:
+            langs = ", ".join(programming_languages)
+            system_prompt += f"\n**IMPORTANT**: User knows: {langs}. When providing code examples, prefer these languages when possible."
 
         try:
             if self.provider == "cohere":

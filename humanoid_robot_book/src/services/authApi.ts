@@ -27,6 +27,12 @@ export interface SignupResponse {
     id: string;
     email: string;
     name: string;
+    // Software background (Feature 008)
+    softwareExperience?: string;
+    programmingLanguages?: string[];
+    // Hardware background
+    hardwareType?: string;
+    hardwareExperience?: boolean;
   };
 }
 
@@ -42,6 +48,12 @@ export interface LoginResponse {
     id: string;
     email: string;
     name: string;
+    // Software background (Feature 008)
+    softwareExperience?: string;
+    programmingLanguages?: string[];
+    // Hardware background
+    hardwareType?: string;
+    hardwareExperience?: boolean;
   };
 }
 
@@ -52,6 +64,7 @@ export async function signupApi(request: SignupRequest): Promise<SignupResponse>
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Important: Include cookies in cross-origin requests
       body: JSON.stringify({
         email: request.email,
         password: request.password,
@@ -86,6 +99,7 @@ export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Important: Include cookies in cross-origin requests
       body: JSON.stringify({
         email: request.email,
         password: request.password
@@ -112,6 +126,7 @@ export async function getUserProfile(userId: string) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Important: Include cookies in cross-origin requests
     });
 
     if (!response.ok) {
@@ -134,6 +149,7 @@ export async function updateUserProfile(userId: string, updateData: any) {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Important: Include cookies in cross-origin requests
       body: JSON.stringify(updateData),
     });
 
@@ -157,6 +173,7 @@ export async function logoutApi() {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include', // Important: Include cookies in cross-origin requests
     });
 
     if (!response.ok) {
