@@ -115,6 +115,9 @@ class AuthService:
                                 "additional_notes": profile_data.hardware_details.additional_notes
                             }
 
+                    # Ensure programming_languages is properly handled for JSONB
+                    programming_languages_json = profile_data.programming_languages if profile_data.programming_languages else None
+
                     result = await conn.fetchrow(
                         query,
                         profile_data.user_id,
@@ -122,7 +125,7 @@ class AuthService:
                         profile_data.password,
                         profile_data.name,
                         profile_data.software_experience,
-                        profile_data.programming_languages,
+                        programming_languages_json,
                         profile_data.hardware_type,
                         hardware_details_json,
                         profile_data.hardware_experience,
