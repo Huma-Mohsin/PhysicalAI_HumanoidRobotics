@@ -1,0 +1,119 @@
+/**
+ * Content Variant Styles
+ * Feature 005: Interactive Personalization System
+ */
+
+.variant {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  border: 2px solid var(--ifm-color-emphasis-300);
+  transition: all 0.3s ease;
+}
+
+.variantHeader {
+  background-color: var(--ifm-color-emphasis-100);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 6px 6px 0 0;
+}
+
+.variantLabel {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.variantBadge {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.variantContent {
+  padding: 1.25rem;
+}
+
+/* Active state - user's hardware when personalized */
+.variantActive {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background-color: var(--ifm-color-primary-lightest);
+}
+
+.variantActive .variantHeader {
+  background-color: var(--ifm-color-primary-light);
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.variantActive .variantLabel {
+  color: var(--ifm-color-primary-darkest);
+  font-weight: 700;
+}
+
+/* Dimmed state - other hardware when personalized */
+.variantDimmed {
+  opacity: 0.5;
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+.variantDimmed .variantHeader {
+  background-color: var(--ifm-color-emphasis-50);
+}
+
+.variantDimmed .variantContent {
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Hover effects for dimmed variants (allow exploration) */
+.variantDimmed:hover {
+  opacity: 0.8;
+  cursor: pointer;
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .variant {
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .variantHeader {
+  background-color: var(--ifm-color-emphasis-200);
+  border-bottom-color: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .variantActive {
+  background-color: rgba(37, 99, 235, 0.15);
+}
+
+[data-theme='dark'] .variantActive .variantHeader {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+[data-theme='dark'] .variantDimmed {
+  opacity: 0.4;
+}
+
+[data-theme='dark'] .variantDimmed:hover {
+  opacity: 0.7;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .variantHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .variantContent {
+    padding: 1rem;
+  }
+}

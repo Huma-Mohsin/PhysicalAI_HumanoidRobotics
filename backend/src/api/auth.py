@@ -19,12 +19,19 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 # Request models
 class SignupRequest(BaseModel):
-    """Request body for signup endpoint."""
+    """Request body for signup endpoint with software/hardware background (Feature 008)."""
     email: str
     password: str
-    name: str
-    hardware_type: Optional[str] = None
+    name: str = ""
+
+    # Software background (Feature 008)
+    software_experience: Optional[str] = None  # beginner, intermediate, expert
+    programming_languages: Optional[list] = None  # ["Python", "JavaScript", etc.]
+
+    # Hardware background (Feature 005/008)
+    hardware_type: Optional[str] = None  # gpu_workstation, edge_device, cloud_mac
     hardware_details: Optional[dict] = None
+    hardware_experience: Optional[bool] = False
 
 
 class LoginRequest(BaseModel):
@@ -46,14 +53,19 @@ async def signup(request: Request, data: SignupRequest):
         # Generate user_id
         user_id = str(uuid4())
 
-        # Create user profile with hardware information
+        # Create user profile with software/hardware background (Feature 008)
         profile_data = UserProfileCreate(
             user_id=user_id,
             email=data.email,
             password=data.password,  # TECH DEBT: Plain text password
             name=data.name,
+            # Software background
+            software_experience=data.software_experience,
+            programming_languages=data.programming_languages,
+            # Hardware background
             hardware_type=data.hardware_type,
-            hardware_details=data.hardware_details
+            hardware_details=data.hardware_details,
+            hardware_experience=data.hardware_experience
         )
 
         # Create the user profile in the database
@@ -65,7 +77,7 @@ async def signup(request: Request, data: SignupRequest):
             UserSessionCreate(user_id=user_profile.user_id)
         )
 
-        # Return success response with session cookie
+        # Return success response with session cookie (Feature 008: include background)
         response = JSONResponse(
             status_code=201,
             content={
@@ -74,7 +86,13 @@ async def signup(request: Request, data: SignupRequest):
                 "user": {
                     "id": user_profile.user_id,
                     "email": user_profile.email,
-                    "name": user_profile.name
+                    "name": user_profile.name,
+                    # Software background
+                    "softwareExperience": user_profile.software_experience,
+                    "programmingLanguages": user_profile.programming_languages or [],
+                    # Hardware background
+                    "hardwareType": user_profile.hardware_type,
+                    "hardwareExperience": user_profile.hardware_experience
                 }
             }
         )
@@ -207,7 +225,7 @@ async def get_session(request: Request):
                 detail={"error": "NotFound", "message": "User profile not found"}
             )
 
-        # Return user + hardware profile (do NOT include password!)
+        # Return user + software/hardware profile (Feature 008) - do NOT include password!
         return JSONResponse(
             status_code=200,
             content={
@@ -215,7 +233,13 @@ async def get_session(request: Request):
                 "user": {
                     "id": user_profile.user_id,
                     "email": user_profile.email,
-                    "name": user_profile.name
+                    "name": user_profile.name,
+                    # Software background
+                    "softwareExperience": user_profile.software_experience,
+                    "programmingLanguages": user_profile.programming_languages or [],
+                    # Hardware background
+                    "hardwareType": user_profile.hardware_type,
+                    "hardwareExperience": user_profile.hardware_experience
                 },
                 "hardware_profile": {
                     "type": user_profile.hardware_type,

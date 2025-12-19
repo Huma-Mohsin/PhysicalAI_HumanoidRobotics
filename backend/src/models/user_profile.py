@@ -1,9 +1,10 @@
 """
 User Profile model for Better-Auth integration.
+Feature 008: Added software/hardware background fields for personalization.
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 
@@ -17,10 +18,23 @@ class HardwareDetails(BaseModel):
 
 
 class UserProfile(BaseModel):
-    """User profile model."""
+    """User profile model with software/hardware background for personalization."""
     user_id: str = Field(..., description="Unique user identifier from Better-Auth")
     email: str = Field(..., description="User's email address")
     name: Optional[str] = Field(default=None, description="User's full name")
+    password: Optional[str] = Field(default=None, description="User password (TECH DEBT: plaintext)")
+
+    # Software background (Feature 008)
+    software_experience: Optional[str] = Field(
+        default=None,
+        description="Software experience level: beginner, intermediate, expert"
+    )
+    programming_languages: Optional[List[str]] = Field(
+        default=None,
+        description="Programming languages known: Python, JavaScript, C++, ROS 2, etc."
+    )
+
+    # Hardware background (Feature 005/008)
     hardware_type: Optional[str] = Field(
         default=None,
         description="Type of hardware: gpu_workstation, edge_device, cloud_mac"
@@ -29,6 +43,11 @@ class UserProfile(BaseModel):
         default=None,
         description="Detailed hardware specifications"
     )
+    hardware_experience: Optional[bool] = Field(
+        default=False,
+        description="Has experience with robotics hardware"
+    )
+
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Profile creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last profile update timestamp")
 
@@ -56,13 +75,28 @@ class UserProfileCreate(BaseModel):
     """Schema for creating a new user profile."""
     user_id: str
     email: str
+    password: str  # TECH DEBT: plaintext
     name: Optional[str] = None
+
+    # Software background
+    software_experience: Optional[str] = None
+    programming_languages: Optional[List[str]] = None
+
+    # Hardware background
     hardware_type: Optional[str] = None
     hardware_details: Optional[HardwareDetails] = None
+    hardware_experience: Optional[bool] = False
 
 
 class UserProfileUpdate(BaseModel):
     """Schema for updating a user profile."""
     name: Optional[str] = None
+
+    # Software background
+    software_experience: Optional[str] = None
+    programming_languages: Optional[List[str]] = None
+
+    # Hardware background
     hardware_type: Optional[str] = None
     hardware_details: Optional[HardwareDetails] = None
+    hardware_experience: Optional[bool] = None

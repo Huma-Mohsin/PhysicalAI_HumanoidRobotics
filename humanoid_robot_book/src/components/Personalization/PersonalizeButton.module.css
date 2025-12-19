@@ -1,0 +1,119 @@
+/**
+ * Personalize Button Styles
+ * Feature 005: Interactive Personalization System
+ */
+
+.container {
+  background-color: var(--ifm-color-primary-lightest);
+  border-left: 4px solid var(--ifm-color-primary);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.profileInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.profileLabel {
+  color: var(--ifm-color-emphasis-700);
+  font-weight: 500;
+}
+
+.profileValue {
+  color: var(--ifm-color-primary-dark);
+  font-weight: 700;
+  background-color: var(--ifm-color-primary-lighter);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border: 2px solid var(--ifm-color-primary);
+  background-color: white;
+  color: var(--ifm-color-primary);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+
+.button:hover {
+  background-color: var(--ifm-color-primary-lightest);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buttonActive {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+.buttonActive:hover {
+  background-color: var(--ifm-color-primary-dark);
+}
+
+.icon {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+.hint {
+  font-size: 0.875rem;
+  color: var(--ifm-color-emphasis-700);
+  margin: 0;
+  font-style: italic;
+}
+
+.noProfileMessage {
+  background-color: var(--ifm-alert-background-color);
+  border-left: 4px solid var(--ifm-color-warning);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+}
+
+.noProfileMessage p {
+  margin: 0;
+  color: var(--ifm-color-emphasis-900);
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .button {
+  background-color: var(--ifm-background-color);
+  border-color: var(--ifm-color-primary-light);
+  color: var(--ifm-color-primary-light);
+}
+
+[data-theme='dark'] .button:hover {
+  background-color: var(--ifm-color-primary-darkest);
+}
+
+[data-theme='dark'] .buttonActive {
+  background-color: var(--ifm-color-primary);
+  color: white;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.875rem 1rem;
+  }
+
+  .button {
+    width: 100%;
+    justify-content: center;
+  }
+}

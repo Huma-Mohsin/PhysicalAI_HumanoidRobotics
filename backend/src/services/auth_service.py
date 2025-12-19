@@ -20,6 +20,10 @@ class UserProfile(BaseModel):
     email: str = Field(..., description="User email")
     password: Optional[str] = Field(default=None, description="User password (plaintext - TECH DEBT)")
     name: Optional[str] = Field(default=None, description="User's full name")
+    # Software background (Feature 008)
+    software_experience: Optional[str] = Field(default=None, description="Software experience level")
+    programming_languages: Optional[list] = Field(default=None, description="Programming languages")
+    # Hardware background
     hardware_type: Optional[str] = Field(
         default=None,
         description="Type of hardware: gpu_workstation, edge_device, cloud_mac"
@@ -28,6 +32,7 @@ class UserProfile(BaseModel):
         default=None,
         description="Detailed hardware specifications"
     )
+    hardware_experience: Optional[bool] = Field(default=False, description="Robotics hardware experience")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Profile creation timestamp")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="Last profile update timestamp")
 
@@ -38,8 +43,13 @@ class UserProfileCreate(BaseModel):
     email: str
     password: str  # Required for signup
     name: Optional[str] = None
+    # Software background (Feature 008)
+    software_experience: Optional[str] = None
+    programming_languages: Optional[list] = None
+    # Hardware background
     hardware_type: Optional[str] = None
-    hardware_details: Optional[HardwareDetails] = None
+    hardware_details: Optional[dict] = None  # Accept dict from API
+    hardware_experience: Optional[bool] = False
 
 
 class UserProfileUpdate(BaseModel):
@@ -67,42 +77,55 @@ class AuthService:
                             email,
                             password,
                             name,
+                            software_experience,
+                            programming_languages,
                             hardware_type,
                             hardware_details,
+                            hardware_experience,
                             created_at,
                             updated_at
                         )
-                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                         ON CONFLICT (user_id)
                         DO UPDATE SET
                             email = EXCLUDED.email,
                             password = EXCLUDED.password,
                             name = EXCLUDED.name,
+                            software_experience = EXCLUDED.software_experience,
+                            programming_languages = EXCLUDED.programming_languages,
                             hardware_type = EXCLUDED.hardware_type,
                             hardware_details = EXCLUDED.hardware_details,
+                            hardware_experience = EXCLUDED.hardware_experience,
                             updated_at = EXCLUDED.updated_at
-                        RETURNING user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
+                        RETURNING user_id, email, password, name, software_experience, programming_languages,
+                                  hardware_type, hardware_details, hardware_experience, created_at, updated_at
                     """
 
-                    # Prepare hardware details for JSONB storage
+                    # Prepare hardware details for JSONB storage (handle dict)
                     hardware_details_json = None
                     if profile_data.hardware_details:
-                        hardware_details_json = {
-                            "gpu_model": profile_data.hardware_details.gpu_model,
-                            "cpu_model": profile_data.hardware_details.cpu_model,
-                            "ram_size": profile_data.hardware_details.ram_size,
-                            "os_type": profile_data.hardware_details.os_type,
-                            "additional_notes": profile_data.hardware_details.additional_notes
-                        }
+                        if isinstance(profile_data.hardware_details, dict):
+                            hardware_details_json = profile_data.hardware_details
+                        else:
+                            hardware_details_json = {
+                                "gpu_model": profile_data.hardware_details.gpu_model,
+                                "cpu_model": profile_data.hardware_details.cpu_model,
+                                "ram_size": profile_data.hardware_details.ram_size,
+                                "os_type": profile_data.hardware_details.os_type,
+                                "additional_notes": profile_data.hardware_details.additional_notes
+                            }
 
                     result = await conn.fetchrow(
                         query,
                         profile_data.user_id,
                         profile_data.email,
-                        profile_data.password,  # Add password parameter
+                        profile_data.password,
                         profile_data.name,
+                        profile_data.software_experience,
+                        profile_data.programming_languages,
                         profile_data.hardware_type,
                         hardware_details_json,
+                        profile_data.hardware_experience,
                         profile_data.created_at if hasattr(profile_data, 'created_at') else datetime.utcnow(),
                         datetime.utcnow()
                     )
@@ -121,10 +144,13 @@ class AuthService:
                     return UserProfile(
                         user_id=result['user_id'],
                         email=result['email'],
-                        password=result['password'],  # Include password in return
+                        password=result['password'],
                         name=result['name'],
+                        software_experience=result['software_experience'],
+                        programming_languages=result['programming_languages'],
                         hardware_type=result['hardware_type'],
                         hardware_details=hardware_details,
+                        hardware_experience=result['hardware_experience'],
                         created_at=result['created_at'],
                         updated_at=result['updated_at']
                     )
@@ -137,7 +163,8 @@ class AuthService:
         try:
             async with self.db_pool.acquire() as conn:
                 query = """
-                    SELECT user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
+                    SELECT user_id, email, password, name, software_experience, programming_languages,
+                           hardware_type, hardware_details, hardware_experience, created_at, updated_at
                     FROM user_profiles
                     WHERE user_id = $1
                 """
@@ -161,10 +188,13 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
-                    password=result['password'],  # Include password
+                    password=result['password'],
                     name=result['name'],
+                    software_experience=result['software_experience'],
+                    programming_languages=result['programming_languages'],
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
+                    hardware_experience=result['hardware_experience'],
                     created_at=result['created_at'],
                     updated_at=result['updated_at']
                 )
@@ -177,7 +207,8 @@ class AuthService:
         try:
             async with self.db_pool.acquire() as conn:
                 query = """
-                    SELECT user_id, email, password, name, hardware_type, hardware_details, created_at, updated_at
+                    SELECT user_id, email, password, name, software_experience, programming_languages,
+                           hardware_type, hardware_details, hardware_experience, created_at, updated_at
                     FROM user_profiles
                     WHERE email = $1
                 """
@@ -200,10 +231,13 @@ class AuthService:
                 return UserProfile(
                     user_id=result['user_id'],
                     email=result['email'],
-                    password=result['password'],  # INCLUDE password for login validation
+                    password=result['password'],
                     name=result['name'],
+                    software_experience=result['software_experience'],
+                    programming_languages=result['programming_languages'],
                     hardware_type=result['hardware_type'],
                     hardware_details=hardware_details,
+                    hardware_experience=result['hardware_experience'],
                     created_at=result['created_at'],
                     updated_at=result['updated_at']
                 )

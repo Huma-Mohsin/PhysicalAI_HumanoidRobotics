@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { createAuthClient } from 'better-auth/react';
+import { signupApi, loginApi, getUserProfile, updateUserProfile, logoutApi } from '../services/authApi';
 
 // Define types for user and hardware profile
 interface HardwareProfile {
@@ -24,11 +25,25 @@ interface UserProfile {
   updatedAt: string;
 }
 
+interface SignUpData {
+  // Software background
+  softwareExperience?: string;
+  programmingLanguages?: string[];
+  // Hardware background
+  hardwareType?: 'gpu_workstation' | 'edge_device' | 'cloud_mac' | null;
+  hardwareExperience?: boolean;
+  gpuModel?: string;
+  cpuModel?: string;
+  ramSize?: number;
+  osType?: string;
+  additionalNotes?: string;
+}
+
 interface AuthContextType {
   user: UserProfile | null;
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string, hardwareProfile: Omit<HardwareProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  signUp: (email: string, password: string, name: string, signUpData: SignUpData) => Promise<void>;
   signOut: () => Promise<void>;
   updateHardwareProfile: (hardwareData: Omit<HardwareProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
 }
@@ -36,7 +51,7 @@ interface AuthContextType {
 // Initialize Better-Auth client
 const authClient = createAuthClient({
   baseURL: process.env.NODE_ENV === 'production'
-    ? 'https://humanoidbackend.vercel.app'  // Update with your actual backend URL
+    ? 'https://humanoid-robotics-backend.vercel.app'  // Backend API URL
     : 'http://localhost:8000',
   fetch: globalThis.fetch,
 });
@@ -73,30 +88,61 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
-    // This would be an API call to your backend to get user profile
-    // For now, returning a mock profile
-    return {
-      id: userId,
-      email: 'user@example.com', // This would come from the session
-      name: 'John Doe', // This would come from the session
-      hardwareProfile: null, // This would be fetched from your database
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    try {
+      const response = await getUserProfile(userId);
+      // Format the response to match UserProfile interface
+      return {
+        id: response.user.id,
+        email: response.user.email,
+        name: response.user.name,
+        hardwareProfile: response.user.hardware_details ? {
+          id: 'temp-id',
+          userId: response.user.id,
+          hardwareType: response.user.hardware_type,
+          gpuModel: response.user.hardware_details.gpu_model,
+          cpuModel: response.user.hardware_details.cpu_model,
+          ramSize: response.user.hardware_details.ram_size,
+          osType: response.user.hardware_details.os_type,
+          additionalNotes: response.user.hardware_details.additional_notes,
+          createdAt: response.user.created_at,
+          updatedAt: response.user.updated_at,
+        } : null,
+        createdAt: response.user.created_at,
+        updatedAt: response.user.updated_at,
+      };
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      // Return a basic profile if API call fails
+      return {
+        id: userId,
+        email: 'user@example.com',
+        name: 'User',
+        hardwareProfile: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+    }
   };
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Sign in using Better-Auth
-      const response = await authClient.signIn.email({
+      // Use direct API call instead of Better-Auth client method
+      const response = await loginApi({
         email,
-        password,
-        callbackURL: '/', // Redirect after sign in
+        password
       });
 
-      if (response?.user) {
-        const userProfile = await fetchUserProfile(response.user.id);
+      if (response.success && response.user) {
+        // Create user profile from response
+        const userProfile = {
+          id: response.user.id,
+          email: response.user.email,
+          name: response.user.name,
+          hardwareProfile: null, // This will be fetched separately if needed
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
         setUser(userProfile);
       }
     } catch (error) {
@@ -111,21 +157,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     email: string,
     password: string,
     name: string,
-    hardwareProfile: Omit<HardwareProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+    signUpData: SignUpData
   ) => {
     setIsLoading(true);
     try {
-      // Sign up using Better-Auth
-      const response = await authClient.signUp.email({
+      // Use direct API call instead of Better-Auth client method
+      const response = await signupApi({
         email,
         password,
         name,
-        callbackURL: '/', // Redirect after sign up
+        // Software background (Feature 008)
+        software_experience: signUpData.softwareExperience || null,
+        programming_languages: signUpData.programmingLanguages || null,
+        // Hardware background
+        hardware_type: signUpData.hardwareType || null,
+        hardware_details: {
+          gpu_model: signUpData.gpuModel,
+          cpu_model: signUpData.cpuModel,
+          ram_size: signUpData.ramSize,
+          os_type: signUpData.osType,
+          additional_notes: signUpData.additionalNotes
+        },
+        hardware_experience: signUpData.hardwareExperience || false
       });
 
-      if (response?.user) {
-        // Create user profile with hardware information
-        const userProfile = await createUserProfile(response.user.id, name, email, hardwareProfile);
+      if (response.success && response.user) {
+        // Create user profile from response
+        const userProfile = {
+          id: response.user.id,
+          email: response.user.email,
+          name: response.user.name,
+          hardwareProfile: {
+            ...hardwareProfile,
+            id: 'temp-id', // This would be generated by your backend
+            userId: response.user.id,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
         setUser(userProfile);
       }
     } catch (error) {
@@ -163,11 +234,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     setIsLoading(true);
     try {
-      await authClient.signOut();
+      await logoutApi();
       setUser(null);
     } catch (error) {
       console.error('Sign out error:', error);
-      throw error;
+      // Even if the API call fails, clear the local user state
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -183,10 +255,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     try {
       // Update hardware profile via API call
-      const updatedProfile = await updateHardwareProfileAPI(user.id, hardwareData);
+      const response = await updateUserProfile(user.id, {
+        hardware_type: hardwareData.hardwareType,
+        hardware_details: {
+          gpu_model: hardwareData.gpuModel,
+          cpu_model: hardwareData.cpuModel,
+          ram_size: hardwareData.ramSize,
+          os_type: hardwareData.osType,
+          additional_notes: hardwareData.additionalNotes
+        }
+      });
+
+      // Update the user state with the new hardware profile
       setUser({
         ...user,
-        hardwareProfile: updatedProfile,
+        hardwareProfile: {
+          ...hardwareData,
+          id: 'temp-id',
+          userId: user.id,
+          createdAt: user.createdAt,
+          updatedAt: new Date().toISOString(),
+        }
       });
     } catch (error) {
       console.error('Update hardware profile error:', error);
@@ -194,21 +283,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const updateHardwareProfileAPI = async (
-    userId: string,
-    hardwareData: Omit<HardwareProfile, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
-  ): Promise<HardwareProfile> => {
-    // This would be an API call to your backend to update hardware profile
-    // For now, returning a mock profile
-    return {
-      ...hardwareData,
-      id: 'temp-id',
-      userId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
   };
 
   return (

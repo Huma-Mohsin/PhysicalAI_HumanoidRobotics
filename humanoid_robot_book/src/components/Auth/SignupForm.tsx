@@ -2,8 +2,14 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './AuthForm.module.css'; // We'll create this CSS file
 
+interface SoftwareBackgroundData {
+  softwareExperience: 'beginner' | 'intermediate' | 'expert' | '';
+  programmingLanguages: string[];
+}
+
 interface HardwareSurveyData {
   hardwareType: 'gpu_workstation' | 'edge_device' | 'cloud_mac' | '';
+  hardwareExperience: boolean;
   gpuModel?: string;
   cpuModel?: string;
   ramSize?: number;
@@ -16,8 +22,13 @@ const SignupForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [softwareBackground, setSoftwareBackground] = useState<SoftwareBackgroundData>({
+    softwareExperience: '',
+    programmingLanguages: [],
+  });
   const [hardwareSurvey, setHardwareSurvey] = useState<HardwareSurveyData>({
     hardwareType: '',
+    hardwareExperience: false,
     gpuModel: '',
     cpuModel: '',
     ramSize: undefined,
@@ -38,7 +49,14 @@ const SignupForm: React.FC = () => {
         password,
         name,
         {
+          // Software background (Feature 008)
+          softwareExperience: softwareBackground.softwareExperience || undefined,
+          programmingLanguages: softwareBackground.programmingLanguages.length > 0
+            ? softwareBackground.programmingLanguages
+            : undefined,
+          // Hardware background
           hardwareType: hardwareSurvey.hardwareType as 'gpu_workstation' | 'edge_device' | 'cloud_mac' | null,
+          hardwareExperience: hardwareSurvey.hardwareExperience,
           gpuModel: hardwareSurvey.gpuModel || undefined,
           cpuModel: hardwareSurvey.cpuModel || undefined,
           ramSize: hardwareSurvey.ramSize || undefined,
@@ -58,6 +76,15 @@ const SignupForm: React.FC = () => {
       ...hardwareSurvey,
       hardwareType: e.target.value as 'gpu_workstation' | 'edge_device' | 'cloud_mac' | '',
     });
+  };
+
+  const handleProgrammingLanguageToggle = (language: string) => {
+    setSoftwareBackground(prev => ({
+      ...prev,
+      programmingLanguages: prev.programmingLanguages.includes(language)
+        ? prev.programmingLanguages.filter(l => l !== language)
+        : [...prev.programmingLanguages, language]
+    }));
   };
 
   return (
@@ -100,8 +127,45 @@ const SignupForm: React.FC = () => {
           />
         </div>
 
+        <div className={styles.softwareBackgroundSection}>
+          <h3>Software Background (Optional)</h3>
+          <p className={styles.subtitle}>Help us personalize learning content for your experience level</p>
+
+          <div className={styles.formGroup}>
+            <label htmlFor="softwareExperience">Experience Level</label>
+            <select
+              id="softwareExperience"
+              value={softwareBackground.softwareExperience}
+              onChange={(e) => setSoftwareBackground({...softwareBackground, softwareExperience: e.target.value as 'beginner' | 'intermediate' | 'expert' | ''})}
+              className={styles.input}
+            >
+              <option value="">Select your experience level</option>
+              <option value="beginner">Beginner (New to robotics/programming)</option>
+              <option value="intermediate">Intermediate (Some experience with code)</option>
+              <option value="expert">Expert (Experienced developer)</option>
+            </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Programming Languages (check all that apply)</label>
+            <div className={styles.checkboxGroup}>
+              {['Python', 'JavaScript', 'C++', 'ROS 2', 'None'].map(language => (
+                <label key={language} className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={softwareBackground.programmingLanguages.includes(language)}
+                    onChange={() => handleProgrammingLanguageToggle(language)}
+                    className={styles.checkbox}
+                  />
+                  {language}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className={styles.hardwareSurveySection}>
-          <h3>Tell us about your hardware setup</h3>
+          <h3>Hardware Background (Optional)</h3>
           <p className={styles.subtitle}>This helps us personalize content for your specific setup</p>
 
           <div className={styles.formGroup}>
@@ -110,7 +174,6 @@ const SignupForm: React.FC = () => {
               id="hardwareType"
               value={hardwareSurvey.hardwareType}
               onChange={handleHardwareTypeChange}
-              required
               className={styles.input}
             >
               <option value="">Select your hardware type</option>
@@ -118,6 +181,18 @@ const SignupForm: React.FC = () => {
               <option value="edge_device">Edge Device (NVIDIA Jetson, etc.)</option>
               <option value="cloud_mac">Cloud/Mac (No dedicated GPU)</option>
             </select>
+          </div>
+
+          <div className={styles.formGroup}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                checked={hardwareSurvey.hardwareExperience}
+                onChange={(e) => setHardwareSurvey({...hardwareSurvey, hardwareExperience: e.target.checked})}
+                className={styles.checkbox}
+              />
+              I have experience with robotics hardware
+            </label>
           </div>
 
           {hardwareSurvey.hardwareType === 'gpu_workstation' && (
