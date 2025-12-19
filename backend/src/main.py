@@ -4,12 +4,12 @@ FastAPI application entry point for RAG Chatbot backend.
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from utils.config import settings
-from utils.logger import logger
-from services.database_service import db_service
-from services.auth_service import init_auth_service
-from api import chat
-from api.auth import router as auth_router
+from src.utils.config import settings
+from src.utils.logger import logger
+from src.services.database_service import db_service
+from src.services.auth_service import init_auth_service
+from src.api import chat
+from src.api.auth import router as auth_router
 
 # Initialize FastAPI application
 app = FastAPI(
@@ -34,29 +34,35 @@ app.include_router(chat.router)
 app.include_router(auth_router)
 
 
+# Serverless-compatible: Initialize services lazily, not on startup
+# Database and auth services are initialized on first use
+
 @app.on_event("startup")
-async def startup_event():
-    """Execute on application startup."""
-    logger.info(f"Starting RAG Chatbot API in {settings.app_env} mode")
-    logger.info(f"CORS origins: {settings.cors_origins_list}")
-    logger.info(f"OpenAI model: {settings.openai_chat_model}")
-    logger.info(f"Qdrant collection: {settings.qdrant_collection}")
+async def run_migrations():
+    """Run database migrations on startup (for Vercel deployment)."""
+    try:
+        from pathlib import Path
+        import asyncpg
 
-    # Initialize database connection pool
-    await db_service.connect()
-    logger.info("Database service initialized")
+        logger.info("Running database migrations...")
 
-    # Initialize auth service
-    init_auth_service(db_service.pool)
-    logger.info("Auth service initialized")
+        # Read migration file
+        migration_path = Path(__file__).parent.parent / "database" / "migrations" / "004_add_background_fields.sql"
+        if migration_path.exists():
+            migration_sql = migration_path.read_text()
 
-
-@app.on_event("shutdown")
-async def shutdown_event():
-    """Execute on application shutdown."""
-    # Close database connection pool
-    await db_service.disconnect()
-    logger.info("Shutting down RAG Chatbot API")
+            # Connect and run migration
+            conn = await asyncpg.connect(settings.neon_database_url)
+            try:
+                await conn.execute(migration_sql)
+                logger.info("✅ Migration 004 completed successfully!")
+            finally:
+                await conn.close()
+        else:
+            logger.warning(f"Migration file not found: {migration_path}")
+    except Exception as e:
+        # Don't fail startup if migration fails
+        logger.error(f"Migration error (non-fatal): {e}")
 
 
 @app.get("/")
