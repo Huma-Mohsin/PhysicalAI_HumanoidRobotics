@@ -64,6 +64,8 @@ const SignupForm: React.FC = () => {
           additionalNotes: hardwareSurvey.additionalNotes || undefined,
         }
       );
+      // Navigate to home page after successful signup
+      window.location.href = '/';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign up');
     } finally {

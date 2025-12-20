@@ -108,6 +108,10 @@ async def signup(request: Request, data: SignupRequest):
         )
 
         return response
+    except ValueError as e:
+        # Handle user-friendly errors (e.g., duplicate email)
+        logger.error(f"Signup validation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"Signup error: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Signup failed: {str(e)}")
@@ -128,14 +132,14 @@ async def login(request: Request, data: LoginRequest):
         if not user_profile:
             raise HTTPException(
                 status_code=401,
-                detail={"error": "Unauthorized", "message": "Invalid email or password"}
+                detail="Invalid email or password"
             )
 
         # Validate password using bcrypt
         if not auth_service.verify_password(data.password, user_profile.password_hash):
             raise HTTPException(
                 status_code=401,
-                detail={"error": "Unauthorized", "message": "Invalid email or password"}
+                detail="Invalid email or password"
             )
 
         # Create session for this user
@@ -181,7 +185,7 @@ async def login(request: Request, data: LoginRequest):
         logger.error(f"Login error: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail={"error": "InternalServerError", "message": "Login failed"}
+            detail="Login failed. Please try again later."
         )
 
 
@@ -199,7 +203,7 @@ async def get_session(request: Request):
         if not session_token:
             raise HTTPException(
                 status_code=401,
-                detail={"error": "Unauthorized", "message": "No session token provided"}
+                detail="No session token provided"
             )
 
         # Parse UUID
@@ -208,7 +212,7 @@ async def get_session(request: Request):
         except ValueError:
             raise HTTPException(
                 status_code=401,
-                detail={"error": "Unauthorized", "message": "Invalid session token"}
+                detail="Invalid session token"
             )
 
         # Get session from database
@@ -218,7 +222,7 @@ async def get_session(request: Request):
         if not session or not session.user_id:
             raise HTTPException(
                 status_code=401,
-                detail={"error": "Unauthorized", "message": "Session not found or not authenticated"}
+                detail="Session not found or not authenticated"
             )
 
         # Get user profile
@@ -228,7 +232,7 @@ async def get_session(request: Request):
         if not user_profile:
             raise HTTPException(
                 status_code=404,
-                detail={"error": "NotFound", "message": "User profile not found"}
+                detail="User profile not found"
             )
 
         # Return user + software/hardware profile (Feature 008) - do NOT include password!
@@ -259,7 +263,7 @@ async def get_session(request: Request):
         logger.error(f"Get session error: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail={"error": "InternalServerError", "message": "Failed to get session"}
+            detail="Failed to get session"
         )
 
 
@@ -381,5 +385,5 @@ async def logout(request: Request):
         logger.error(f"Logout error: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail={"error": "InternalServerError", "message": "Logout failed"}
+            detail="Logout failed"
         )

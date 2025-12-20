@@ -180,6 +180,13 @@ class AuthService:
                         created_at=result['created_at'],
                         updated_at=result['updated_at']
                     )
+        except asyncpg.UniqueViolationError as e:
+            # Check if it's a duplicate email error
+            if 'email' in str(e).lower() or 'unique' in str(e).lower():
+                logger.error(f"Duplicate email attempt: {profile_data.email}")
+                raise ValueError("User with this email already exists")
+            logger.error(f"Unique constraint violation: {str(e)}")
+            raise ValueError("A user with this information already exists")
         except Exception as e:
             logger.error(f"Error creating user profile: {str(e)}")
             raise

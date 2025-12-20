@@ -16,6 +16,8 @@ const LoginForm: React.FC = () => {
 
     try {
       await signIn(email, password);
+      // Navigate to home page after successful login
+      window.location.href = '/';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign in');
     } finally {
