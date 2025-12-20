@@ -22,8 +22,9 @@ export default function HardwareSurveyModal() {
   // Show modal 1 second after page load (only if no profile exists AND user has no hardware from signup)
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Feature 008: Skip modal if user has hardware data from signup
-      const hasAuthHardware = user?.hardwareProfile?.hardwareType;
+      // Feature 008: Skip modal if user has hardware data from signup OR login
+      // Check BOTH hardwareProfile.hardwareType (signup) and hardwareType (login)
+      const hasAuthHardware = user?.hardwareProfile?.hardwareType || user?.hardwareType;
 
       if (!profile && !hasAuthHardware) {
         console.log('[HardwareSurveyModal] No profile found, showing modal');

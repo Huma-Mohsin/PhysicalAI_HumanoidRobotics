@@ -57,7 +57,7 @@ async def signup(request: Request, data: SignupRequest):
         profile_data = UserProfileCreate(
             user_id=user_id,
             email=data.email,
-            password=data.password,  # TECH DEBT: Plain text password
+            password=data.password,  # Will be hashed with bcrypt in auth_service
             name=data.name,
             # Software background
             software_experience=data.software_experience,
