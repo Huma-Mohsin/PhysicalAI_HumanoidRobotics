@@ -3,9 +3,10 @@
  * Handles communication with the FastAPI backend for RAG chatbot
  */
 
-const API_BASE_URL = process.env.NODE_ENV === 'production'
-  ? 'https://humanoid-robotics-backend.vercel.app'  // Backend API URL
-  : 'http://localhost:8000';  // Local development
+// Use production backend by default (can override with .env.local)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
+  || process.env.REACT_APP_API_URL
+  || 'https://humanoid-robotics-backend.vercel.app';  // Production backend
 
 export interface ChatMessage {
   message_id: string;
