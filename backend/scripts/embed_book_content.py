@@ -10,13 +10,13 @@ from typing import List, Dict, Any
 from uuid import uuid4
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
-from services.embedding_service import embedding_service
-from utils.config import settings
-from utils.logger import logger
+from src.services.embedding_service import embedding_service
+from src.utils.config import settings
+from src.utils.logger import logger
 
 
 def parse_mdx_file(file_path: Path) -> Dict[str, Any]:
