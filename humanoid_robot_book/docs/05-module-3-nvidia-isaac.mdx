@@ -5,6 +5,14 @@ sidebar_label: "Module 3: NVIDIA Isaac"
 sidebar_position: 5
 ---
 
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
 # Module 3: The AI-Robot Brain (NVIDIA Isaac™)
 
 ## Overview
@@ -27,6 +35,8 @@ By the end of this module, you will:
 6. ✅ Execute sim-to-real transfer workflows
 
 ---
+
+<PersonalizeButton />
 
 ## The Isaac Ecosystem
 
@@ -65,7 +75,11 @@ Isaac Sim requires an **NVIDIA RTX GPU** (RTX 2000 series or newer). It will not
 
 ### Installing Isaac Sim
 
-**Method 1: Omniverse Launcher (Recommended)**
+<ContentVariant hardwareType="gpu_workstation">
+
+#### For GPU Workstation Users (RTX 4090+)
+
+**Recommended: Omniverse Launcher (Local Installation)**
 
 ```bash
 # Download Omniverse Launcher
@@ -83,7 +97,41 @@ chmod +x omniverse-launcher-linux.AppImage
 # 3. Install "Isaac Sim"
 ```
 
-**Method 2: Docker Container**
+With your powerful RTX GPU, you can run Isaac Sim locally for the best performance and full RTX ray-tracing features.
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+#### For Jetson Orin Nano Users
+
+:::warning Isaac Sim Not Supported on Jetson
+NVIDIA Isaac Sim requires a desktop RTX GPU and is **not supported** on Jetson devices due to computational requirements. Instead, use **Gazebo** for simulation (covered in Module 2).
+:::
+
+**Alternative: Use Isaac ROS Packages**
+
+You can still use Isaac ROS perception packages on Jetson for real robot deployment:
+
+```bash
+# Install Isaac ROS on Jetson
+cd ~/workspaces/isaac_ros-dev/src
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
+
+# Build
+cd ~/workspaces/isaac_ros-dev
+colcon build --symlink-install
+```
+
+For simulation, continue with **Gazebo** from Module 2 or use a cloud workstation for Isaac Sim.
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+#### For Cloud / Mac Users
+
+**Recommended: Docker Container**
 
 ```bash
 # Pull Isaac Sim container
@@ -104,6 +152,14 @@ docker run --name isaac-sim --entrypoint bash -it --gpus all \
 # Launch Isaac Sim
 ./runheadless.native.sh
 ```
+
+**Alternative: Omniverse Cloud**
+
+For Mac users or those without local GPUs, consider:
+- [NVIDIA Omniverse Cloud](https://www.nvidia.com/en-us/omniverse/cloud/)
+- Cloud GPU instances (AWS g5, Azure NC-series, GCP A2)
+
+</ContentVariant>
 
 ---
 
