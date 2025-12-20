@@ -5,6 +5,14 @@ sidebar_label: "Module 2: Gazebo & Unity"
 sidebar_position: 4
 ---
 
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
 # Module 2: The Digital Twin (Gazebo & Unity)
 
 ## Overview
@@ -25,6 +33,10 @@ By the end of this module, you will:
 4. ✅ Implement sensor simulation (LiDAR, Depth Cameras, IMUs)
 5. ✅ Create high-fidelity visualizations with Unity
 6. ✅ Design human-robot interaction scenarios
+
+---
+
+<PersonalizeButton />
 
 ---
 
@@ -63,10 +75,14 @@ Gazebo is the industry-standard robot simulator with realistic physics and senso
 
 ### Setting Up Gazebo
 
-**Installation (Ubuntu 22.04):**
+<ContentVariant hardwareType="gpu_workstation">
+
+#### For GPU Workstation Users (RTX 4090+)
+
+**Native Installation with GPU Acceleration (Ubuntu 22.04):**
 
 ```bash
-# Install Gazebo Garden (latest stable)
+# Install Gazebo Garden with full GPU support
 sudo apt-get update
 sudo apt-get install lsb-release wget gnupg
 
@@ -79,13 +95,88 @@ sudo apt-get install gz-garden
 
 # Install ROS 2 Gazebo bridge
 sudo apt-get install ros-humble-ros-gz
+
+# Enable GPU rendering (NVIDIA drivers required)
+export LIBGL_ALWAYS_SOFTWARE=0
 ```
 
-**Verify Installation:**
+**Verify GPU Acceleration:**
 
 ```bash
 gz sim shapes.sdf
+# Check GPU usage: nvidia-smi
 ```
+
+**Advantages**: Full physics accuracy, RTX ray tracing, high frame rates (60+ FPS)
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+#### For Edge Device Users (Jetson Orin Nano)
+
+**Jetson-Optimized Installation:**
+
+```bash
+# Install lightweight Gazebo for Jetson
+sudo apt-get update
+sudo apt-get install gz-garden
+
+# Install ROS 2 bridge (ARM64)
+sudo apt-get install ros-humble-ros-gz
+
+# Reduce physics load for better performance
+export GZ_SIM_RESOURCE_PATH=/usr/share/gz/gz-sim7
+```
+
+**Optimize for Jetson:**
+
+```bash
+# Run with reduced physics steps
+gz sim shapes.sdf --physics-engine bullet --physics-update-rate 50
+```
+
+**Limitations**:
+- Lower frame rates (15-30 FPS)
+- Simplified physics recommended
+- No RTX ray tracing
+
+**Tip**: Use headless mode for better performance: `gz sim -s shapes.sdf`
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+#### For Cloud/Mac Users
+
+**Docker-Based Setup (Cross-Platform):**
+
+```bash
+# Pull Gazebo Docker image
+docker pull osrf/ros:humble-desktop-full
+
+# Run Gazebo in Docker with X11 forwarding
+docker run -it --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  osrf/ros:humble-desktop-full \
+  bash
+
+# Inside container:
+apt-get update && apt-get install -y gz-garden
+gz sim shapes.sdf
+```
+
+**Mac Users (Alternative)**:
+- Use VcXsrv or XQuartz for GUI
+- Or use cloud-based Gazebo instances (AWS RoboMaker, Azure)
+
+**Limitations**:
+- Performance depends on cloud instance specs
+- X11 forwarding adds latency
+- Consider cloud GPU instances for better performance
+
+</ContentVariant>
 
 ---
 

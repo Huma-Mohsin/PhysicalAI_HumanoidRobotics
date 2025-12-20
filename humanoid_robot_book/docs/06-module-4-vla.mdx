@@ -5,6 +5,14 @@ sidebar_label: "Module 4: VLA"
 sidebar_position: 6
 ---
 
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
 # Module 4: Vision-Language-Action (VLA)
 
 ## Overview
@@ -25,6 +33,10 @@ By the end of this module, you will:
 4. ✅ Translate natural language to ROS 2 actions
 5. ✅ Build the Capstone Project: The Autonomous Humanoid
 6. ✅ Deploy multi-modal interaction systems
+
+---
+
+<PersonalizeButton />
 
 ---
 
@@ -51,24 +63,111 @@ By the end of this module, you will:
 
 Whisper is OpenAI's state-of-the-art speech recognition model.
 
-### Installing Whisper
+<ContentVariant hardwareType="gpu_workstation">
+
+### Installing Whisper (GPU Accelerated)
+
+**For RTX 4090 Users - Maximum Performance:**
 
 ```bash
+# Install with CUDA support for GPU acceleration
 pip install openai-whisper
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### Basic Usage
+### Local Model Training
 
 ```python
 import whisper
 
-# Load model (options: tiny, base, small, medium, large)
-model = whisper.load_model("base")
+# Use largest model for best accuracy (requires 10GB+ VRAM)
+model = whisper.load_model("large-v2")  # GPU required
 
-# Transcribe audio
-result = model.transcribe("audio.mp3")
+# Transcribe with GPU acceleration
+result = model.transcribe("audio.mp3", fp16=True)  # Use FP16 for speed
 print(result["text"])
 ```
+
+**Performance**: ~10x faster than CPU, real-time transcription possible
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+### Installing Whisper (Jetson Optimized)
+
+**For Jetson Orin Nano - Lightweight Models:**
+
+```bash
+# Install optimized version for ARM64
+pip install openai-whisper
+
+# Use smaller model to fit Jetson's memory
+```
+
+### Deployment on Jetson
+
+```python
+import whisper
+
+# Use smaller model (base or small) for Jetson
+model = whisper.load_model("base")  # 74M parameters, ~500MB
+
+# Transcribe with reduced memory usage
+result = model.transcribe("audio.mp3", fp16=False)  # FP32 for stability
+print(result["text"])
+```
+
+**Limitations**:
+- Use "tiny" or "base" models only (large models won't fit)
+- Expect 2-3x slower than GPU workstations
+- Real-time transcription challenging
+
+**Tip**: Pre-process audio in cloud, deploy inference on Jetson
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+### Installing Whisper (Cloud/Mac)
+
+**For Mac/Cloud Users - API-Based Approach:**
+
+```bash
+# Option 1: Local CPU installation (slow but works)
+pip install openai-whisper
+
+# Option 2: Use OpenAI API (recommended for Mac)
+pip install openai
+```
+
+### Use OpenAI API (Recommended)
+
+```python
+from openai import OpenAI
+client = OpenAI(api_key="your-api-key")
+
+# Cloud-based transcription (no local GPU needed)
+with open("audio.mp3", "rb") as audio_file:
+    transcript = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio_file
+    )
+print(transcript.text)
+```
+
+**Alternative**: Use Google Colab with GPU for training
+
+```python
+# In Colab notebook:
+!pip install openai-whisper
+import whisper
+model = whisper.load_model("large-v2")  # Uses Colab's free GPU
+```
+
+**Advantages**: No local GPU needed, cost-effective for prototyping
+
+</ContentVariant>
 
 ---
 
