@@ -2,7 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": "docusaurus",
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
-  ]
+  "trailingSlash": false,
+  "cleanUrls": true
 }
