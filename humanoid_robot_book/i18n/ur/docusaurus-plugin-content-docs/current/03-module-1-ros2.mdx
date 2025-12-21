@@ -1,0 +1,212 @@
+---
+id: module-1-ros2
+title: "ماڈیول 1: ROS 2 بنیادی باتیں"
+sidebar_label: "ماڈیول 1: ROS 2"
+sidebar_position: 3
+---
+
+# ماڈیول 1: ROS 2 بنیادی باتیں
+
+## جائزہ
+
+**توجہ**: روبوٹ آپریٹنگ سسٹم (ROS 2) سیکھنا
+
+ROS 2 جدید روبوٹک ایپلیکیشنز کے لیے معیاری فریم ورک ہے۔ یہ فراہم کرتا ہے:
+- Node-based آرکیٹیکچر
+- Publish-Subscribe مسیجنگ
+- Distributed کمپیوٹیشن
+- ہارڈویئر abstraction
+
+---
+
+## سیکھنے کے مقاصد
+
+اس ماڈیول کے اختتام تک:
+
+1. ✅ ROS 2 انسٹال اور configure کرنا
+2. ✅ Nodes، Topics، Services بنانا
+3. ✅ Publisher اور Subscriber لکھنا
+4. ✅ Custom messages بنانا
+5. ✅ Launch files استعمال کرنا
+
+---
+
+## ROS 2 کیوں؟
+
+### ROS 1 vs ROS 2
+
+| خصوصیت | ROS 1 | ROS 2 |
+|---------|-------|-------|
+| Communication | TCP/IP | DDS |
+| Real-time | نہیں | ہاں |
+| Security | محدود | مکمل |
+| Windows | نہیں | ہاں |
+| Python | 2.7 | 3.10+ |
+
+---
+
+## انسٹالیشن (Ubuntu 22.04)
+
+### ROS 2 Humble انسٹال کریں
+
+```bash
+# Repository شامل کریں
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+
+# ROS 2 GPG key
+sudo apt install curl
+curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+# Repository شامل کریں
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# انسٹال کریں
+sudo apt update
+sudo apt install ros-humble-desktop
+
+# Environment setup
+echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+### تصدیق کریں
+
+```bash
+ros2 --version
+# Output: ros2 cli version humble
+```
+
+---
+
+## بنیادی تصورات
+
+### 1. Nodes
+
+**Node** ROS 2 کی بنیادی اکائی ہے۔ ہر node ایک process ہے۔
+
+```python
+import rclpy
+from rclpy.node import Node
+
+class MinimalNode(Node):
+    def __init__(self):
+        super().__init__('minimal_node')
+        self.get_logger().info('Node شروع ہو گیا!')
+
+def main():
+    rclpy.init()
+    node = MinimalNode()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### 2. Topics
+
+**Topic** پیغامات کا channel ہے۔ Nodes topics پر publish اور subscribe کرتے ہیں۔
+
+**Publisher:**
+
+```python
+from std_msgs.msg import String
+
+class Publisher(Node):
+    def __init__(self):
+        super().__init__('publisher')
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        self.timer = self.create_timer(1.0, self.publish_message)
+
+    def publish_message(self):
+        msg = String()
+        msg.data = 'سلام ROS 2!'
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'شائع: {msg.data}')
+```
+
+**Subscriber:**
+
+```python
+class Subscriber(Node):
+    def __init__(self):
+        super().__init__('subscriber')
+        self.subscription = self.create_subscription(
+            String,
+            'topic',
+            self.listener_callback,
+            10
+        )
+
+    def listener_callback(self, msg):
+        self.get_logger().info(f'موصول: {msg.data}')
+```
+
+---
+
+## عملی مشق: Talker-Listener
+
+### قدم 1: Workspace بنائیں
+
+```bash
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+ros2 pkg create --build-type ament_python my_robot_pkg
+```
+
+### قدم 2: Talker Node
+
+```python
+# my_robot_pkg/talker.py
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class Talker(Node):
+    def __init__(self):
+        super().__init__('talker')
+        self.publisher_ = self.create_publisher(String, 'chatter', 10)
+        self.timer = self.create_timer(1.0, self.timer_callback)
+        self.count = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = f'پیغام {self.count}'
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'شائع: {msg.data}')
+        self.count += 1
+
+def main():
+    rclpy.init()
+    talker = Talker()
+    rclpy.spin(talker)
+    rclpy.shutdown()
+```
+
+### قدم 3: Build اور Run
+
+```bash
+# Build کریں
+cd ~/ros2_ws
+colcon build
+
+# Source کریں
+source install/setup.bash
+
+# چلائیں
+ros2 run my_robot_pkg talker
+```
+
+---
+
+## اگلے قدمات
+
+اب آپ نے ROS 2 بنیادی باتیں سیکھ لیں! اگلا:
+
+👉 [ماڈیول 2: Gazebo سمیولیشن](./module-2-gazebo-unity)
+
+---
+
+**یاد رکھیں**: اپنی ہارڈویئر کے مطابق ہدایات دیکھنے کے لیے "ذاتی بنائیں" بٹن استعمال کریں۔

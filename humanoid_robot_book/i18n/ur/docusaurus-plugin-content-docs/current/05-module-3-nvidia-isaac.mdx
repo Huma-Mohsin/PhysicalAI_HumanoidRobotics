@@ -1,0 +1,158 @@
+---
+id: module-3-nvidia-isaac
+title: "ماڈیول 3: NVIDIA Isaac Sim"
+sidebar_label: "ماڈیول 3: Isaac Sim"
+sidebar_position: 5
+---
+
+# ماڈیول 3: AI-Robot Brain (NVIDIA Isaac)
+
+## جائزہ
+
+**توجہ**: اعلیٰ perception، AI-powered navigation، اور مصنوعی ڈیٹا پیدا کرنا
+
+NVIDIA Isaac صنعت کا سرکردہ پلیٹ فارم ہے AI-powered روبوٹکس کے لیے۔ یہ جمع کرتا ہے:
+- Photorealistic سمیولیشن (Isaac Sim)
+- ہارڈویئر-accelerated perception (Isaac ROS)
+- AI ماڈل ٹریننگ
+
+---
+
+## سیکھنے کے مقاصد
+
+اس ماڈیول کے اختتام تک:
+
+1. ✅ NVIDIA Isaac Sim میں مہارت حاصل کرنا
+2. ✅ مصنوعی ٹریننگ ڈیٹا پیدا کرنا
+3. ✅ Isaac ROS برائے VSLAM
+4. ✅ Nav2 برائے path planning
+5. ✅ Jetson پر perception pipelines ڈیپلائے کرنا
+6. ✅ Sim-to-real منتقلی
+
+---
+
+## Isaac Ecosystem
+
+| حصہ | مقصد | کلیدی خصوصیات |
+|------|------|----------------|
+| **Isaac Sim** | حقیقت پسند سمیولیشن | USD، RTX rendering |
+| **Isaac ROS** | تیز perception | VSLAM، detection |
+| **Isaac SDK** | Robot ایپلیکیشن | Components، tools |
+
+---
+
+## سسٹم کی ضروریات
+
+:::danger RTX GPU ضروری
+Isaac Sim کو **NVIDIA RTX GPU** چاہیے (RTX 2000 سیریز یا نیا)۔
+:::
+
+| حصہ | کم از کم | تجویز شدہ |
+|------|---------|-----------|
+| **GPU** | RTX 2070 (8GB) | RTX 4080 (16GB) |
+| **CPU** | Intel i7 9th Gen | Intel i9 12th Gen+ |
+| **RAM** | 32 GB | 64 GB |
+| **Storage** | 50 GB SSD | 100 GB NVMe |
+| **OS** | Ubuntu 22.04 | Ubuntu 22.04 LTS |
+
+---
+
+## Isaac Sim انسٹال کرنا
+
+### GPU Workstation صارفین کے لیے
+
+**Omniverse Launcher (مقامی انسٹالیشن)**
+
+```bash
+# Omniverse Launcher ڈاؤن لوڈ کریں
+wget https://install.launcher.omniverse.nvidia.com/installers/omniverse-launcher-linux.AppImage
+
+# قابل عمل بنائیں
+chmod +x omniverse-launcher-linux.AppImage
+
+# Launcher چلائیں
+./omniverse-launcher-linux.AppImage
+
+# Launcher میں:
+# 1. NVIDIA اکاؤنٹ سے سائن ان کریں
+# 2. "Exchange" ٹیب پر جائیں
+# 3. "Isaac Sim" انسٹال کریں
+```
+
+اپنے طاقتور RTX GPU کے ساتھ، آپ مقامی طور پر Isaac Sim چلا سکتے ہیں۔
+
+---
+
+### Jetson Orin Nano صارفین کے لیے
+
+:::warning Isaac Sim Jetson پر نہیں چلتا
+NVIDIA Isaac Sim کو desktop RTX GPU چاہیے اور Jetson ڈیوائسز پر **سپورٹ نہیں** ہے۔
+:::
+
+**متبادل: Isaac ROS Packages استعمال کریں**
+
+```bash
+# Isaac ROS Jetson پر انسٹال کریں
+cd ~/workspaces/isaac_ros-dev/src
+git clone https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
+
+# Build کریں
+cd ~/workspaces/isaac_ros-dev
+colcon build --symlink-install
+```
+
+سمیولیشن کے لیے، **Gazebo** استعمال کریں (ماڈیول 2 سے)۔
+
+---
+
+## Isaac ROS: تیز Perception
+
+Isaac ROS GPU-accelerated ROS 2 packages فراہم کرتا ہے perception کے لیے۔
+
+### کلیدی Packages
+
+| Package | مقصد | Acceleration |
+|---------|------|--------------|
+| `isaac_ros_visual_slam` | VSLAM | CUDA |
+| `isaac_ros_dnn_inference` | Object detection | TensorRT |
+| `isaac_ros_image_pipeline` | تصویر processing | VPI |
+
+---
+
+### VSLAM مثال
+
+```bash
+# VSLAM node شروع کریں
+ros2 launch isaac_ros_visual_slam isaac_ros_visual_slam_realsense.launch.py
+
+# RViz میں دیکھیں
+rviz2 -d src/isaac_ros_visual_slam/isaac_ros_visual_slam/rviz/default.rviz
+```
+
+---
+
+## عملی پروجیکٹ
+
+### پروجیکٹ کی ضروریات
+
+1. ✅ Isaac Sim میں humanoid robot بنائیں
+2. ✅ Isaac ROS استعمال کرتے ہوئے VSLAM
+3. ✅ nvblox سے 3D نقشہ بنائیں
+4. ✅ Nav2 برائے autonomous navigation
+5. ✅ Jetson پر ڈیپلائے کریں (Sim-to-Real)
+
+---
+
+## وسائل
+
+- [Isaac Sim دستاویزات](https://docs.omniverse.nvidia.com/isaacsim/latest/)
+- [Isaac ROS GitHub](https://github.com/NVIDIA-ISAAC-ROS)
+- [NVIDIA Jetson](https://developer.nvidia.com/embedded/jetson)
+
+---
+
+## اگلے قدمات
+
+Vision-Language-Action ماڈلز کے ساتھ سب کچھ جوڑیں!
+
+👉 **اگلا**: [ماڈیول 4: VLA](./module-4-vla)
