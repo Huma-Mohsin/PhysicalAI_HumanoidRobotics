@@ -1,6 +1,14 @@
 {
-  "theme.SearchBar.label": "تلاش کریں",
-  "theme.common.editThisPage": "یہ صفحہ ترمیم کریں",
-  "theme.docs.sidebar.collapseButtonTitle": "سائڈبار بند کریں",
-  "theme.docs.sidebar.expandButtonTitle": "سائڈبار کھولیں"
+  "theme.SearchBar.label": {
+    "message": "تلاش کریں"
+  },
+  "theme.common.editThisPage": {
+    "message": "یہ صفحہ ترمیم کریں"
+  },
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "سائڈبار بند کریں"
+  },
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "سائڈبار کھولیں"
+  }
 }
