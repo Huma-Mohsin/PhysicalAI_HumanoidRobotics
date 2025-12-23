@@ -1,5 +1,5 @@
 """
-Vercel entry point for FastAPI application.
+API entry point for FastAPI application.
 This file sits at the root level to properly handle Python imports.
 """
 
@@ -12,6 +12,3 @@ sys.path.insert(0, str(src_path))
 
 # Now import the FastAPI app
 from main import app
-
-# Vercel expects a variable named 'app' or 'handler'
-# FastAPI app is already named 'app', so we're good!

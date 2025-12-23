@@ -37,6 +37,7 @@ const SignupForm: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showDuplicateModal, setShowDuplicateModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +68,15 @@ const SignupForm: React.FC = () => {
       // Navigate to home page after successful signup
       window.location.href = '/';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred during sign up');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during sign up';
+
+      // Check if it's a duplicate email error
+      if (errorMessage.toLowerCase().includes('already exists') ||
+          errorMessage.toLowerCase().includes('duplicate')) {
+        setShowDuplicateModal(true);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -90,9 +99,45 @@ const SignupForm: React.FC = () => {
   };
 
   return (
-    <div className={styles.authContainer}>
-      <h2>Create Account</h2>
-      <form onSubmit={handleSubmit} className={styles.authForm}>
+    <>
+      {/* Duplicate Email Modal */}
+      {showDuplicateModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowDuplicateModal(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#f59e0b" strokeWidth="2"/>
+                <path d="M12 8v4M12 16h.01" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <h3 className={styles.modalTitle}>User Already Exists</h3>
+            <p className={styles.modalMessage}>
+              An account with email <strong>{email}</strong> is already registered.
+            </p>
+            <p className={styles.modalMessage}>
+              Please try logging in or use a different email address.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                onClick={() => window.location.href = '/login'}
+                className={`${styles.button} ${styles.primaryButton}`}
+              >
+                Go to Login
+              </button>
+              <button
+                onClick={() => setShowDuplicateModal(false)}
+                className={`${styles.button} ${styles.secondaryButton}`}
+              >
+                Use Different Email
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.authContainer}>
+        <h2>Create Account</h2>
+        <form onSubmit={handleSubmit} className={styles.authForm}>
         <div className={styles.formGroup}>
           <label htmlFor="name">Full Name</label>
           <input
@@ -289,7 +334,8 @@ const SignupForm: React.FC = () => {
           {isLoading ? 'Creating Account...' : 'Sign Up'}
         </button>
       </form>
-    </div>
+      </div>
+    </>
   );
 };
 

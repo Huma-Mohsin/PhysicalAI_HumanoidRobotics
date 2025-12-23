@@ -2,7 +2,8 @@
 
 **Current Status**: ✅ RAG Chatbot deployed and working!
 
-**🚀 Production Site**: https://humanoidrobotbook-7xo2xto38-huma-mohsins-projects.vercel.app/
+**🚀 Production Site**:  https://humanoidrobotbook.vercel.app/
+
 
 ---
 

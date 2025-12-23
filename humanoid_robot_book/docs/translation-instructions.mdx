@@ -1,0 +1,63 @@
+---
+id: translation-instructions
+title: Translation Instructions
+sidebar_label: Translation Guide
+sidebar_position: 7
+---
+
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
+# Translation Functionality Guide
+
+## Overview
+
+This documentation includes a built-in Urdu translation feature that allows users to toggle between English and Urdu content.
+
+## How It Works
+
+1. **Translation Toggle**: Click the "اردو" button to translate content to Urdu
+2. **RTL Support**: Text direction automatically switches to right-to-left for Urdu
+3. **Content Preservation**: Code blocks and formatting are preserved during translation
+
+## Current Implementation
+
+The translation system includes:
+- Comprehensive dictionary with 1800+ technical terms
+- Smart translation that preserves code blocks and HTML
+- Caching for performance optimization
+- RTL styling for Urdu content
+
+## Limitations
+
+Currently, the main documentation content is rendered by Docusaurus and requires manual wrapping with translation components to be translated. The toggle functionality is working and provides:
+
+- Language state management
+- RTL styling application
+- Translation infrastructure
+- Custom translation components for content
+
+## Using Translation Components
+
+To make content translatable, wrap it with the provided components:
+
+```jsx
+import TranslatableText from '@site/src/components/Translation/TranslatableText';
+
+<TranslatableText>This content will be translated</TranslatableText>
+```
+
+## Future Enhancements
+
+For automatic translation of all documentation content, a build-time or DOM-interception approach would be needed, which is outside the scope of this implementation.
+
+## Technical Details
+
+The translation system uses:
+- React Context for state management
+- Comprehensive English-to-Urdu dictionary
+- Format-preserving translation logic
+- Caching mechanism for performance

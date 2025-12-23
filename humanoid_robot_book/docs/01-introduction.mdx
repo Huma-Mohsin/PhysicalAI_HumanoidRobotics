@@ -5,6 +5,14 @@ sidebar_label: Introduction
 sidebar_position: 1
 ---
 
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
 # Physical AI & Humanoid Robotics
 
 ## Focus and Theme: AI Systems in the Physical World
@@ -25,6 +33,93 @@ Students learn to design, simulate, and deploy humanoid robots capable of natura
 - **ROS 2** (Robot Operating System)
 - **Gazebo** (Physics simulation)
 - **NVIDIA Isaac** (AI-powered robotics platform)
+
+---
+
+<PersonalizeButton />
+
+---
+
+## Your Learning Path
+
+<ContentVariant hardwareType="gpu_workstation">
+
+### For GPU Workstation Users (RTX 4070 Ti / RTX 4090)
+
+**You have the complete Physical AI development environment!**
+
+✅ **What You Can Do:**
+- Run **NVIDIA Isaac Sim** locally for photorealistic simulations
+- Execute **Gazebo** with full GPU acceleration
+- Train **reinforcement learning models** on your local GPU
+- Run all **Vision-Language-Action (VLA)** models locally
+- Deploy real-time perception pipelines
+
+**Recommended Setup:**
+- **OS:** Ubuntu 22.04 LTS (dual-boot or dedicated machine)
+- **ROS 2:** Humble or Iron
+- **Isaac Sim:** Install Omniverse Launcher → Isaac Sim 2023.1+
+- **Python:** 3.10+ with CUDA toolkit
+
+**Your Advantage:** Complete hands-on experience from simulation to deployment without cloud costs.
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+### For Edge Device Users (Jetson Orin Nano / AGX Orin)
+
+**You have the embedded AI brain for real robots!**
+
+✅ **What You Can Do:**
+- Run **Isaac ROS** packages (hardware-accelerated perception)
+- Deploy **trained models** for real-time inference
+- Execute **VSLAM** (Visual SLAM) and navigation
+- Run lightweight **Gazebo simulations**
+- Interface with **real sensors** (RealSense cameras, LiDAR)
+
+⚠️ **Limitations:**
+- Cannot run full Isaac Sim (use cloud or workstation for training)
+- Limited to Gazebo for local simulation
+- Focus on deployment rather than training
+
+**Recommended Setup:**
+- **OS:** Ubuntu 22.04 LTS (JetPack 5.1+)
+- **ROS 2:** Humble
+- **Isaac ROS:** Install via apt packages
+- **Sensors:** Intel RealSense D435i recommended
+
+**Your Advantage:** Learn real-world deployment and edge computing—the most challenging part of robotics!
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+### For Cloud/Mac Users
+
+**You can learn robotics through cloud-based simulation!**
+
+✅ **What You Can Do:**
+- Run **Gazebo in Docker** (works on Mac via Rosetta)
+- Use **Omniverse Cloud** for Isaac Sim (requires subscription)
+- Learn **ROS 2 concepts** via Docker containers
+- Deploy to **cloud-based robot fleets**
+- Focus on high-level planning and AI integration
+
+⚠️ **Considerations:**
+- Cloud costs for Isaac Sim (~$1.50/hour on AWS)
+- Docker performance on Mac may be slower
+- No local GPU acceleration
+
+**Recommended Setup:**
+- **Docker Desktop** for Mac/Windows
+- **AWS/Azure account** for cloud GPU access (optional)
+- **Omniverse Cloud** trial account
+- **ROS 2 Docker images** (osrf/ros:humble-desktop)
+
+**Your Advantage:** Platform independence—learn anywhere, deploy to cloud robots.
+
+</ContentVariant>
 
 ---
 
@@ -136,6 +231,36 @@ Throughout the course, you will complete:
 - ✅ **Gazebo simulation implementation**
 - ✅ **Isaac-based perception pipeline**
 - ✅ **Capstone**: Simulated humanoid robot with conversational AI
+
+<ContentVariant hardwareType="gpu_workstation">
+
+**Your Assessment Path (GPU Workstation):**
+- Complete all projects **locally** with full Isaac Sim integration
+- Demonstrate **sim-to-real transfer** with synthetic data generation
+- Build the capstone with **photorealistic rendering** in Isaac Sim
+- Optimize for **real-time performance** on your GPU
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+**Your Assessment Path (Edge Device):**
+- Focus on **Isaac ROS** deployment and optimization
+- Demonstrate **real-time perception** on Jetson hardware
+- Build the capstone with **Gazebo + real sensor data**
+- Optimize for **low-latency inference** on embedded GPU
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+**Your Assessment Path (Cloud/Mac):**
+- Complete projects using **Gazebo in Docker**
+- Optional: Use **Omniverse Cloud** for Isaac Sim modules
+- Build the capstone with **ROS 2 containerized workflows**
+- Focus on **cloud deployment strategies**
+
+</ContentVariant>
 
 ---
 

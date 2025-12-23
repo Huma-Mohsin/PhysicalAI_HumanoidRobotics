@@ -7,9 +7,9 @@ from typing import List, Dict, Any, Optional
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue, MatchAny
 
-from utils.config import settings
-from utils.logger import logger
-from services.embedding_service import embedding_service
+from src.utils.config import settings
+from src.utils.logger import logger
+from src.services.embedding_service import embedding_service
 
 
 class QdrantService:

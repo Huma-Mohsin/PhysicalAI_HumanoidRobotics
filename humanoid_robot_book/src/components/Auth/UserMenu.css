@@ -7,15 +7,17 @@
 
 .navbar-auth-link {
   padding: 0.5rem 1rem;
-  color: var(--ifm-navbar-link-color);
+  color: white;
   text-decoration: none;
   border-radius: 0.375rem;
+  font-weight: 600;
+  background-color: var(--ifm-color-primary);
   transition: background-color 0.2s;
 }
 
 .navbar-auth-link:hover {
-  background-color: var(--ifm-navbar-link-hover-color);
-  color: var(--ifm-font-color-base);
+  background-color: var(--ifm-color-primary-dark);
+  color: white;
   text-decoration: none;
 }
 

@@ -76,12 +76,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // Use authClient.getSession() instead of getCurrentSession
-        const session = await authClient.getSession();
-        if (session?.session) {
-          // Fetch user profile including hardware profile
-          const userProfile = await fetchUserProfile(session.session.userId);
-          setUser(userProfile);
+        // Call backend's get-session endpoint which checks the session cookie
+        const API_BASE_URL = process.env.NODE_ENV === 'production'
+          ? 'https://humanoid-robotics-backend.vercel.app'
+          : 'http://localhost:8000';
+
+        const response = await fetch(`${API_BASE_URL}/api/auth/get-session`, {
+          method: 'GET',
+          credentials: 'include', // Important: Send cookies
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.user) {
+            // Set user from session data
+            const userProfile: UserProfile = {
+              id: data.user.id,
+              email: data.user.email,
+              name: data.user.name,
+              softwareExperience: data.user.softwareExperience,
+              programmingLanguages: data.user.programmingLanguages || [],
+              hardwareType: data.user.hardwareType,
+              hardwareExperience: data.user.hardwareExperience,
+              hardwareProfile: data.hardware_profile ? {
+                id: 'temp-id',
+                userId: data.user.id,
+                hardwareType: data.hardware_profile.type,
+                gpuModel: data.hardware_profile.details?.gpu_model,
+                cpuModel: data.hardware_profile.details?.cpu_model,
+                ramSize: data.hardware_profile.details?.ram_size,
+                osType: data.hardware_profile.details?.os_type,
+                additionalNotes: data.hardware_profile.details?.additional_notes,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+              } : null,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+            };
+            setUser(userProfile);
+          }
         }
       } catch (error) {
         console.error('Error checking session:', error);

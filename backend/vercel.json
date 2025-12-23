@@ -2,20 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/main.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
+      "src": "api.py",
+      "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/src/main.py"
+      "dest": "api.py"
     }
-  ],
-  "functions": {
-    "src/main.py": {
-      "maxDuration": 60
-    }
-  }
+  ]
 }

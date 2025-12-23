@@ -3,10 +3,11 @@
  * Handles communication with the FastAPI backend for RAG chatbot
  */
 
-// Use production backend by default (can override with .env.local)
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
-  || process.env.REACT_APP_API_URL
-  || 'https://humanoid-robotics-backend.vercel.app';  // Production backend
+// Use production backend by default
+// For Docusaurus, use window object to access env vars if needed
+const API_BASE_URL = typeof window !== 'undefined' && (window as any).ENV_API_URL
+  ? (window as any).ENV_API_URL
+  : 'https://humanoid-robotics-backend.vercel.app';  // Production backend
 
 export interface ChatMessage {
   message_id: string;

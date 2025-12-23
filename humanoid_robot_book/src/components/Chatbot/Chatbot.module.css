@@ -6,6 +6,11 @@
   right: 24px;
   z-index: 9999;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  pointer-events: none; /* Allow clicks through container */
+}
+
+.chatbotContainer > * {
+  pointer-events: auto; /* But enable clicks on children */
 }
 
 /* Floating Button */
@@ -37,13 +42,14 @@
 .chatPanel {
   width: 400px;
   height: 550px;
-  background: white;
+  background: var(--ifm-background-color, white);
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--ifm-toc-border-color, #eaeaea);
 }
 
 @keyframes slideIn {
@@ -109,7 +115,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  background: #f8f9fa;
+  background: var(--ifm-background-surface-color, #f8f9fa);
 }
 
 .messagesContainer::-webkit-scrollbar {
@@ -389,43 +395,43 @@
   }
 }
 
-/* Dark mode support - DISABLED - Always use light theme */
-/* Force white background on all devices including mobile */
+/* Dark mode support - Force light theme for chatbot readability */
 [data-theme='dark'] .chatPanel {
-  background: white !important;
+  background: white;
+  border-color: #e2e8f0;
 }
 
 [data-theme='dark'] .messagesContainer {
-  background: #f8f9fa !important;
+  background: #f8f9fa;
 }
 
 [data-theme='dark'] .assistant .messageContent {
-  background: white !important;
-  color: #2d3748 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  background: white;
+  color: #2d3748;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme='dark'] .input {
-  background: white !important;
-  border-color: #e2e8f0 !important;
-  color: #2d3748 !important;
+  background: white;
+  border-color: #e2e8f0;
+  color: #2d3748;
 }
 
 [data-theme='dark'] .input:focus {
-  border-color: #204860 !important;
+  border-color: #204860;
 }
 
 [data-theme='dark'] .inputContainer {
-  background: white !important;
-  border-top-color: #e2e8f0 !important;
+  background: white;
+  border-top-color: #e2e8f0;
 }
 
 [data-theme='dark'] .emptyState li {
-  background: white !important;
-  color: #4a5568 !important;
+  background: white;
+  color: #4a5568;
 }
 
 [data-theme='dark'] .messageContent code {
-  background: #edf2f7 !important;
-  color: #2d3748 !important;
+  background: #edf2f7;
+  color: #2d3748;
 }

@@ -152,6 +152,9 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
     clearConversation();
     setMessages([]);
     setError(null);
+    setInputValue('');  // Clear input field
+    setPendingSelection(null);  // Clear pending selection
+    if (onSelectedTextUsed) onSelectedTextUsed();  // Clear parent state
   };
 
   const toggleChat = () => {

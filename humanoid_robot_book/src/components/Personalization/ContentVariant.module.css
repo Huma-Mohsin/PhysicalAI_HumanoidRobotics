@@ -27,7 +27,7 @@
 }
 
 .variantBadge {
-  background-color: var(--ifm-color-primary);
+  background-color: #f59e0b;
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 12px;
@@ -43,18 +43,18 @@
 
 /* Active state - user's hardware when personalized */
 .variantActive {
-  border-color: var(--ifm-color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  background-color: var(--ifm-color-primary-lightest);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  background-color: #fef3c7;
 }
 
 .variantActive .variantHeader {
-  background-color: var(--ifm-color-primary-light);
-  border-bottom-color: var(--ifm-color-primary);
+  background-color: #fde68a;
+  border-bottom-color: #f59e0b;
 }
 
 .variantActive .variantLabel {
-  color: var(--ifm-color-primary-darkest);
+  color: #92400e;
   font-weight: 700;
 }
 
@@ -90,11 +90,11 @@
 }
 
 [data-theme='dark'] .variantActive {
-  background-color: rgba(37, 99, 235, 0.15);
+  background-color: rgba(245, 158, 11, 0.15);
 }
 
 [data-theme='dark'] .variantActive .variantHeader {
-  background-color: var(--ifm-color-primary-dark);
+  background-color: #d97706;
 }
 
 [data-theme='dark'] .variantDimmed {

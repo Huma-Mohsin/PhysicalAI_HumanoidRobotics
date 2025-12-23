@@ -1,12 +1,10 @@
 """
-Vercel entry point for the FastAPI application.
-This file serves as the entry point for Vercel deployments.
+API entry point for the FastAPI application.
+This file serves as the entry point for Vercel serverless deployment.
 """
 
 from src.main import app
 
-# This ensures Vercel can properly import and run the application
-application = app
-
-# For Vercel Python runtime compatibility
-handler = app
+# Export the FastAPI app for Vercel
+# Vercel will automatically detect and serve the ASGI app
+__all__ = ["app"]

@@ -24,6 +24,14 @@
     {
       "input": "Can I run Isaac Sim on Mac?",
       "output": "No, Isaac Sim requires an NVIDIA RTX GPU and won't work on Mac. See Module 3 (05-module-3-nvidia-isaac.mdx) for alternatives: use Omniverse Cloud for cloud-based Isaac Sim, or stick with Gazebo (Module 2) which works on Mac via Docker."
+    },
+    {
+      "input": "What's the difference between Gazebo and Isaac Sim?",
+      "output": "Great question! Both are robot simulators but serve different purposes. **Gazebo** (Module 2: 04-module-2-gazebo-unity.mdx) is open-source, runs on any platform (Mac/Windows/Linux via Docker), and focuses on physics simulation. **Isaac Sim** (Module 3: 05-module-3-nvidia-isaac.mdx) is NVIDIA's photorealistic simulator requiring RTX GPU, offers synthetic data generation, and integrates with AI training workflows. For GPU users: use Isaac Sim. For Jetson/Mac users: use Gazebo."
+    },
+    {
+      "input": "How do I integrate GPT models with ROS 2?",
+      "output": "Module 1 (03-module-1-ros2.mdx) includes a complete example of GPT-4 as a robot controller. The code shows how to subscribe to voice commands, call OpenAI API to translate human language to robot actions, and publish velocity commands. For conversational robotics, see Week 12-13 (07-week-12-13-conversational.mdx) which covers speech recognition, natural language understanding, and multi-modal interaction."
     }
   ],
   "tags": ["robotics", "rag", "education", "ros2", "isaac-sim"]

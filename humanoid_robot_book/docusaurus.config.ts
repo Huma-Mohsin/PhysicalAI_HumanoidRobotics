@@ -96,6 +96,11 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
+          href: 'https://www.linkedin.com/in/huma-mohsin-0b35382b5/',
+          label: 'LinkedIn',
+          position: 'right',
+        },
+        {
           type: 'custom-userMenu',
           position: 'right',
         },

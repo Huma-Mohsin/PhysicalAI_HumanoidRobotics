@@ -1,0 +1,122 @@
+.translationContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 1rem 0;
+  position: relative;
+}
+
+.translationButton {
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.translationButton:hover:not(:disabled) {
+  background-color: #3a5ae0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.translationButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.urduActive {
+  background-color: #e67700;
+}
+
+.urduActive:hover:not(:disabled) {
+  background-color: #cc6600;
+}
+
+.englishActive {
+  background-color: #4a6cf7;
+}
+
+.englishActive:hover:not(:disabled) {
+  background-color: #3a5ae0;
+}
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.buttonText {
+  font-family: inherit;
+}
+
+/* Error message styling */
+.errorMessage {
+  background-color: #fee;
+  color: #c33;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  animation: fadeIn 0.3s ease;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* RTL support for Urdu text */
+.translationContainer:dir(rtl) .buttonText,
+.translationContainer[dir="rtl"] .buttonText {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Specific styling for Urdu content */
+.urduText {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .translationButton {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 90px;
+  }
+
+  .translationContainer {
+    align-items: flex-end;
+    margin: 0.5rem 0;
+  }
+}

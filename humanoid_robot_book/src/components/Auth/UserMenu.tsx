@@ -47,7 +47,7 @@ export default function UserMenu() {
     );
   }
 
-  // Logged in: show user email with dropdown
+  // Logged in: show user icon with dropdown
   return (
     <div className="navbar-user-menu" ref={dropdownRef}>
       <button
@@ -55,18 +55,28 @@ export default function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup="true"
+        title={user.email} // Tooltip shows email on hover
       >
-        <span className="navbar-user-email">{user.email}</span>
+        {/* User Icon */}
         <svg
-          className={`navbar-user-arrow ${isOpen ? 'navbar-user-arrow--open' : ''}`}
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
+          className="navbar-user-icon"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            d="M1 1.5L6 6.5L11 1.5"
+            d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle
+            cx="12"
+            cy="7"
+            r="4"
             stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
@@ -77,10 +87,48 @@ export default function UserMenu() {
 
       {isOpen && (
         <div className="navbar-user-dropdown">
+          <div className="navbar-user-info">
+            <div className="navbar-user-email-display">{user.email}</div>
+            <div className="navbar-user-id">ID: {user.id.substring(0, 8)}...</div>
+          </div>
+          <div className="navbar-user-divider"></div>
           <button
             className="navbar-user-dropdown-item"
             onClick={handleLogout}
           >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ marginRight: '8px' }}
+            >
+              <path
+                d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points="16 17 21 12 16 7"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <line
+                x1="21"
+                y1="12"
+                x2="9"
+                y2="12"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             Logout
           </button>
         </div>

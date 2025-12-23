@@ -69,7 +69,7 @@ All bonus objectives are treated as mandatory requirements, not optional enhance
 **Non-Negotiable Rules**:
 - **Reusable Intelligence (50 pts)**: Claude Code Subagents and Agent Skills must be implemented and documented
 - **Auth & Survey (50 pts)**: Better-Auth with hardware/software background survey fully functional
-- **Dynamic Content (50 pts)**: "Personalize" button operational at chapter start
+- **Dynamic Content (50 pts)**: Login-based auto-personalization adapts content to user's hardware context
 - **Localization (50 pts)**: "Translate to Urdu" button functional at chapter start
 - Each requirement validated independently before final delivery
 

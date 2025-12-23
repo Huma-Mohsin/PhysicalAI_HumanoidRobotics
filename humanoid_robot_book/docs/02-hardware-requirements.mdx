@@ -5,6 +5,14 @@ sidebar_label: Hardware Requirements
 sidebar_position: 2
 ---
 
+import TranslationToggle from '@site/src/components/Translation/TranslationToggle';
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+<div style={{display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem'}}>
+  <TranslationToggle />
+</div>
+
 # Hardware Requirements
 
 This course is technically demanding. It sits at the intersection of three heavy computational loads:
@@ -13,6 +21,101 @@ This course is technically demanding. It sits at the intersection of three heavy
 - **Generative AI** (LLMs/VLA)
 
 Because the capstone involves a "Simulated Humanoid," the primary investment must be in **High-Performance Workstations**. However, to fulfill the "Physical AI" promise, you also need **Edge Computing Kits** (brains without bodies) or specific robot hardware.
+
+---
+
+<PersonalizeButton />
+
+---
+
+## Your Hardware Assessment
+
+<ContentVariant hardwareType="gpu_workstation">
+
+### ✅ Your Setup: GPU Workstation (Perfect!)
+
+**You have the ideal hardware for this course!** Your GPU workstation allows you to complete 100% of the course content locally without cloud costs.
+
+**What You Already Have:**
+- ✅ NVIDIA RTX GPU (4070 Ti / 4080 / 4090 / 5000 series)
+- ✅ Ubuntu 22.04 LTS (recommended)
+- ✅ Sufficient RAM (32GB+ recommended, 64GB ideal)
+- ✅ Fast CPU for physics simulations
+
+**No Additional Hardware Required!** You can complete the entire course with your existing setup.
+
+**Optional Upgrades (Advanced Users Only):**
+- **Jetson Orin Nano** ($249) - Learn edge deployment and real-world robotics
+- **Intel RealSense D435i** ($349) - Add real camera data to your simulations
+- **Unitree Go2** ($1,800+) - Deploy to a real robot (optional capstone extension)
+
+**Your Total Cost:** $0 (everything works on your existing hardware)
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+### ✅ Your Setup: Edge Device (Jetson)
+
+**Great choice for learning real-world robotics deployment!** Your Jetson device is the brain that goes into actual robots.
+
+**What You Already Have:**
+- ✅ Jetson Orin Nano / AGX Orin
+- ✅ Edge AI inference capabilities
+- ✅ Isaac ROS compatibility
+
+**Recommended Additions:**
+1. **Intel RealSense D435i** ($349) - Essential for perception modules
+   - Provides depth data for SLAM
+   - Includes built-in IMU
+
+2. **ReSpeaker Mic Array** ($69) - For conversational robotics module
+   - Voice command capture
+   - Far-field audio processing
+
+3. **Cloud GPU Access** (Optional, ~$200/quarter)
+   - For Isaac Sim training (your Jetson can't run full simulations)
+   - AWS g5.2xlarge or Omniverse Cloud subscription
+   - Alternative: Partner with classmates who have GPU workstations
+
+**Your Total Investment:** $418 (camera + mic) or $618 (add cloud access)
+
+**Note:** You'll use Gazebo for local simulations and focus on deployment rather than training.
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+### ✅ Your Setup: Cloud/Mac
+
+**You can still learn Physical AI using cloud-based tools!** While you don't have local GPU hardware, cloud services provide access to the same capabilities.
+
+**Your Learning Strategy:**
+
+**Option 1: Cloud GPU Access (Recommended)**
+- **AWS g5.2xlarge** (~$1.50/hour) - 120 hours = $180/quarter
+- **Omniverse Cloud** ($100-300/month) - Isaac Sim in browser
+- **Google Colab Pro+** ($50/month) - For AI training
+
+**Option 2: Docker + Gazebo (Free Alternative)**
+- **Docker Desktop** (Free on Mac/Windows)
+- **ROS 2 Humble Docker images** (Free)
+- **Gazebo Classic** (Runs on Mac via Docker)
+- Focus on ROS 2 concepts and Gazebo (skip Isaac Sim)
+
+**Option 3: Hybrid Approach**
+- Use free tier services: Google Colab (free), Gazebo locally
+- Pay for cloud GPU only for Isaac Sim modules (Weeks 8-10)
+- Total cost: ~$100-150 for entire course
+
+**Optional: Jetson Kit** ($700)
+- Learn real-world deployment
+- Add physical sensors (camera, mic)
+- Partner with others for shared robot hardware
+
+**Your Total Cost:** $100-180 (cloud-only) or $800-900 (cloud + Jetson kit)
+
+</ContentVariant>
 
 ---
 
