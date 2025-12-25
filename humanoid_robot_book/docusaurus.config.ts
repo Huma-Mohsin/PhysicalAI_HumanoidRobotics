@@ -96,6 +96,10 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
+          type: 'localeDropdown',
+          position: 'right',
+        },
+        {
           href: 'https://www.linkedin.com/in/huma-mohsin-0b35382b5/',
           label: 'LinkedIn',
           position: 'right',
