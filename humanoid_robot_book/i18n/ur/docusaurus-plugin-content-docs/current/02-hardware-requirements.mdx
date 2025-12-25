@@ -1,7 +1,7 @@
 ---
 id: hardware-requirements
-title: Hardware Requirements
-sidebar_label: Hardware Requirements
+title: ہارڈویئر کی ضروریات
+sidebar_label: ہارڈویئر کی ضروریات
 sidebar_position: 2
 ---
 
@@ -9,14 +9,14 @@ import PersonalizeButton from '@site/src/components/Personalization/PersonalizeB
 import ContentVariant from '@site/src/components/Personalization/ContentVariant';
 
 
-# Hardware Requirements
+# ہارڈویئر کی ضروریات
 
-This course is technically demanding. It sits at the intersection of three heavy computational loads:
-- **Physics Simulation** (Isaac Sim/Gazebo)
-- **Visual Perception** (SLAM/Computer Vision)
-- **Generative AI** (LLMs/VLA)
+یہ کورس تکنیکی طور پر بہت مشکل ہے۔ یہ تین بھاری کمپیوٹیشنل لوڈز کے سنگم پر ہے:
+- **فزکس سمیولیشن** (Isaac Sim/Gazebo)
+- **بصری ادراک** (SLAM/Computer Vision)
+- **جنریٹو AI** (LLMs/VLA)
 
-Because the capstone involves a "Simulated Humanoid," the primary investment must be in **High-Performance Workstations**. However, to fulfill the "Physical AI" promise, you also need **Edge Computing Kits** (brains without bodies) or specific robot hardware.
+چونکہ کیپ اسٹون میں "سمیولیٹڈ ہیومنائیڈ" شامل ہے، اس لیے بنیادی سرمایہ کاری **ہائی پرفارمنس ورک سٹیشنز** میں ہونی چاہیے۔ تاہم، "فزیکل AI" کے وعدے کو پورا کرنے کے لیے، آپ کو **ایج کمپیوٹنگ کٹس** (بغیر جسم کے دماغ) یا مخصوص روبوٹ ہارڈویئر کی بھی ضرورت ہے۔
 
 ---
 
@@ -24,237 +24,237 @@ Because the capstone involves a "Simulated Humanoid," the primary investment mus
 
 ---
 
-## Your Hardware Assessment
+## آپ کا ہارڈویئر تشخیص
 
 <ContentVariant hardwareType="gpu_workstation">
 
-### ✅ Your Setup: GPU Workstation (Perfect!)
+### ✅ آپ کا سیٹ اپ: GPU ورک سٹیشن (بہترین!)
 
-**You have the ideal hardware for this course!** Your GPU workstation allows you to complete 100% of the course content locally without cloud costs.
+**آپ کے پاس اس کورس کے لیے بہترین ہارڈویئر ہے!** آپ کا GPU ورک سٹیشن آپ کو کلاؤڈ کی لاگت کے بغیر مقامی طور پر 100% کورس مواد مکمل کرنے کی اجازت دیتا ہے۔
 
-**What You Already Have:**
-- ✅ NVIDIA RTX GPU (4070 Ti / 4080 / 4090 / 5000 series)
-- ✅ Ubuntu 22.04 LTS (recommended)
-- ✅ Sufficient RAM (32GB+ recommended, 64GB ideal)
-- ✅ Fast CPU for physics simulations
+**آپ کے پاس پہلے سے موجود:**
+- ✅ NVIDIA RTX GPU (4070 Ti / 4080 / 4090 / 5000 سیریز)
+- ✅ Ubuntu 22.04 LTS (تجویز کردہ)
+- ✅ کافی RAM (32GB+ تجویز کردہ، 64GB مثالی)
+- ✅ فزکس سمیولیشن کے لیے تیز CPU
 
-**No Additional Hardware Required!** You can complete the entire course with your existing setup.
+**کوئی اضافی ہارڈویئر کی ضرورت نہیں!** آپ اپنے موجودہ سیٹ اپ کے ساتھ پورا کورس مکمل کر سکتے ہیں۔
 
-**Optional Upgrades (Advanced Users Only):**
-- **Jetson Orin Nano** ($249) - Learn edge deployment and real-world robotics
-- **Intel RealSense D435i** ($349) - Add real camera data to your simulations
-- **Unitree Go2** ($1,800+) - Deploy to a real robot (optional capstone extension)
+**اختیاری اپ گریڈز (صرف ایڈوانسڈ صارفین کے لیے):**
+- **Jetson Orin Nano** ($249) - ایج ڈیپلائمنٹ اور حقیقی دنیا کی روبوٹکس سیکھیں
+- **Intel RealSense D435i** ($349) - اپنے سمیولیشنز میں حقیقی کیمرہ ڈیٹا شامل کریں
+- **Unitree Go2** ($1,800+) - حقیقی روبوٹ پر ڈیپلائے کریں (اختیاری کیپ اسٹون توسیع)
 
-**Your Total Cost:** $0 (everything works on your existing hardware)
+**آپ کی کل لاگت:** $0 (سب کچھ آپ کے موجودہ ہارڈویئر پر کام کرتا ہے)
 
 </ContentVariant>
 
 <ContentVariant hardwareType="edge_device">
 
-### ✅ Your Setup: Edge Device (Jetson)
+### ✅ آپ کا سیٹ اپ: ایج ڈیوائس (Jetson)
 
-**Great choice for learning real-world robotics deployment!** Your Jetson device is the brain that goes into actual robots.
+**حقیقی دنیا کی روبوٹکس ڈیپلائمنٹ سیکھنے کے لیے بہترین انتخاب!** آپ کی Jetson ڈیوائس وہ دماغ ہے جو اصل روبوٹس میں جاتی ہے۔
 
-**What You Already Have:**
+**آپ کے پاس پہلے سے موجود:**
 - ✅ Jetson Orin Nano / AGX Orin
-- ✅ Edge AI inference capabilities
-- ✅ Isaac ROS compatibility
+- ✅ ایج AI انفرنس صلاحیتیں
+- ✅ Isaac ROS مطابقت
 
-**Recommended Additions:**
-1. **Intel RealSense D435i** ($349) - Essential for perception modules
-   - Provides depth data for SLAM
-   - Includes built-in IMU
+**تجویز کردہ اضافات:**
+1. **Intel RealSense D435i** ($349) - ادراک ماڈیولز کے لیے ضروری
+   - SLAM کے لیے ڈیپتھ ڈیٹا فراہم کرتا ہے
+   - بلٹ ان IMU شامل ہے
 
-2. **ReSpeaker Mic Array** ($69) - For conversational robotics module
-   - Voice command capture
-   - Far-field audio processing
+2. **ReSpeaker Mic Array** ($69) - گفتگو والے روبوٹکس ماڈیول کے لیے
+   - آواز کمانڈ کیپچر
+   - فار فیلڈ آڈیو پروسیسنگ
 
-3. **Cloud GPU Access** (Optional, ~$200/quarter)
-   - For Isaac Sim training (your Jetson can't run full simulations)
-   - AWS g5.2xlarge or Omniverse Cloud subscription
-   - Alternative: Partner with classmates who have GPU workstations
+3. **کلاؤڈ GPU رسائی** (اختیاری، ~$200/سہ ماہی)
+   - Isaac Sim ٹریننگ کے لیے (آپ کا Jetson مکمل سمیولیشن نہیں چلا سکتا)
+   - AWS g5.2xlarge یا Omniverse Cloud سبسکرپشن
+   - متبادل: GPU ورک سٹیشن والے ساتھیوں کے ساتھ شراکت کریں
 
-**Your Total Investment:** $418 (camera + mic) or $618 (add cloud access)
+**آپ کی کل سرمایہ کاری:** $418 (کیمرہ + مائک) یا $618 (کلاؤڈ رسائی شامل کریں)
 
-**Note:** You'll use Gazebo for local simulations and focus on deployment rather than training.
+**نوٹ:** آپ مقامی سمیولیشنز کے لیے Gazebo استعمال کریں گے اور ٹریننگ کے بجائے ڈیپلائمنٹ پر توجہ دیں گے۔
 
 </ContentVariant>
 
 <ContentVariant hardwareType="cloud_mac">
 
-### ✅ Your Setup: Cloud/Mac
+### ✅ آپ کا سیٹ اپ: کلاؤڈ/Mac
 
-**You can still learn Physical AI using cloud-based tools!** While you don't have local GPU hardware, cloud services provide access to the same capabilities.
+**آپ اب بھی کلاؤڈ پر مبنی ٹولز استعمال کرتے ہوئے فزیکل AI سیکھ سکتے ہیں!** اگرچہ آپ کے پاس مقامی GPU ہارڈویئر نہیں ہے، کلاؤڈ سروسز وہی صلاحیتیں فراہم کرتی ہیں۔
 
-**Your Learning Strategy:**
+**آپ کی سیکھنے کی حکمت عملی:**
 
-**Option 1: Cloud GPU Access (Recommended)**
-- **AWS g5.2xlarge** (~$1.50/hour) - 120 hours = $180/quarter
-- **Omniverse Cloud** ($100-300/month) - Isaac Sim in browser
-- **Google Colab Pro+** ($50/month) - For AI training
+**آپشن 1: کلاؤڈ GPU رسائی (تجویز کردہ)**
+- **AWS g5.2xlarge** (~$1.50/گھنٹہ) - 120 گھنٹے = $180/سہ ماہی
+- **Omniverse Cloud** ($100-300/ماہ) - براؤزر میں Isaac Sim
+- **Google Colab Pro+** ($50/ماہ) - AI ٹریننگ کے لیے
 
-**Option 2: Docker + Gazebo (Free Alternative)**
-- **Docker Desktop** (Free on Mac/Windows)
-- **ROS 2 Humble Docker images** (Free)
-- **Gazebo Classic** (Runs on Mac via Docker)
-- Focus on ROS 2 concepts and Gazebo (skip Isaac Sim)
+**آپشن 2: Docker + Gazebo (مفت متبادل)**
+- **Docker Desktop** (Mac/Windows پر مفت)
+- **ROS 2 Humble Docker images** (مفت)
+- **Gazebo Classic** (Docker کے ذریعے Mac پر چلتا ہے)
+- ROS 2 تصورات اور Gazebo پر توجہ دیں (Isaac Sim چھوڑ دیں)
 
-**Option 3: Hybrid Approach**
-- Use free tier services: Google Colab (free), Gazebo locally
-- Pay for cloud GPU only for Isaac Sim modules (Weeks 8-10)
-- Total cost: ~$100-150 for entire course
+**آپشن 3: ہائبرڈ اپروچ**
+- مفت ٹئیر سروسز استعمال کریں: Google Colab (مفت)، Gazebo مقامی طور پر
+- صرف Isaac Sim ماڈیولز کے لیے کلاؤڈ GPU کے لیے ادائیگی کریں (ہفتے 8-10)
+- کل لاگت: پورے کورس کے لیے ~$100-150
 
-**Optional: Jetson Kit** ($700)
-- Learn real-world deployment
-- Add physical sensors (camera, mic)
-- Partner with others for shared robot hardware
+**اختیاری: Jetson Kit** ($700)
+- حقیقی دنیا کی ڈیپلائمنٹ سیکھیں
+- فزیکل سینسرز شامل کریں (کیمرہ، مائک)
+- شیئرڈ روبوٹ ہارڈویئر کے لیے دوسروں کے ساتھ شراکت کریں
 
-**Your Total Cost:** $100-180 (cloud-only) or $800-900 (cloud + Jetson kit)
+**آپ کی کل لاگت:** $100-180 (صرف کلاؤڈ) یا $800-900 (کلاؤڈ + Jetson کٹ)
 
 </ContentVariant>
 
 ---
 
-## 1. The "Digital Twin" Workstation (Required per Student)
+## 1. "ڈیجیٹل ٹوِن" ورک سٹیشن (ہر طالب علم کے لیے ضروری)
 
-This is the **most critical component**. NVIDIA Isaac Sim is an Omniverse application that requires "RTX" (Ray Tracing) capabilities. Standard laptops (MacBooks or non-RTX Windows machines) will **not work**.
+یہ **سب سے اہم جزو** ہے۔ NVIDIA Isaac Sim ایک Omniverse ایپلیکیشن ہے جس کے لیے "RTX" (Ray Tracing) صلاحیتوں کی ضرورت ہے۔ عام لیپ ٹاپس (MacBooks یا غیر RTX Windows مشینیں) **کام نہیں کریں گی**۔
 
-| Component | Specification | Rationale |
+| جزو | تفصیل | منطق |
 |-----------|--------------|-----------|
-| **GPU** (The Bottleneck) | **NVIDIA RTX 4070 Ti (12GB VRAM)** or higher | You need high VRAM to load the USD (Universal Scene Description) assets for the robot and environment, plus run the VLA (Vision-Language-Action) models simultaneously. |
-| **GPU** (Ideal) | **RTX 3090 or 4090 (24GB VRAM)** | Allows for smoother "Sim-to-Real" training with larger scene complexity. |
-| **CPU** | Intel Core i7 (13th Gen+) or AMD Ryzen 9 | Physics calculations (Rigid Body Dynamics) in Gazebo/Isaac are CPU-intensive. |
-| **RAM** | **64 GB DDR5** (32 GB absolute minimum) | 32 GB will crash during complex scene rendering. 64 GB provides headroom. |
-| **OS** | **Ubuntu 22.04 LTS** | While Isaac Sim runs on Windows, ROS 2 (Humble/Iron) is native to Linux. Dual-booting or dedicated Linux machines are mandatory for a friction-free experience. |
+| **GPU** (رکاوٹ) | **NVIDIA RTX 4070 Ti (12GB VRAM)** یا اس سے زیادہ | روبوٹ اور ماحول کے لیے USD (Universal Scene Description) اثاثے لوڈ کرنے کے لیے آپ کو زیادہ VRAM کی ضرورت ہے، اور ساتھ ہی VLA (Vision-Language-Action) ماڈلز چلانے کے لیے۔ |
+| **GPU** (مثالی) | **RTX 3090 یا 4090 (24GB VRAM)** | زیادہ سین پیچیدگی کے ساتھ ہموار "Sim-to-Real" ٹریننگ کی اجازت دیتا ہے۔ |
+| **CPU** | Intel Core i7 (13th Gen+) یا AMD Ryzen 9 | Gazebo/Isaac میں فزکس کیلکولیشنز (Rigid Body Dynamics) CPU-intensive ہیں۔ |
+| **RAM** | **64 GB DDR5** (32 GB مطلق کم از کم) | 32 GB پیچیدہ سین رینڈرنگ کے دوران کریش ہو جائے گا۔ 64 GB ہیڈ روم فراہم کرتا ہے۔ |
+| **OS** | **Ubuntu 22.04 LTS** | اگرچہ Isaac Sim Windows پر چلتا ہے، ROS 2 (Humble/Iron) Linux کے لیے مقامی ہے۔ ڈوئل بوٹنگ یا وقف شدہ Linux مشینیں رگڑ سے پاک تجربے کے لیے لازمی ہیں۔ |
 
-:::warning GPU Requirement
-Standard laptops (MacBooks or non-RTX Windows machines) **cannot run** NVIDIA Isaac Sim. You must have an NVIDIA RTX GPU.
+:::warning GPU کی ضرورت
+عام لیپ ٹاپس (MacBooks یا غیر RTX Windows مشینیں) NVIDIA Isaac Sim **نہیں چلا سکتیں**۔ آپ کے پاس NVIDIA RTX GPU ہونا ضروری ہے۔
 :::
 
 ---
 
-## 2. The "Physical AI" Edge Kit
+## 2. "فزیکل AI" ایج کٹ
 
-Since a full humanoid robot is expensive, students learn "Physical AI" by setting up the nervous system on a desk before deploying it to a robot. This kit covers Module 3 (Isaac ROS) and Module 4 (VLA).
+چونکہ مکمل ہیومنائیڈ روبوٹ مہنگا ہے، طالب علم ڈیسک پر اعصابی نظام قائم کرکے "فزیکل AI" سیکھتے ہیں اس سے پہلے کہ اسے روبوٹ میں ڈیپلائے کریں۔ یہ کٹ ماڈیول 3 (Isaac ROS) اور ماڈیول 4 (VLA) کا احاطہ کرتی ہے۔
 
-| Component | Model | Price (Approx.) | Role |
+| جزو | ماڈل | قیمت (تقریباً) | کردار |
 |-----------|-------|-----------------|------|
-| **The Brain** | NVIDIA Jetson Orin Nano (8GB) or Orin NX (16GB) | $249 - $599 | Industry standard for embodied AI. Students will deploy their ROS 2 nodes here to understand resource constraints vs. their powerful workstations. |
-| **The Eyes** | Intel RealSense D435i or D455 | $349 | Provides RGB (Color) and Depth (Distance) data. Essential for the VSLAM and Perception modules. |
-| **The Inner Ear** | Generic USB IMU (BNO055) | $30 - $50 | Often built into the RealSense D435i or Jetson boards, but a separate module helps teach IMU calibration. |
-| **Voice Interface** | ReSpeaker USB Mic Array v2.0 | $69 | Far-field microphone for voice commands and the "Voice-to-Action" Whisper integration (Module 4). |
-| **Storage** | 128GB microSD Card (High-endurance) | $30 | Required for Jetson OS. |
-| **Total** | | **~$700 per kit** | |
+| **دماغ** | NVIDIA Jetson Orin Nano (8GB) یا Orin NX (16GB) | $249 - $599 | Embodied AI کے لیے انڈسٹری سٹینڈرڈ۔ طالب علم یہاں اپنے ROS 2 نوڈز ڈیپلائے کریں گے تاکہ ان کے طاقتور ورک سٹیشنز کے مقابلے میں وسائل کی پابندیاں سمجھ سکیں۔ |
+| **آنکھیں** | Intel RealSense D435i یا D455 | $349 | RGB (رنگ) اور Depth (فاصلہ) ڈیٹا فراہم کرتا ہے۔ VSLAM اور Perception ماڈیولز کے لیے ضروری۔ |
+| **اندرونی کان** | Generic USB IMU (BNO055) | $30 - $50 | اکثر RealSense D435i یا Jetson بورڈز میں بلٹ ان ہوتا ہے، لیکن ایک الگ ماڈیول IMU کیلیبریشن سکھانے میں مدد کرتا ہے۔ |
+| **آواز انٹرفیس** | ReSpeaker USB Mic Array v2.0 | $69 | آواز کمانڈز اور "Voice-to-Action" Whisper انضمام (ماڈیول 4) کے لیے فار فیلڈ مائیکروفون۔ |
+| **اسٹوریج** | 128GB microSD Card (High-endurance) | $30 | Jetson OS کے لیے ضروری۔ |
+| **کل** | | **~$700 فی کٹ** | |
 
-:::tip Economy Kit
-The **Jetson Orin Nano Super Dev Kit** (8GB) is now $249 (price dropped from ~$499), making it more accessible for students.
+:::tip اکانومی کٹ
+**Jetson Orin Nano Super Dev Kit** (8GB) اب $249 ہے (قیمت ~$499 سے کم ہو گئی)، جو طالب علموں کے لیے زیادہ قابل رسائی بناتی ہے۔
 :::
 
 ---
 
-## 3. The Robot Lab
+## 3. روبوٹ لیب
 
-For the "Physical" part of the course, you have three tiers of options depending on budget.
+کورس کے "فزیکل" حصے کے لیے، بجٹ کے لحاظ سے آپ کے پاس تین درجے کے اختیارات ہیں۔
 
-### Option A: The "Proxy" Approach (Recommended for Budget)
+### آپشن A: "پراکسی" اپروچ (بجٹ کے لیے تجویز کردہ)
 
-Use a quadruped (dog) or a robotic arm as a proxy. The software principles (ROS 2, VSLAM, Isaac Sim) transfer 90% effectively to humanoids.
+ایک quadruped (کتا) یا روبوٹک بازو کو پراکسی کے طور پر استعمال کریں۔ سافٹ ویئر اصول (ROS 2، VSLAM، Isaac Sim) 90% مؤثر طریقے سے ہیومنائیڈز میں منتقل ہوتے ہیں۔
 
-| Robot | Price | Pros | Cons |
+| روبوٹ | قیمت | فوائد | نقصانات |
 |-------|-------|------|------|
-| **Unitree Go2 Edu** | $1,800 - $3,000 | Highly durable, excellent ROS 2 support, affordable enough to have multiple units | Not a biped (humanoid) |
+| **Unitree Go2 Edu** | $1,800 - $3,000 | انتہائی پائیدار، بہترین ROS 2 سپورٹ، متعدد یونٹس رکھنے کے لیے کافی سستا | biped (humanoid) نہیں ہے |
 
-### Option B: The "Miniature Humanoid" Approach
+### آپشن B: "چھوٹا ہیومنائیڈ" اپروچ
 
-Small, table-top humanoids.
+چھوٹے، ٹیبل ٹاپ ہیومنائیڈز۔
 
-| Robot | Price | Notes |
+| روبوٹ | قیمت | نوٹس |
 |-------|-------|-------|
-| **Unitree G1** | ~$16,000 | Research-grade humanoid with open SDK |
-| **Robotis OP3** | ~$12,000 | Older but stable platform |
-| **Hiwonder TonyPi Pro** | ~$600 | Budget alternative (runs on Raspberry Pi, limited Isaac ROS support) |
+| **Unitree G1** | ~$16,000 | ریسرچ گریڈ ہیومنائیڈ کھلے SDK کے ساتھ |
+| **Robotis OP3** | ~$12,000 | پرانا لیکن مستحکم پلیٹ فارم |
+| **Hiwonder TonyPi Pro** | ~$600 | بجٹ متبادل (Raspberry Pi پر چلتا ہے، محدود Isaac ROS سپورٹ) |
 
-:::warning Budget Humanoids
-Cheap kits (Hiwonder) usually run on Raspberry Pi, which **cannot run NVIDIA Isaac ROS efficiently**. Use these only for kinematics (walking) and use the Jetson kits for AI.
+:::warning بجٹ ہیومنائیڈز
+سستے کٹس (Hiwonder) عام طور پر Raspberry Pi پر چلتے ہیں، جو **NVIDIA Isaac ROS مؤثر طریقے سے نہیں چلا سکتا**۔ ان کا استعمال صرف kinematics (چلنا) کے لیے کریں اور AI کے لیے Jetson کٹس استعمال کریں۔
 :::
 
-### Option C: The "Premium" Lab (Sim-to-Real specific)
+### آپشن C: "پریمیم" لیب (Sim-to-Real مخصوص)
 
-If the goal is to actually deploy the Capstone to a real humanoid:
+اگر مقصد کیپ اسٹون کو اصل ہیومنائیڈ میں ڈیپلائے کرنا ہے:
 
-| Robot | Price | Why? |
+| روبوٹ | قیمت | کیوں؟ |
 |-------|-------|------|
-| **Unitree G1 Humanoid** | ~$16,000 | One of the few commercially available humanoids that can walk dynamically and has an SDK open enough for students to inject their own ROS 2 controllers. |
+| **Unitree G1 Humanoid** | ~$16,000 | تجارتی طور پر دستیاب چند ہیومنائیڈز میں سے ایک جو متحرک طور پر چل سکتا ہے اور SDK کافی کھلا ہے کہ طالب علم اپنے ROS 2 کنٹرولرز داخل کر سکیں۔ |
 
 ---
 
-## 4. Summary of Architecture
+## 4. آرکیٹیکچر کا خلاصہ
 
-To teach this successfully, your lab infrastructure should look like this:
+اسے کامیابی سے سکھانے کے لیے، آپ کی لیب انفراسٹرکچر اس طرح نظر آنی چاہیے:
 
-| Component | Hardware | Function |
+| جزو | ہارڈویئر | فنکشن |
 |-----------|----------|----------|
-| **Sim Rig** | PC with RTX 4080 + Ubuntu 22.04 | Runs Isaac Sim, Gazebo, Unity, and trains LLM/VLA models |
-| **Edge Brain** | Jetson Orin Nano | Runs the "Inference" stack. Students deploy their code here |
-| **Sensors** | RealSense Camera + Lidar | Connected to the Jetson to feed real-world data to the AI |
-| **Actuator** | Unitree Go2 or G1 (Shared) | Receives motor commands from the Jetson |
+| **Sim Rig** | RTX 4080 + Ubuntu 22.04 والا PC | Isaac Sim، Gazebo، Unity چلاتا ہے، اور LLM/VLA ماڈلز ٹرین کرتا ہے |
+| **ایج برین** | Jetson Orin Nano | "Inference" اسٹیک چلاتا ہے۔ طالب علم یہاں اپنا کوڈ ڈیپلائے کرتے ہیں |
+| **سینسرز** | RealSense Camera + Lidar | Jetson سے منسلک تاکہ AI کو حقیقی دنیا کا ڈیٹا فیڈ کر سکیں |
+| **ایکچویٹر** | Unitree Go2 یا G1 (شیئرڈ) | Jetson سے موٹر کمانڈز وصول کرتا ہے |
 
-:::danger Critical Note
-If you do not have access to RTX-enabled workstations, we must restructure the course to rely entirely on **cloud-based instances** (like AWS RoboMaker or NVIDIA's cloud delivery for Omniverse), though this introduces significant latency and cost complexity.
+:::danger اہم نوٹ
+اگر آپ کے پاس RTX فعال ورک سٹیشنز تک رسائی نہیں ہے، تو ہمیں مکمل طور پر **کلاؤڈ پر مبنی انسٹنسز** (جیسے AWS RoboMaker یا NVIDIA کی Omniverse کے لیے کلاؤڈ ڈیلیوری) پر انحصار کرنے کے لیے کورس کو دوبارہ ترتیب دینا ہوگا، حالانکہ اس سے نمایاں تاخیر اور لاگت کی پیچیدگی متعارف ہوتی ہے۔
 :::
 
 ---
 
-## Option 2: High OpEx - The "Ether" Lab (Cloud-Native)
+## آپشن 2: ہائی OpEx - "ایتھر" لیب (کلاؤڈ نیٹیو)
 
-**Best for**: Rapid deployment, or students with weak laptops.
+**بہترین ہے**: تیز ڈیپلائمنٹ، یا کمزور لیپ ٹاپس والے طالب علموں کے لیے۔
 
-### 1. Cloud Workstations (AWS/Azure)
+### 1. کلاؤڈ ورک سٹیشنز (AWS/Azure)
 
-Instead of buying PCs, you rent instances.
+PCs خریدنے کے بجائے، آپ انسٹنسز کرایے پر لیتے ہیں۔
 
-| Component | Specification | Cost |
+| جزو | تفصیل | لاگت |
 |-----------|---------------|------|
-| **Instance Type** | AWS g5.2xlarge (A10G GPU, 24GB VRAM) or g6e.xlarge | ~$1.50/hour |
-| **Software** | NVIDIA Isaac Sim on Omniverse Cloud | Requires specific AMI |
-| **Usage** | 10 hours/week × 12 weeks = 120 hours | - |
-| **Storage** | EBS volumes for saving environments | ~$25/quarter |
-| **Total Cloud Bill** | | **~$205 per quarter** |
+| **انسٹنس ٹائپ** | AWS g5.2xlarge (A10G GPU، 24GB VRAM) یا g6e.xlarge | ~$1.50/گھنٹہ |
+| **سافٹ ویئر** | Omniverse Cloud پر NVIDIA Isaac Sim | مخصوص AMI کی ضرورت ہے |
+| **استعمال** | 10 گھنٹے/ہفتہ × 12 ہفتے = 120 گھنٹے | - |
+| **اسٹوریج** | ماحول کو محفوظ کرنے کے لیے EBS والیومز | ~$25/سہ ماہی |
+| **کل کلاؤڈ بل** | | **~$205 فی سہ ماہی** |
 
-### 2. Local "Bridge" Hardware
+### 2. مقامی "برج" ہارڈویئر
 
-You cannot eliminate hardware entirely for "Physical AI." You still need the edge devices to deploy the code physically.
+آپ "فزیکل AI" کے لیے ہارڈویئر کو مکمل طور پر ختم نہیں کر سکتے۔ آپ کو اب بھی کوڈ کو فزیکل طور پر ڈیپلائے کرنے کے لیے ایج ڈیوائسز کی ضرورت ہے۔
 
-- **Edge AI Kits**: Jetson Kit ($700 one-time purchase)
-- **Robot**: One physical robot for final demo ($3,000 - Unitree Go2)
+- **ایج AI کٹس**: Jetson Kit ($700 ایک بار کی خریداری)
+- **روبوٹ**: آخری ڈیمو کے لیے ایک فزیکل روبوٹ ($3,000 - Unitree Go2)
 
-### 3. The Latency Trap (Hidden Cost)
+### 3. تاخیر کا جال (پوشیدہ لاگت)
 
-:::warning Cloud Limitations
-Simulating in the cloud works well, but **controlling a real robot from a cloud instance is dangerous** due to latency.
+:::warning کلاؤڈ کی حدود
+کلاؤڈ میں سمیولیٹ کرنا اچھی طرح کام کرتا ہے، لیکن **کلاؤڈ انسٹنس سے حقیقی روبوٹ کو کنٹرول کرنا خطرناک ہے** تاخیر کی وجہ سے۔
 
-**Solution**: Students train in the Cloud, download the model (weights), and flash it to the local Jetson kit.
+**حل**: طالب علم کلاؤڈ میں ٹرین کرتے ہیں، ماڈل (وزن) ڈاؤن لوڈ کرتے ہیں، اور اسے مقامی Jetson کٹ میں فلیش کرتے ہیں۔
 :::
 
 ---
 
-## The Economy Jetson Student Kit
+## اکانومی Jetson طالب علم کٹ
 
-**Best for**: Learning ROS 2, Basic Computer Vision, and Sim-to-Real control.
+**بہترین ہے**: ROS 2، بیسک کمپیوٹر وژن، اور Sim-to-Real کنٹرول سیکھنے کے لیے۔
 
-| Component | Model | Price (Approx.) | Notes |
+| جزو | ماڈل | قیمت (تقریباً) | نوٹس |
 |-----------|-------|-----------------|-------|
-| **The Brain** | NVIDIA Jetson Orin Nano Super Dev Kit (8GB) | $249 | New official MSRP (Price dropped from ~$499). Capable of 40 TOPS. |
-| **The Eyes** | Intel RealSense D435i | $349 | Includes IMU (essential for SLAM). Do not buy the D435 (non-i). |
-| **The Ears** | ReSpeaker USB Mic Array v2.0 | $69 | Far-field microphone for voice commands (Module 4). |
-| **Wi-Fi** | (Included in Dev Kit) | $0 | The new "Super" kit includes the Wi-Fi module pre-installed. |
-| **Power/Misc** | SD Card (128GB) + Jumper Wires | $30 | High-endurance microSD card required for the OS. |
-| **TOTAL** | | **~$700 per kit** | |
+| **دماغ** | NVIDIA Jetson Orin Nano Super Dev Kit (8GB) | $249 | نیا سرکاری MSRP (قیمت ~$499 سے کم ہو گئی)۔ 40 TOPS کی صلاحیت۔ |
+| **آنکھیں** | Intel RealSense D435i | $349 | IMU شامل ہے (SLAM کے لیے ضروری)۔ D435 (non-i) نہ خریدیں۔ |
+| **کان** | ReSpeaker USB Mic Array v2.0 | $69 | آواز کمانڈز کے لیے فار فیلڈ مائیکروفون (ماڈیول 4)۔ |
+| **Wi-Fi** | (Dev Kit میں شامل) | $0 | نیا "Super" کٹ پہلے سے انسٹال شدہ Wi-Fi ماڈیول کے ساتھ آتا ہے۔ |
+| **پاور/متفرق** | SD Card (128GB) + جمپر وائرز | $30 | OS کے لیے High-endurance microSD کارڈ ضروری ہے۔ |
+| **کل** | | **~$700 فی کٹ** | |
 
 ---
 
-## Next Steps
+## اگلے مراحل
 
-Now that you understand the hardware requirements, let's dive into the first module: **The Robotic Nervous System (ROS 2)**.
+اب جب آپ ہارڈویئر کی ضروریات کو سمجھ گئے ہیں، آئیے پہلے ماڈیول میں غوطہ لگائیں: **روبوٹک اعصابی نظام (ROS 2)**۔
 
-👉 **Next**: [Module 1: ROS 2 Fundamentals](./module-1-ros2)
+👉 **اگلا**: [ماڈیول 1: ROS 2 بنیادی باتیں](./module-1-ros2)

@@ -1,7 +1,7 @@
 ---
 id: module-4-vla
-title: "Module 4: Vision-Language-Action (VLA)"
-sidebar_label: "Module 4: VLA"
+title: "ماڈیول 4: Vision-Language-Action (VLA)"
+sidebar_label: "ماڈیول 4: VLA"
 sidebar_position: 6
 ---
 
@@ -9,26 +9,26 @@ import PersonalizeButton from '@site/src/components/Personalization/PersonalizeB
 import ContentVariant from '@site/src/components/Personalization/ContentVariant';
 
 
-# Module 4: Vision-Language-Action (VLA)
+# ماڈیول 4: Vision-Language-Action (VLA)
 
-## Overview
+## جائزہ
 
-**Focus**: The convergence of LLMs and Robotics
+**توجہ**: LLMs اور روبوٹکس کا انضمام
 
-Vision-Language-Action (VLA) models represent the cutting edge of embodied AI—systems that can understand natural language commands, perceive their environment through vision, and execute physical actions. This module teaches you to build conversational robots that respond to voice commands and perform complex tasks autonomously.
+Vision-Language-Action (VLA) ماڈلز embodied AI کی جدید ترین شکل ہیں—ایسے سسٹم جو قدرتی زبان کی کمانڈز کو سمجھ سکتے ہیں، اپنے ماحول کو بصارت کے ذریعے محسوس کر سکتے ہیں، اور جسمانی اعمال انجام دے سکتے ہیں۔ یہ ماڈیول آپ کو سکھاتا ہے کہ گفتگو کرنے والے روبوٹ کیسے بنائیں جو آوازی کمانڈز کا جواب دیتے ہیں اور خودمختار طور پر پیچیدہ کام انجام دیتے ہیں۔
 
 ---
 
-## Learning Objectives
+## سیکھنے کے مقاصد
 
-By the end of this module, you will:
+اس ماڈیول کے اختتام تک، آپ یہ کر سکیں گے:
 
-1. ✅ Integrate speech recognition with OpenAI Whisper
-2. ✅ Use LLMs (GPT-4) for cognitive planning
-3. ✅ Implement vision-based object detection
-4. ✅ Translate natural language to ROS 2 actions
-5. ✅ Build the Capstone Project: The Autonomous Humanoid
-6. ✅ Deploy multi-modal interaction systems
+1. ✅ OpenAI Whisper کے ساتھ تقریر کی شناخت کو ضم کرنا
+2. ✅ علمی منصوبہ بندی کے لیے LLMs (GPT-4) استعمال کرنا
+3. ✅ بصارت پر مبنی چیزوں کی شناخت نافذ کرنا
+4. ✅ قدرتی زبان کو ROS 2 اعمال میں ترجمہ کرنا
+5. ✅ Capstone پروجیکٹ بنانا: خودمختار ہیومنائیڈ
+6. ✅ کثیر الجہتی تعامل کے سسٹم ڈیپلائے کرنا
 
 ---
 
@@ -36,7 +36,7 @@ By the end of this module, you will:
 
 ---
 
-## The VLA Pipeline
+## VLA پائپ لائن
 
 ```
 ┌──────────────┐     ┌────────────┐     ┌──────────────┐     ┌────────────┐
@@ -55,95 +55,95 @@ By the end of this module, you will:
 
 ---
 
-## Component 1: Voice-to-Text with OpenAI Whisper
+## جزو 1: OpenAI Whisper کے ساتھ آواز سے متن
 
-Whisper is OpenAI's state-of-the-art speech recognition model.
+Whisper OpenAI کا جدید ترین تقریر شناخت ماڈل ہے۔
 
 <ContentVariant hardwareType="gpu_workstation">
 
-### Installing Whisper (GPU Accelerated)
+### Whisper انسٹال کریں (GPU Accelerated)
 
-**For RTX 4090 Users - Maximum Performance:**
+**RTX 4090 صارفین کے لیے - زیادہ سے زیادہ کارکردگی:**
 
 ```bash
-# Install with CUDA support for GPU acceleration
+# GPU acceleration کے لیے CUDA support کے ساتھ انسٹال کریں
 pip install openai-whisper
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
 
-### Local Model Training
+### مقامی ماڈل ٹریننگ
 
 ```python
 import whisper
 
-# Use largest model for best accuracy (requires 10GB+ VRAM)
-model = whisper.load_model("large-v2")  # GPU required
+# بہترین درستگی کے لیے سب سے بڑا ماڈل استعمال کریں (10GB+ VRAM درکار ہے)
+model = whisper.load_model("large-v2")  # GPU ضروری ہے
 
-# Transcribe with GPU acceleration
-result = model.transcribe("audio.mp3", fp16=True)  # Use FP16 for speed
+# GPU acceleration کے ساتھ نقل کریں
+result = model.transcribe("audio.mp3", fp16=True)  # رفتار کے لیے FP16 استعمال کریں
 print(result["text"])
 ```
 
-**Performance**: ~10x faster than CPU, real-time transcription possible
+**کارکردگی**: CPU سے ~10x تیز، حقیقی وقت میں نقل ممکن ہے
 
 </ContentVariant>
 
 <ContentVariant hardwareType="edge_device">
 
-### Installing Whisper (Jetson Optimized)
+### Whisper انسٹال کریں (Jetson Optimized)
 
-**For Jetson Orin Nano - Lightweight Models:**
+**Jetson Orin Nano کے لیے - ہلکے ماڈلز:**
 
 ```bash
-# Install optimized version for ARM64
+# ARM64 کے لیے بہتر بنایا گیا ورژن انسٹال کریں
 pip install openai-whisper
 
-# Use smaller model to fit Jetson's memory
+# Jetson کی میموری میں فٹ ہونے کے لیے چھوٹا ماڈل استعمال کریں
 ```
 
-### Deployment on Jetson
+### Jetson پر ڈیپلائمنٹ
 
 ```python
 import whisper
 
-# Use smaller model (base or small) for Jetson
-model = whisper.load_model("base")  # 74M parameters, ~500MB
+# Jetson کے لیے چھوٹا ماڈل (base یا small) استعمال کریں
+model = whisper.load_model("base")  # 74M parameters، ~500MB
 
-# Transcribe with reduced memory usage
-result = model.transcribe("audio.mp3", fp16=False)  # FP32 for stability
+# کم میموری استعمال کے ساتھ نقل کریں
+result = model.transcribe("audio.mp3", fp16=False)  # استحکام کے لیے FP32
 print(result["text"])
 ```
 
-**Limitations**:
-- Use "tiny" or "base" models only (large models won't fit)
-- Expect 2-3x slower than GPU workstations
-- Real-time transcription challenging
+**حدود**:
+- صرف "tiny" یا "base" ماڈلز استعمال کریں (بڑے ماڈلز فٹ نہیں ہوں گے)
+- GPU workstations سے 2-3x سست کی توقع کریں
+- حقیقی وقت میں نقل مشکل ہے
 
-**Tip**: Pre-process audio in cloud, deploy inference on Jetson
+**تجویز**: آڈیو کو cloud میں پہلے سے پروسیس کریں، Jetson پر inference ڈیپلائے کریں
 
 </ContentVariant>
 
 <ContentVariant hardwareType="cloud_mac">
 
-### Installing Whisper (Cloud/Mac)
+### Whisper انسٹال کریں (Cloud/Mac)
 
-**For Mac/Cloud Users - API-Based Approach:**
+**Mac/Cloud صارفین کے لیے - API پر مبنی طریقہ:**
 
 ```bash
-# Option 1: Local CPU installation (slow but works)
+# آپشن 1: مقامی CPU انسٹالیشن (سست لیکن کام کرتا ہے)
 pip install openai-whisper
 
-# Option 2: Use OpenAI API (recommended for Mac)
+# آپشن 2: OpenAI API استعمال کریں (Mac کے لیے تجویز کردہ)
 pip install openai
 ```
 
-### Use OpenAI API (Recommended)
+### OpenAI API استعمال کریں (تجویز کردہ)
 
 ```python
 from openai import OpenAI
 client = OpenAI(api_key="your-api-key")
 
-# Cloud-based transcription (no local GPU needed)
+# Cloud-based نقل (مقامی GPU کی ضرورت نہیں)
 with open("audio.mp3", "rb") as audio_file:
     transcript = client.audio.transcriptions.create(
         model="whisper-1",
@@ -152,22 +152,22 @@ with open("audio.mp3", "rb") as audio_file:
 print(transcript.text)
 ```
 
-**Alternative**: Use Google Colab with GPU for training
+**متبادل**: ٹریننگ کے لیے GPU کے ساتھ Google Colab استعمال کریں
 
 ```python
-# In Colab notebook:
+# Colab notebook میں:
 !pip install openai-whisper
 import whisper
-model = whisper.load_model("large-v2")  # Uses Colab's free GPU
+model = whisper.load_model("large-v2")  # Colab کے مفت GPU استعمال کرتا ہے
 ```
 
-**Advantages**: No local GPU needed, cost-effective for prototyping
+**فوائد**: مقامی GPU کی ضرورت نہیں، prototyping کے لیے لاگت مؤثر
 
 </ContentVariant>
 
 ---
 
-### Real-Time ROS 2 Integration
+### حقیقی وقت میں ROS 2 انضمام
 
 ```python
 import rclpy
@@ -183,10 +183,10 @@ class VoiceCommandNode(Node):
     def __init__(self):
         super().__init__('voice_command_node')
 
-        # Load Whisper model
+        # Whisper ماڈل لوڈ کریں
         self.model = whisper.load_model("base")
 
-        # Subscribe to microphone audio
+        # مائیکروفون آڈیو کو subscribe کریں
         self.audio_sub = self.create_subscription(
             AudioData,
             '/audio',
@@ -194,7 +194,7 @@ class VoiceCommandNode(Node):
             10
         )
 
-        # Publish transcribed commands
+        # نقل شدہ کمانڈز شائع کریں
         self.command_pub = self.create_publisher(
             String,
             '/voice_command',
@@ -202,23 +202,23 @@ class VoiceCommandNode(Node):
         )
 
         self.audio_buffer = []
-        self.buffer_duration = 3.0  # seconds
+        self.buffer_duration = 3.0  # سیکنڈ
 
     def audio_callback(self, msg):
-        # Accumulate audio data
+        # آڈیو ڈیٹا جمع کریں
         self.audio_buffer.extend(msg.data)
 
-        # Process when buffer is full
+        # جب buffer بھر جائے تو پروسیس کریں
         if len(self.audio_buffer) >= 48000 * self.buffer_duration:
             self.process_audio()
             self.audio_buffer = []
 
     def process_audio(self):
-        # Convert to numpy array
+        # numpy array میں تبدیل کریں
         audio_data = np.array(self.audio_buffer, dtype=np.float32)
-        audio_data = audio_data / 32768.0  # Normalize
+        audio_data = audio_data / 32768.0  # Normalize کریں
 
-        # Transcribe with Whisper
+        # Whisper کے ساتھ نقل کریں
         result = self.model.transcribe(
             audio_data,
             language='en',
@@ -228,9 +228,9 @@ class VoiceCommandNode(Node):
         command = result["text"].strip()
 
         if command:
-            self.get_logger().info(f'Voice command: {command}')
+            self.get_logger().info(f'آوازی کمانڈ: {command}')
 
-            # Publish command
+            # کمانڈ شائع کریں
             msg = String()
             msg.data = command
             self.command_pub.publish(msg)
@@ -244,15 +244,15 @@ def main(args=None):
 
 ---
 
-## Component 2: Cognitive Planning with GPT-4
+## جزو 2: GPT-4 کے ساتھ علمی منصوبہ بندی
 
-LLMs can translate high-level commands into sequences of robot actions.
+LLMs اعلیٰ سطح کی کمانڈز کو روبوٹ کے اعمال کی ترتیب میں ترجمہ کر سکتے ہیں۔
 
-### Task Decomposition Example
+### کام کی تقسیم کی مثال
 
-**Input**: "Clean the room"
+**ان پٹ**: "کمرہ صاف کرو"
 
-**GPT-4 Output**:
+**GPT-4 آؤٹ پٹ**:
 ```json
 {
   "task": "clean_room",
@@ -269,7 +269,7 @@ LLMs can translate high-level commands into sequences of robot actions.
 
 ---
 
-### ROS 2 Integration with GPT-4
+### GPT-4 کے ساتھ ROS 2 انضمام
 
 ```python
 import rclpy
@@ -288,7 +288,7 @@ class CognitivePlannerNode(Node):
         # OpenAI client
         self.client = openai.OpenAI()
 
-        # Subscribe to voice commands
+        # آوازی کمانڈز کو subscribe کریں
         self.command_sub = self.create_subscription(
             String,
             '/voice_command',
@@ -303,7 +303,7 @@ class CognitivePlannerNode(Node):
             'navigate_to_pose'
         )
 
-        # Known locations
+        # معلوم مقامات
         self.locations = {
             "table": {"x": 2.0, "y": 3.0},
             "trash_bin": {"x": -1.0, "y": -2.0},
@@ -312,16 +312,16 @@ class CognitivePlannerNode(Node):
 
     def command_callback(self, msg):
         command = msg.data
-        self.get_logger().info(f'Processing command: {command}')
+        self.get_logger().info(f'کمانڈ پروسیس کر رہے ہیں: {command}')
 
-        # Get action plan from GPT-4
+        # GPT-4 سے action plan حاصل کریں
         plan = self.generate_plan(command)
 
-        # Execute plan
+        # منصوبہ نافذ کریں
         self.execute_plan(plan)
 
     def generate_plan(self, command):
-        """Use GPT-4 to generate action plan."""
+        """GPT-4 استعمال کرکے action plan بنائیں۔"""
 
         system_prompt = """You are a robot task planner. Given a high-level command,
         break it down into a sequence of robot actions. Available actions:
@@ -354,11 +354,11 @@ class CognitivePlannerNode(Node):
         plan_json = response.choices[0].message.content
         plan = json.loads(plan_json)
 
-        self.get_logger().info(f'Generated plan: {json.dumps(plan, indent=2)}')
+        self.get_logger().info(f'بنایا گیا منصوبہ: {json.dumps(plan, indent=2)}')
         return plan
 
     def execute_plan(self, plan):
-        """Execute the action plan step by step."""
+        """قدم بہ قدم action plan نافذ کریں۔"""
 
         for step in sorted(plan["steps"], key=lambda x: x["priority"]):
             action = step["action"]
@@ -373,10 +373,10 @@ class CognitivePlannerNode(Node):
                 self.place_object(step["target"])
 
     def navigate_to(self, target):
-        """Navigate to a target location."""
+        """ہدف کے مقام پر نیویگیٹ کریں۔"""
 
         if target not in self.locations:
-            self.get_logger().error(f'Unknown location: {target}')
+            self.get_logger().error(f'نامعلوم مقام: {target}')
             return
 
         goal_msg = NavigateToPose.Goal()
@@ -385,7 +385,7 @@ class CognitivePlannerNode(Node):
         goal_msg.pose.pose.position.y = self.locations[target]["y"]
         goal_msg.pose.pose.orientation.w = 1.0
 
-        self.get_logger().info(f'Navigating to {target}...')
+        self.get_logger().info(f'{target} کی طرف نیویگیٹ کر رہے ہیں...')
 
         self.nav_client.wait_for_server()
         future = self.nav_client.send_goal_async(goal_msg)
@@ -395,25 +395,25 @@ class CognitivePlannerNode(Node):
         goal_handle = future.result()
 
         if not goal_handle.accepted:
-            self.get_logger().error('Goal rejected')
+            self.get_logger().error('ہدف مسترد ہو گیا')
             return
 
-        self.get_logger().info('Goal accepted')
+        self.get_logger().info('ہدف قبول ہو گیا')
         result_future = goal_handle.get_result_async()
         result_future.add_done_callback(self.get_result_callback)
 
     def get_result_callback(self, future):
         result = future.result().result
-        self.get_logger().info('Navigation completed')
+        self.get_logger().info('نیویگیشن مکمل ہو گئی')
 ```
 
 ---
 
-## Component 3: Vision-Based Object Detection
+## جزو 3: بصارت پر مبنی چیزوں کی شناخت
 
-Integrate YOLO or other object detection models for visual perception.
+بصری ادراک کے لیے YOLO یا دیگر object detection ماڈلز کو ضم کریں۔
 
-### YOLOv8 with ROS 2
+### ROS 2 کے ساتھ YOLOv8
 
 ```python
 from ultralytics import YOLO
@@ -426,13 +426,13 @@ class ObjectDetectorNode(Node):
     def __init__(self):
         super().__init__('object_detector')
 
-        # Load YOLO model
+        # YOLO ماڈل لوڈ کریں
         self.model = YOLO('yolov8n.pt')
 
         # CV Bridge
         self.bridge = CvBridge()
 
-        # Subscribe to camera
+        # کیمرے کو subscribe کریں
         self.image_sub = self.create_subscription(
             Image,
             '/camera/image_raw',
@@ -440,7 +440,7 @@ class ObjectDetectorNode(Node):
             10
         )
 
-        # Publish detections
+        # شناخت شدہ چیزیں شائع کریں
         self.detection_pub = self.create_publisher(
             Detection2DArray,
             '/detections',
@@ -448,13 +448,13 @@ class ObjectDetectorNode(Node):
         )
 
     def image_callback(self, msg):
-        # Convert ROS Image to OpenCV
+        # ROS Image کو OpenCV میں تبدیل کریں
         cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
-        # Run inference
+        # Inference چلائیں
         results = self.model(cv_image)
 
-        # Create detection message
+        # Detection message بنائیں
         detection_array = Detection2DArray()
         detection_array.header = msg.header
 
@@ -469,7 +469,7 @@ class ObjectDetectorNode(Node):
                 detection.bbox.size_x = x2 - x1
                 detection.bbox.size_y = y2 - y1
 
-                # Class and confidence
+                # Class اور confidence
                 detection.results.append({
                     "id": int(box.cls[0]),
                     "score": float(box.conf[0])
@@ -477,32 +477,32 @@ class ObjectDetectorNode(Node):
 
                 detection_array.detections.append(detection)
 
-        # Publish detections
+        # شناخت شدہ چیزیں شائع کریں
         self.detection_pub.publish(detection_array)
 ```
 
 ---
 
-## Capstone Project: The Autonomous Humanoid
+## Capstone پروجیکٹ: خودمختار ہیومنائیڈ
 
-### Project Overview
+### پروجیکٹ کا جائزہ
 
-Build a complete autonomous humanoid system that:
+ایک مکمل خودمختار ہیومنائیڈ سسٹم بنائیں جو:
 
-1. **Receives voice commands** ("Clean the room", "Bring me water")
-2. **Plans action sequences** using GPT-4
-3. **Navigates autonomously** using Nav2
-4. **Detects objects** with vision models
-5. **Manipulates objects** with arm control
-6. **Provides feedback** via speech synthesis
+1. **آوازی کمانڈز وصول کرے** ("کمرہ صاف کرو"، "مجھے پانی لاؤ")
+2. **GPT-4 استعمال کرکے اعمال کی ترتیب کی منصوبہ بندی کرے**
+3. **Nav2 استعمال کرکے خودمختار طور پر نیویگیٹ کرے**
+4. **vision ماڈلز کے ساتھ چیزوں کی شناخت کرے**
+5. **بازو کے کنٹرول کے ساتھ چیزوں کو ہیرا پھیری کرے**
+6. **تقریر کی ترکیب کے ذریعے رائے فراہم کرے**
 
 ---
 
-### System Architecture
+### سسٹم آرکیٹیکچر
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                  Autonomous Humanoid System                  │
+│                  خودمختار ہیومنائیڈ سسٹم                     │
 ├─────────────────────────────────────────────────────────────┤
 │                                                               │
 │  ┌──────────────┐      ┌──────────────┐      ┌───────────┐ │
@@ -527,26 +527,26 @@ Build a complete autonomous humanoid system that:
 
 ---
 
-### Requirements
+### ضروریات
 
-**Hardware:**
-- RTX 4080+ workstation for simulation
-- NVIDIA Jetson Orin for deployment
-- Intel RealSense D435i camera
-- ReSpeaker microphone array
-- Unitree G1 humanoid (or simulation)
+**ہارڈویئر:**
+- سمیولیشن کے لیے RTX 4080+ workstation
+- ڈیپلائمنٹ کے لیے NVIDIA Jetson Orin
+- Intel RealSense D435i کیمرہ
+- ReSpeaker مائیکروفون array
+- Unitree G1 humanoid (یا سمیولیشن)
 
-**Software:**
-- Isaac Sim for simulation
+**سافٹ ویئر:**
+- سمیولیشن کے لیے Isaac Sim
 - ROS 2 Humble
 - Isaac ROS packages
 - OpenAI API access
 
 ---
 
-### Implementation Steps
+### نفاذ کے قدمات
 
-#### Step 1: Voice Command Processing
+#### قدم 1: آوازی کمانڈ پروسیسنگ
 
 ```python
 # voice_processor.launch.py
@@ -574,39 +574,39 @@ def generate_launch_description():
     ])
 ```
 
-#### Step 2: Cognitive Planning
+#### قدم 2: علمی منصوبہ بندی
 
 ```python
-# Run cognitive planner
+# Cognitive planner چلائیں
 ros2 run my_robot cognitive_planner_node
 ```
 
-#### Step 3: Perception Pipeline
+#### قدم 3: ادراک کی پائپ لائن
 
 ```bash
-# Launch Isaac ROS VSLAM + Object Detection
+# Isaac ROS VSLAM + Object Detection لانچ کریں
 ros2 launch my_robot perception.launch.py
 ```
 
-#### Step 4: Navigation
+#### قدم 4: نیویگیشن
 
 ```bash
-# Launch Nav2
+# Nav2 لانچ کریں
 ros2 launch my_robot navigation.launch.py
 ```
 
-#### Step 5: Integration
+#### قدم 5: انضمام
 
 ```bash
-# Launch complete system
+# مکمل سسٹم لانچ کریں
 ros2 launch my_robot autonomous_humanoid.launch.py
 ```
 
 ---
 
-## Multi-Modal Interaction
+## کثیر الجہتی تعامل
 
-### Speech Synthesis for Feedback
+### رائے کے لیے تقریر کی ترکیب
 
 ```python
 from gtts import gTTS
@@ -627,60 +627,60 @@ class RobotSpeaker(Node):
         self.speak(msg.data)
 
     def speak(self, text):
-        # Generate speech
+        # تقریر بنائیں
         tts = gTTS(text=text, lang='en')
         tts.save("output.mp3")
 
-        # Play audio
+        # آڈیو چلائیں
         os.system("mpg321 output.mp3")
         os.remove("output.mp3")
 ```
 
 ---
 
-## Assessment Rubric
+## تشخیص کا معیار
 
-### Capstone Project Grading (100 points)
+### Capstone پروجیکٹ گریڈنگ (100 پوائنٹس)
 
-| Category | Points | Requirements |
+| زمرہ | پوائنٹس | ضروریات |
 |----------|--------|--------------|
-| **Voice Command Processing** | 20 | Whisper integration, accuracy >90% |
-| **Cognitive Planning** | 25 | GPT-4 task decomposition, JSON output validation |
-| **Navigation** | 20 | Autonomous navigation with obstacle avoidance |
-| **Object Detection** | 15 | YOLOv8 integration, detection accuracy >80% |
-| **Manipulation** | 10 | Pick-and-place functionality |
-| **System Integration** | 10 | All components working together |
+| **آوازی کمانڈ پروسیسنگ** | 20 | Whisper انضمام، درستگی >90% |
+| **علمی منصوبہ بندی** | 25 | GPT-4 کام کی تقسیم، JSON آؤٹ پٹ کی تصدیق |
+| **نیویگیشن** | 20 | رکاوٹوں سے بچنے کے ساتھ خودمختار نیویگیشن |
+| **چیزوں کی شناخت** | 15 | YOLOv8 انضمام، شناخت کی درستگی >80% |
+| **ہیرا پھیری** | 10 | اٹھانے اور رکھنے کی فعالیت |
+| **سسٹم انضمام** | 10 | تمام اجزاء مل کر کام کر رہے ہیں |
 
-**Bonus** (+10): Sim-to-real deployment on physical robot
+**بونس** (+10): جسمانی روبوٹ پر Sim-to-real ڈیپلائمنٹ
 
 ---
 
-## Resources
+## وسائل
 
 - [OpenAI Whisper](https://github.com/openai/whisper)
-- [GPT-4 API Documentation](https://platform.openai.com/docs/api-reference)
+- [GPT-4 API دستاویزات](https://platform.openai.com/docs/api-reference)
 - [YOLOv8](https://github.com/ultralytics/ultralytics)
-- [MoveIt2 Documentation](https://moveit.ros.org/)
-- [Nav2 Documentation](https://navigation.ros.org/)
+- [MoveIt2 دستاویزات](https://moveit.ros.org/)
+- [Nav2 دستاویزات](https://navigation.ros.org/)
 
 ---
 
-## Congratulations! 🎉
+## مبارک ہو!
 
-You've completed the **Physical AI & Humanoid Robotics** course!
+آپ نے **فزیکل AI اور ہیومنائیڈ روبوٹکس** کورس مکمل کر لیا!
 
-You now have the skills to:
-- ✅ Build ROS 2 robot controllers
-- ✅ Simulate robots in Gazebo and Isaac Sim
-- ✅ Implement AI-powered perception
-- ✅ Create conversational humanoid robots
-- ✅ Deploy to real hardware
+اب آپ کے پاس یہ مہارتیں ہیں:
+- ✅ ROS 2 روبوٹ کنٹرولرز بنانا
+- ✅ Gazebo اور Isaac Sim میں روبوٹس سمیولیٹ کرنا
+- ✅ AI سے چلنے والا ادراک نافذ کرنا
+- ✅ گفتگو کرنے والے ہیومنائیڈ روبوٹس بنانا
+- ✅ حقیقی ہارڈویئر پر ڈیپلائے کرنا
 
-### What's Next?
+### اگلا کیا ہے؟
 
-- Join the ROS community
-- Contribute to open-source robotics projects
-- Build your own robot startup
-- Research advanced topics (multi-robot systems, swarm robotics, human-robot collaboration)
+- ROS کمیونٹی میں شامل ہوں
+- اوپن سورس روبوٹکس پروجیکٹس میں حصہ ڈالیں
+- اپنا روبوٹ startup بنائیں
+- جدید موضوعات پر تحقیق کریں (کثیر روبوٹ سسٹم، swarm robotics، انسان-روبوٹ تعاون)
 
-**Welcome to the future of Physical AI!** 🤖
+**فزیکل AI کے مستقبل میں خوش آمدید!**

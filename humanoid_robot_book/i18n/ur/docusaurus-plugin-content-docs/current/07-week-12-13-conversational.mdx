@@ -1,7 +1,7 @@
 ---
 id: week-12-13-conversational
-title: "Week 12-13: Conversational Robotics with VLA"
-sidebar_label: "Week 12-13: Conversational AI"
+title: "ہفتہ 12-13: VLA کے ساتھ گفتگو کرنے والی روبوٹکس"
+sidebar_label: "ہفتہ 12-13: گفتگو AI"
 sidebar_position: 7
 ---
 
@@ -9,36 +9,36 @@ import PersonalizeButton from '@site/src/components/Personalization/PersonalizeB
 import ContentVariant from '@site/src/components/Personalization/ContentVariant';
 
 
-# Week 12-13: Conversational Robotics with Vision-Language-Action Models
+# ہفتہ 12-13: Vision-Language-Action ماڈلز کے ساتھ گفتگو کرنے والی روبوٹکس
 
-## Overview
+## جائزہ
 
-**Focus**: Voice-controlled humanoid robots using VLA (Vision-Language-Action) models
+**توجہ**: VLA (Vision-Language-Action) ماڈلز استعمال کرتے ہوئے آواز سے کنٹرول ہونے والے ہیومنائیڈ روبوٹس
 
-In this final module, you'll combine everything learned to build a conversational humanoid robot that:
-- Listens to voice commands (Whisper ASR)
-- Understands context using vision and language (Gemini VLA)
-- Generates executable robot actions (ROS 2 commands)
-- Executes motions safely in simulation and real hardware
+اس آخری ماڈیول میں، آپ ہر چیز کو یکجا کر کے ایک گفتگو کرنے والا ہیومنائیڈ روبوٹ بنائیں گے جو:
+- آواز کے احکامات سنتا ہے (Whisper ASR)
+- بصارت اور زبان استعمال کرتے ہوئے سیاق و سباق سمجھتا ہے (Gemini VLA)
+- قابل عمل روبوٹ ایکشنز بناتا ہے (ROS 2 احکامات)
+- سمیولیشن اور حقیقی ہارڈویئر میں محفوظ طریقے سے حرکتیں انجام دیتا ہے
 
 ---
 
-## Learning Objectives
+## سیکھنے کے مقاصد
 
-By the end of this module, you will:
+اس ماڈیول کے اختتام تک، آپ یہ کر سکیں گے:
 
-1. ✅ Integrate Whisper for real-time speech recognition
-2. ✅ Connect Google Gemini as a VLA model for action planning
-3. ✅ Map natural language to robot actions
-4. ✅ Build a voice-controlled navigation system
-5. ✅ Deploy to Jetson with hardware acceleration
-6. ✅ Test in Isaac Sim and transfer to real robot
+1. ✅ حقیقی وقت میں تقریر کی شناخت کے لیے Whisper کو ضم کرنا
+2. ✅ ایکشن پلاننگ کے لیے Google Gemini کو VLA ماڈل کے طور پر جوڑنا
+3. ✅ قدرتی زبان کو روبوٹ ایکشنز میں تبدیل کرنا
+4. ✅ آواز سے کنٹرول ہونے والا نیویگیشن سسٹم بنانا
+5. ✅ ہارڈویئر ایکسیلریشن کے ساتھ Jetson پر ڈیپلائے کرنا
+6. ✅ Isaac Sim میں ٹیسٹ کرنا اور حقیقی روبوٹ میں منتقل کرنا
 
 ---
 
 <PersonalizeButton />
 
-## The VLA Pipeline
+## VLA پائپ لائن
 
 ```
 ┌──────────────┐
@@ -60,88 +60,88 @@ By the end of this module, you will:
 
 ---
 
-## Part 1: Speech Recognition with Whisper
+## حصہ 1: Whisper کے ساتھ تقریر کی شناخت
 
-OpenAI's Whisper is a robust speech recognition model supporting 99 languages.
+OpenAI کا Whisper ایک مضبوط تقریر شناخت ماڈل ہے جو 99 زبانوں کو سپورٹ کرتا ہے۔
 
-### Installing Whisper
+### Whisper انسٹال کرنا
 
 <ContentVariant hardwareType="gpu_workstation">
 
-#### For GPU Workstation Users (RTX 4090+)
+#### GPU ورک سٹیشن صارفین کے لیے (RTX 4090+)
 
-**GPU-Accelerated Installation**
+**GPU-Accelerated انسٹالیشن**
 
 ```bash
-# Install PyTorch with CUDA
+# PyTorch کو CUDA کے ساتھ انسٹال کریں
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
-# Install Whisper
+# Whisper انسٹال کریں
 pip install openai-whisper
 
-# Install audio processing
+# آڈیو پروسیسنگ انسٹال کریں
 sudo apt-get install ffmpeg
 pip install pyaudio
 
-# Test GPU availability
+# GPU دستیابی ٹیسٹ کریں
 python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}')"
 ```
 
-**Performance**: Real-time transcription with `whisper-large-v3` on RTX 4090.
+**کارکردگی**: RTX 4090 پر `whisper-large-v3` کے ساتھ حقیقی وقت میں ٹرانسکرپشن۔
 
 </ContentVariant>
 
 <ContentVariant hardwareType="edge_device">
 
-#### For Jetson Orin Nano Users
+#### Jetson Orin Nano صارفین کے لیے
 
-**Jetson-Optimized Installation**
+**Jetson-Optimized انسٹالیشن**
 
 ```bash
-# Install PyTorch for Jetson (ARM64)
+# Jetson کے لیے PyTorch انسٹال کریں (ARM64)
 pip install torch torchvision torchaudio
 
-# Install Whisper (use smaller model for Jetson)
+# Whisper انسٹال کریں (Jetson کے لیے چھوٹا ماڈل استعمال کریں)
 pip install openai-whisper
 
-# Install audio libraries
+# آڈیو لائبریریز انسٹال کریں
 sudo apt-get install portaudio19-dev python3-pyaudio
 pip install pyaudio
 
-# Use whisper-base or whisper-small for real-time performance
+# حقیقی وقت کی کارکردگی کے لیے whisper-base یا whisper-small استعمال کریں
 ```
 
-**Recommended**: Use `whisper-base` model for 2-3x faster inference on Jetson.
+**تجویز**: Jetson پر 2-3x تیز تر انفرنس کے لیے `whisper-base` ماڈل استعمال کریں۔
 
 </ContentVariant>
 
 <ContentVariant hardwareType="cloud_mac">
 
-#### For Cloud / Mac Users
+#### Cloud / Mac صارفین کے لیے
 
-**CPU Installation**
+**CPU انسٹالیشن**
 
 ```bash
-# Install PyTorch (CPU version)
+# PyTorch انسٹال کریں (CPU ورژن)
 pip install torch torchvision torchaudio
 
-# Install Whisper
+# Whisper انسٹال کریں
 pip install openai-whisper
 
-# Mac: Install audio libraries
+# Mac: آڈیو لائبریریز انسٹال کریں
 brew install portaudio
 pip install pyaudio
 
-# Use whisper-tiny or whisper-base for CPU
+# CPU کے لیے whisper-tiny یا whisper-base استعمال کریں
 ```
 
-**Alternative**: Use Google Cloud Speech-to-Text API for faster inference without local GPU.
+**متبادل**: مقامی GPU کے بغیر تیز تر انفرنس کے لیے Google Cloud Speech-to-Text API استعمال کریں۔
 
 </ContentVariant>
 
 ---
 
-### Real-Time Speech Recognition
+### حقیقی وقت میں تقریر کی شناخت
 
 ```python
 import whisper
@@ -153,14 +153,14 @@ class VoiceListener:
     def __init__(self, model_size="base"):
         """
         model_size: tiny, base, small, medium, large
-        GPU users: Use 'large-v3' for best accuracy
-        Jetson users: Use 'base' for real-time performance
+        GPU صارفین: بہترین درستگی کے لیے 'large-v3' استعمال کریں
+        Jetson صارفین: حقیقی وقت کی کارکردگی کے لیے 'base' استعمال کریں
         """
         self.model = whisper.load_model(model_size)
         self.audio = pyaudio.PyAudio()
 
     def record_audio(self, duration=5):
-        """Record audio from microphone"""
+        """مائیکروفون سے آڈیو ریکارڈ کریں"""
         CHUNK = 1024
         FORMAT = pyaudio.paInt16
         CHANNELS = 1
@@ -174,7 +174,7 @@ class VoiceListener:
             frames_per_buffer=CHUNK
         )
 
-        print("🎤 Listening...")
+        print("🎤 سن رہا ہے...")
         frames = []
 
         for _ in range(0, int(RATE / CHUNK * duration)):
@@ -184,7 +184,7 @@ class VoiceListener:
         stream.stop_stream()
         stream.close()
 
-        # Save to temporary WAV file
+        # عارضی WAV فائل میں محفوظ کریں
         with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as f:
             wf = wave.open(f.name, 'wb')
             wf.setnchannels(CHANNELS)
@@ -195,44 +195,44 @@ class VoiceListener:
             return f.name
 
     def transcribe(self, audio_file):
-        """Transcribe audio to text"""
+        """آڈیو کو متن میں تبدیل کریں"""
         result = self.model.transcribe(audio_file)
         return result["text"]
 
     def listen_and_transcribe(self, duration=5):
-        """Record and transcribe in one call"""
+        """ایک کال میں ریکارڈ اور ٹرانسکرائب کریں"""
         audio_file = self.record_audio(duration)
         text = self.transcribe(audio_file)
-        print(f"📝 Transcribed: {text}")
+        print(f"📝 ٹرانسکرائب شدہ: {text}")
         return text
 
-# Usage
+# استعمال
 listener = VoiceListener(model_size="base")
 command = listener.listen_and_transcribe(duration=5)
-print(f"User said: {command}")
+print(f"صارف نے کہا: {command}")
 ```
 
 ---
 
-## Part 2: VLA with Google Gemini
+## حصہ 2: Google Gemini کے ساتھ VLA
 
-Google Gemini combines vision and language to generate robot actions.
+Google Gemini بصارت اور زبان کو یکجا کر کے روبوٹ ایکشنز بناتا ہے۔
 
-### Setting Up Gemini API
+### Gemini API سیٹ اپ کرنا
 
 ```bash
-# Install Gemini SDK
+# Gemini SDK انسٹال کریں
 pip install google-generativeai
 
-# Set API key
+# API key سیٹ کریں
 export GEMINI_API_KEY="your-api-key-here"
 ```
 
-**Get your API key**: https://makersuite.google.com/app/apikey
+**اپنی API key حاصل کریں**: https://makersuite.google.com/app/apikey
 
 ---
 
-### VLA Prompt Engineering
+### VLA Prompt انجینئرنگ
 
 ```python
 import google.generativeai as genai
@@ -243,7 +243,7 @@ class VLAController:
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
         self.model = genai.GenerativeModel('gemini-1.5-pro')
 
-        # System prompt for VLA
+        # VLA کے لیے سسٹم prompt
         self.system_prompt = """You are a humanoid robot control system.
 Convert natural language commands into ROS 2 action sequences.
 
@@ -268,32 +268,32 @@ Only output valid JSON. No other text."""
 
     def plan_actions(self, command, image=None):
         """
-        Convert voice command to action sequence
+        آواز کے حکم کو ایکشن سیکوینس میں تبدیل کریں
 
         Args:
-            command: Natural language command (from Whisper)
-            image: Optional camera image (PIL Image or file path)
+            command: قدرتی زبان کا حکم (Whisper سے)
+            image: اختیاری کیمرہ تصویر (PIL Image یا فائل پاتھ)
         """
         prompt = f"{self.system_prompt}\n\nUser command: {command}"
 
         if image:
-            # Multimodal input (text + image)
+            # Multimodal input (متن + تصویر)
             response = self.model.generate_content([prompt, image])
         else:
-            # Text-only input
+            # صرف متن input
             response = self.model.generate_content(prompt)
 
         return response.text
 
-# Usage
+# استعمال
 vla = VLAController()
 
-# Text-only command
+# صرف متن کا حکم
 command = "Go to the kitchen and pick up the red mug"
 actions = vla.plan_actions(command)
 print(actions)
 
-# With vision (multimodal)
+# بصارت کے ساتھ (multimodal)
 from PIL import Image
 camera_image = Image.open("camera_feed.jpg")
 command = "Pick up the object in front of me"
@@ -301,7 +301,7 @@ actions = vla.plan_actions(command, image=camera_image)
 print(actions)
 ```
 
-**Expected Output:**
+**متوقع آؤٹ پٹ:**
 
 ```json
 {
@@ -315,9 +315,9 @@ print(actions)
 
 ---
 
-## Part 3: Action Execution with ROS 2
+## حصہ 3: ROS 2 کے ساتھ ایکشن اجرائی
 
-Convert JSON actions to ROS 2 commands.
+JSON ایکشنز کو ROS 2 احکامات میں تبدیل کریں۔
 
 ```python
 import rclpy
@@ -335,7 +335,7 @@ class ActionExecutor(Node):
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
     def execute_actions(self, actions_json):
-        """Execute action sequence from VLA"""
+        """VLA سے ایکشن سیکوینس انجام دیں"""
         actions = json.loads(actions_json)
 
         for action in actions['actions']:
@@ -348,60 +348,60 @@ class ActionExecutor(Node):
                 self.grasp_object(params['object'])
             elif action_type == 'wave':
                 self.wave_hand()
-            # Add more actions...
+            # مزید ایکشنز شامل کریں...
 
     def navigate_to(self, x, y, theta):
-        """Navigate to position using Nav2"""
+        """Nav2 استعمال کرتے ہوئے پوزیشن پر جائیں"""
         goal_msg = NavigateToPose.Goal()
         goal_msg.pose.header.frame_id = 'map'
         goal_msg.pose.pose.position.x = x
         goal_msg.pose.pose.position.y = y
 
-        # Convert theta to quaternion
+        # theta کو quaternion میں تبدیل کریں
         from tf_transformations import quaternion_from_euler
         q = quaternion_from_euler(0, 0, theta)
         goal_msg.pose.pose.orientation.z = q[2]
         goal_msg.pose.pose.orientation.w = q[3]
 
-        self.get_logger().info(f'Navigating to ({x}, {y}, {theta})')
+        self.get_logger().info(f'({x}, {y}, {theta}) پر جا رہے ہیں')
         self.nav_client.send_goal_async(goal_msg)
 
     def grasp_object(self, object_name):
-        """Grasp object (simplified)"""
-        self.get_logger().info(f'Grasping {object_name}')
-        # Implement grasping logic here
-        # - Move arm to pre-grasp pose
-        # - Close gripper
-        # - Lift object
+        """چیز پکڑیں (آسان بنایا گیا)"""
+        self.get_logger().info(f'{object_name} کو پکڑ رہے ہیں')
+        # یہاں پکڑنے کی منطق لاگو کریں
+        # - بازو کو pre-grasp pose میں لے جائیں
+        # - گرپر بند کریں
+        # - چیز اٹھائیں
 
     def wave_hand(self):
-        """Wave hand gesture"""
-        self.get_logger().info('Waving hand')
-        # Publish joint trajectory for waving motion
+        """ہاتھ ہلانے کا اشارہ"""
+        self.get_logger().info('ہاتھ ہلا رہے ہیں')
+        # ہاتھ ہلانے کی حرکت کے لیے joint trajectory شائع کریں
 
-# Main loop
+# مین لوپ
 def main():
     rclpy.init()
 
-    # Initialize components
+    # اجزاء کو شروع کریں
     listener = VoiceListener(model_size="base")
     vla = VLAController()
     executor = ActionExecutor()
 
-    print("🤖 Conversational robot ready!")
+    print("🤖 گفتگو کرنے والا روبوٹ تیار ہے!")
 
     while True:
-        # Listen for voice command
+        # آواز کے حکم کے لیے سنیں
         command = listener.listen_and_transcribe(duration=5)
 
         if "stop" in command.lower():
             break
 
-        # Generate action plan with VLA
+        # VLA کے ساتھ ایکشن پلان بنائیں
         actions_json = vla.plan_actions(command)
-        print(f"Action plan: {actions_json}")
+        print(f"ایکشن پلان: {actions_json}")
 
-        # Execute actions
+        # ایکشنز انجام دیں
         executor.execute_actions(actions_json)
 
     executor.destroy_node()
@@ -413,15 +413,15 @@ if __name__ == '__main__':
 
 ---
 
-## Part 4: Complete VLA System
+## حصہ 4: مکمل VLA سسٹم
 
-### Full Integration Example
+### مکمل انٹیگریشن مثال
 
 ```python
 #!/usr/bin/env python3
 """
-Conversational Humanoid Robot
-Combines Whisper (ASR) + Gemini (VLA) + ROS 2 (Execution)
+گفتگو کرنے والا ہیومنائیڈ روبوٹ
+Whisper (ASR) + Gemini (VLA) + ROS 2 (Execution) کو یکجا کرتا ہے
 """
 
 import rclpy
@@ -436,14 +436,14 @@ class ConversationalRobot(Node):
     def __init__(self):
         super().__init__('conversational_robot')
 
-        # Load Whisper model
+        # Whisper ماڈل لوڈ کریں
         self.whisper = whisper.load_model("base")
 
-        # Configure Gemini
+        # Gemini کنفیگر کریں
         genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
         self.gemini = genai.GenerativeModel('gemini-1.5-pro')
 
-        # Camera subscriber
+        # کیمرہ subscriber
         self.bridge = CvBridge()
         self.camera_sub = self.create_subscription(
             Image,
@@ -453,21 +453,21 @@ class ConversationalRobot(Node):
         )
         self.latest_image = None
 
-        self.get_logger().info("🤖 Conversational robot initialized")
+        self.get_logger().info("🤖 گفتگو کرنے والا روبوٹ شروع ہو گیا")
 
     def camera_callback(self, msg):
-        """Store latest camera frame"""
+        """تازہ ترین کیمرہ فریم محفوظ کریں"""
         self.latest_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
 
     def process_voice_command(self, audio_file):
-        """Complete pipeline: Voice → Actions"""
+        """مکمل پائپ لائن: آواز → ایکشنز"""
 
-        # 1. Speech recognition
+        # 1. تقریر کی شناخت
         result = self.whisper.transcribe(audio_file)
         command = result["text"]
-        self.get_logger().info(f"Command: {command}")
+        self.get_logger().info(f"حکم: {command}")
 
-        # 2. VLA planning (with vision)
+        # 2. VLA پلاننگ (بصارت کے ساتھ)
         prompt = f"""Convert this command to robot actions: {command}
 
         Available actions: navigate, grasp, place, wave, turn
@@ -480,16 +480,16 @@ class ConversationalRobot(Node):
 
         actions = json.loads(response.text)
 
-        # 3. Execute actions
+        # 3. ایکشنز انجام دیں
         self.execute_plan(actions)
 
         return actions
 
     def execute_plan(self, actions):
-        """Execute action sequence"""
+        """ایکشن سیکوینس انجام دیں"""
         for action in actions['actions']:
-            self.get_logger().info(f"Executing: {action}")
-            # Call appropriate ROS 2 action/service
+            self.get_logger().info(f"انجام دے رہے ہیں: {action}")
+            # مناسب ROS 2 action/service کو کال کریں
 
 def main():
     rclpy.init()
@@ -502,49 +502,49 @@ if __name__ == '__main__':
 
 ---
 
-## Hands-On Project: Voice-Controlled Navigation
+## عملی پروجیکٹ: آواز سے کنٹرول شدہ نیویگیشن
 
-### Project Requirements
+### پروجیکٹ کی ضروریات
 
-Build a humanoid robot that:
-1. ✅ Listens for voice commands ("Go to the kitchen", "Wave hello")
-2. ✅ Uses camera to identify objects and obstacles
-3. ✅ Generates safe navigation plans using Gemini VLA
-4. ✅ Executes motions in Isaac Sim
-5. ✅ Deploys to Jetson Orin Nano for real robot
+ایک ہیومنائیڈ روبوٹ بنائیں جو:
+1. ✅ آواز کے احکامات سنتا ہے ("Go to the kitchen"، "Wave hello")
+2. ✅ اشیاء اور رکاوٹوں کی شناخت کے لیے کیمرہ استعمال کرتا ہے
+3. ✅ Gemini VLA استعمال کرتے ہوئے محفوظ نیویگیشن پلان بناتا ہے
+4. ✅ Isaac Sim میں حرکتیں انجام دیتا ہے
+5. ✅ حقیقی روبوٹ کے لیے Jetson Orin Nano پر ڈیپلائے ہوتا ہے
 
-### Assessment Criteria
+### تشخیص کے معیار
 
-- Voice recognition accuracy > 90%
-- VLA generates valid action sequences
-- Navigation avoids obstacles
-- Smooth motion execution
-- Successful sim-to-real transfer
+- آواز کی شناخت کی درستگی > 90%
+- VLA درست ایکشن سیکوینس بناتا ہے
+- نیویگیشن رکاوٹوں سے بچتا ہے
+- ہموار حرکت کی اجرائی
+- کامیاب sim-to-real منتقلی
 
 ---
 
-## Safety Considerations
+## حفاظت کے تحفظات
 
-:::danger Critical Safety Rules
+:::danger اہم حفاظتی قوانین
 
-1. **Emergency Stop**: Always have physical e-stop button
-2. **Speed Limits**: Cap velocity at 0.5 m/s during testing
-3. **Workspace Boundaries**: Define safe operation zone in code
-4. **Human Detection**: Stop if person enters 1m radius
-5. **Simulation First**: Test all commands in Isaac Sim before real robot
+1. **ایمرجنسی سٹاپ**: ہمیشہ فزیکل e-stop بٹن رکھیں
+2. **رفتار کی حدیں**: ٹیسٹنگ کے دوران velocity کو 0.5 m/s پر محدود کریں
+3. **ورک سپیس کی حدود**: کوڈ میں محفوظ آپریشن زون کی تعریف کریں
+4. **انسانی کا پتہ لگانا**: اگر کوئی شخص 1m رداس میں داخل ہو تو رک جائیں
+5. **پہلے سمیولیشن**: حقیقی روبوٹ سے پہلے Isaac Sim میں تمام احکامات ٹیسٹ کریں
 
 :::
 
-### Safety Code Example
+### حفاظتی کوڈ کی مثال
 
 ```python
 class SafetyMonitor(Node):
     def __init__(self):
         super().__init__('safety_monitor')
         self.max_velocity = 0.5  # m/s
-        self.safety_radius = 1.0  # meters
+        self.safety_radius = 1.0  # میٹر
 
-        # Laser scan for obstacle detection
+        # رکاوٹ کا پتہ لگانے کے لیے Laser scan
         self.scan_sub = self.create_subscription(
             LaserScan,
             '/scan',
@@ -553,77 +553,77 @@ class SafetyMonitor(Node):
         )
 
     def scan_callback(self, msg):
-        """Check for obstacles in safety radius"""
+        """حفاظتی رداس میں رکاوٹوں کی جانچ کریں"""
         min_distance = min(msg.ranges)
 
         if min_distance < self.safety_radius:
-            self.get_logger().warn(f"Obstacle at {min_distance}m - STOPPING")
+            self.get_logger().warn(f"{min_distance}m پر رکاوٹ - رک رہے ہیں")
             self.emergency_stop()
 
     def emergency_stop(self):
-        """Publish zero velocity"""
-        # Stop all motion
+        """صفر velocity شائع کریں"""
+        # تمام حرکت روک دیں
         pass
 ```
 
 ---
 
-## Deployment Checklist
+## ڈیپلائمنٹ چیک لسٹ
 
-### Pre-Deployment Tests
+### ڈیپلائمنٹ سے پہلے ٹیسٹ
 
-- [ ] Test voice recognition in noisy environment
-- [ ] Verify VLA generates safe actions
-- [ ] Test emergency stop button
-- [ ] Validate obstacle detection
-- [ ] Confirm battery level > 50%
-- [ ] Test in simulation with same commands
+- [ ] شور والے ماحول میں آواز کی شناخت ٹیسٹ کریں
+- [ ] تصدیق کریں کہ VLA محفوظ ایکشنز بناتا ہے
+- [ ] ایمرجنسی سٹاپ بٹن ٹیسٹ کریں
+- [ ] رکاوٹ کا پتہ لگانا validate کریں
+- [ ] بیٹری لیول > 50% کی تصدیق کریں
+- [ ] انہی احکامات کے ساتھ سمیولیشن میں ٹیسٹ کریں
 
-### Jetson Deployment
+### Jetson ڈیپلائمنٹ
 
 ```bash
-# Copy code to Jetson
+# کوڈ کو Jetson میں کاپی کریں
 scp -r conversational_robot/ jetson@192.168.1.100:~/ros2_ws/src/
 
-# Build on Jetson
+# Jetson پر بلڈ کریں
 ssh jetson@192.168.1.100
 cd ~/ros2_ws
 colcon build --packages-select conversational_robot
 source install/setup.bash
 
-# Run
+# چلائیں
 ros2 launch conversational_robot robot.launch.py
 ```
 
 ---
 
-## Resources
+## وسائل
 
-- [Whisper Documentation](https://github.com/openai/whisper)
+- [Whisper دستاویزات](https://github.com/openai/whisper)
 - [Google Gemini API](https://ai.google.dev/docs)
 - [ROS 2 Actions](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Actions/Understanding-ROS2-Actions.html)
-- [Nav2 Documentation](https://navigation.ros.org/)
-- [VLA Research Papers](https://robotics-transformer.github.io/)
+- [Nav2 دستاویزات](https://navigation.ros.org/)
+- [VLA تحقیقی مقالات](https://robotics-transformer.github.io/)
 
 ---
 
-## Congratulations! 🎉
+## مبارک ہو! 🎉
 
-You've completed the Physical AI & Humanoid Robotics course!
+آپ نے فزیکل AI اور ہیومنائیڈ روبوٹکس کورس مکمل کر لیا ہے!
 
-**You now know how to:**
-- ✅ Build ROS 2 applications for humanoid robots
-- ✅ Simulate in Gazebo and Isaac Sim
-- ✅ Train VLA models with synthetic data
-- ✅ Deploy to NVIDIA Jetson hardware
-- ✅ Create voice-controlled conversational robots
+**اب آپ یہ جانتے ہیں:**
+- ✅ ہیومنائیڈ روبوٹس کے لیے ROS 2 ایپلیکیشنز بنانا
+- ✅ Gazebo اور Isaac Sim میں سمیولیٹ کرنا
+- ✅ مصنوعی ڈیٹا کے ساتھ VLA ماڈلز ٹرین کرنا
+- ✅ NVIDIA Jetson ہارڈویئر پر ڈیپلائے کرنا
+- ✅ آواز سے کنٹرول ہونے والے گفتگو کرنے والے روبوٹس بنانا
 
-**Next Steps:**
-- Join the [ROS 2 Community](https://discourse.ros.org/)
-- Contribute to [NVIDIA Isaac ROS](https://github.com/NVIDIA-ISAAC-ROS)
-- Build your own humanoid robot project
-- Share your work on [Humanoid Robotics Discord](https://discord.gg/humanoid-robotics)
+**اگلے قدمات:**
+- [ROS 2 کمیونٹی](https://discourse.ros.org/) میں شامل ہوں
+- [NVIDIA Isaac ROS](https://github.com/NVIDIA-ISAAC-ROS) میں حصہ ڈالیں
+- اپنا ہیومنائیڈ روبوٹ پروجیکٹ بنائیں
+- اپنا کام [Humanoid Robotics Discord](https://discord.gg/humanoid-robotics) پر شیئر کریں
 
 ---
 
-**Keep building! The future of physical AI is in your hands.** 🤖
+**بناتے رہیں! فزیکل AI کا مستقبل آپ کے ہاتھوں میں ہے۔** 🤖
