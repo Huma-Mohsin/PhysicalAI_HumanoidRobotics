@@ -22,6 +22,7 @@ const config: Config = {
 
   // Important for Vercel deployment
   trailingSlash: false,
+  // Force deployment: Urdu docs are built and ready
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
