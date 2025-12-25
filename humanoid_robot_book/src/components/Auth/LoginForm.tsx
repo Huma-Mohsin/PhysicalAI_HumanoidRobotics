@@ -8,6 +8,7 @@ const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,19 +17,41 @@ const LoginForm: React.FC = () => {
 
     try {
       await signIn(email, password);
-      // Navigate to home page after successful login
-      window.location.href = '/';
+      // Show success message
+      setShowSuccessModal(true);
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during sign in');
-    } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className={styles.authContainer}>
-      <h2>Sign In</h2>
-      <form onSubmit={handleSubmit} className={styles.authForm}>
+    <>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2"/>
+                <path d="M9 12l2 2 4-4" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className={styles.modalTitle}>Login Successful!</h3>
+            <p className={styles.modalMessage}>
+              Welcome back! Redirecting to home page...
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.authContainer}>
+        <h2>Sign In</h2>
+        <form onSubmit={handleSubmit} className={styles.authForm}>
         <div className={styles.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -58,12 +81,19 @@ const LoginForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className={`${styles.button} ${styles.primaryButton}`}
+          className={`${styles.button} ${styles.primaryButton} ${isLoading ? styles.loading : ''}`}
+          style={{ cursor: isLoading ? 'wait' : 'pointer' }}
         >
-          {isLoading ? 'Signing In...' : 'Sign In'}
+          {isLoading ? (
+            <>
+              <span className={styles.spinner}></span>
+              Signing In...
+            </>
+          ) : 'Sign In'}
         </button>
       </form>
-    </div>
+      </div>
+    </>
   );
 };
 

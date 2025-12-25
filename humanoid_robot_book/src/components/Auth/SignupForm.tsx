@@ -38,6 +38,7 @@ const SignupForm: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,8 +66,12 @@ const SignupForm: React.FC = () => {
           additionalNotes: hardwareSurvey.additionalNotes || undefined,
         }
       );
-      // Navigate to home page after successful signup
-      window.location.href = '/';
+      // Show success message
+      setShowSuccessModal(true);
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during sign up';
 
@@ -100,6 +105,24 @@ const SignupForm: React.FC = () => {
 
   return (
     <>
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalIcon}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#10b981" strokeWidth="2"/>
+                <path d="M9 12l2 2 4-4" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <h3 className={styles.modalTitle}>Successfully Registered!</h3>
+            <p className={styles.modalMessage}>
+              Your account has been created successfully. Redirecting to home page...
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Duplicate Email Modal */}
       {showDuplicateModal && (
         <div className={styles.modalOverlay} onClick={() => setShowDuplicateModal(false)}>
@@ -329,9 +352,15 @@ const SignupForm: React.FC = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className={`${styles.button} ${styles.primaryButton}`}
+          className={`${styles.button} ${styles.primaryButton} ${isLoading ? styles.loading : ''}`}
+          style={{ cursor: isLoading ? 'wait' : 'pointer' }}
         >
-          {isLoading ? 'Creating Account...' : 'Sign Up'}
+          {isLoading ? (
+            <>
+              <span className={styles.spinner}></span>
+              Creating Account...
+            </>
+          ) : 'Sign Up'}
         </button>
       </form>
       </div>
