@@ -98,6 +98,8 @@ const config: Config = {
         {
           type: 'localeDropdown',
           position: 'right',
+          dropdownItemsAfter: [],
+          queryString: '?persistLocale=true',
         },
         {
           href: 'https://www.linkedin.com/in/huma-mohsin-0b35382b5/',
