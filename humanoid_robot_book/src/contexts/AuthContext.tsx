@@ -69,12 +69,36 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(() => {
+    // Initialize from localStorage on mount
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('userProfile');
+      return stored ? JSON.parse(stored) : null;
+    }
+    return null;
+  });
   const [isLoading, setIsLoading] = useState(true);
+
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (user) {
+        localStorage.setItem('userProfile', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('userProfile');
+      }
+    }
+  }, [user]);
 
   // Check session on component mount
   useEffect(() => {
     const checkSession = async () => {
+      // If user already loaded from localStorage, skip backend check initially
+      if (user) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
         // Call backend's get-session endpoint which checks the session cookie
         const API_BASE_URL = process.env.NODE_ENV === 'production'
@@ -132,7 +156,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkSession();
-  }, []);
+  }, [user]);
 
   const fetchUserProfile = async (userId: string): Promise<UserProfile> => {
     try {
