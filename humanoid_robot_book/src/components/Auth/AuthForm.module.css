@@ -90,9 +90,9 @@
 }
 
 .primaryButton:disabled {
-  background: #cbd5e1;
+  background: linear-gradient(135deg, #204860 0%, #1a3e54 100%);
   cursor: wait;
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .primaryButton.loading {
