@@ -2,11 +2,5 @@
   "buildCommand": "cd humanoid_robot_book && npm install && npm run build",
   "outputDirectory": "humanoid_robot_book/build",
   "framework": "docusaurus",
-  "installCommand": "cd humanoid_robot_book && npm install",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "installCommand": "cd humanoid_robot_book && npm install"
 }
