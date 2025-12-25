@@ -1,18 +1,12 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "cd humanoid_robot_book && npm install && npm run build",
+  "outputDirectory": "humanoid_robot_book/build",
+  "framework": "docusaurus",
+  "installCommand": "cd humanoid_robot_book && npm install",
+  "rewrites": [
     {
-      "src": "api.py",
-      "use": "@vercel/python",
-      "config": {
-        "includeFiles": ["**/*.py", "**/*.txt", "**/*.json"]
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "api.py"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
