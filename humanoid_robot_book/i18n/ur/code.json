@@ -10,5 +10,35 @@
   },
   "theme.docs.sidebar.expandButtonTitle": {
     "message": "سائڈبار کھولیں"
+  },
+  "homepage.hero.title": {
+    "message": "فزیکل AI اور ہیومنائیڈ روبوٹکس"
+  },
+  "homepage.hero.subtitle": {
+    "message": "Embodied Intelligence کورس"
+  },
+  "homepage.hero.description": {
+    "message": "ڈیجیٹل دماغ اور فزیکل جسم کے درمیان خلا کو پر کرنا"
+  },
+  "homepage.cta.getStarted": {
+    "message": "شروع کریں"
+  },
+  "homepage.features.focus.title": {
+    "message": "فوکس"
+  },
+  "homepage.features.focus.description": {
+    "message": "فزیکل دنیا میں AI سسٹمز"
+  },
+  "homepage.features.goal.title": {
+    "message": "مقصد"
+  },
+  "homepage.features.goal.description": {
+    "message": "مصنوعی ذہانت کو Embodied Robotics کے ساتھ مربوط کرنے میں مہارت حاصل کریں"
+  },
+  "homepage.features.approach.title": {
+    "message": "طریقہ کار"
+  },
+  "homepage.features.approach.description": {
+    "message": "نظریہ، عملی نفاذ، اور حقیقی دنیا کی ایپلیکیشنز"
   }
 }

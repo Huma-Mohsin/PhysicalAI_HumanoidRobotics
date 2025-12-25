@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Heading from '@theme/Heading';
+import Translate from '@docusaurus/Translate';
 
 import styles from './index.module.css';
 
@@ -13,17 +14,27 @@ function HomepageHeader() {
       <div className={styles.heroContent}>
         <div className={styles.heroText}>
           <Heading as="h1" className={styles.heroTitle}>
-            Physical AI & Humanoid Robotics
+            <Translate id="homepage.hero.title">
+              Physical AI & Humanoid Robotics
+            </Translate>
           </Heading>
-          <p className={styles.heroSubtitle}>The Embodied Intelligence Course</p>
+          <p className={styles.heroSubtitle}>
+            <Translate id="homepage.hero.subtitle">
+              The Embodied Intelligence Course
+            </Translate>
+          </p>
           <p className={styles.heroDescription}>
-            Bridging the gap between the digital brain and the physical body
+            <Translate id="homepage.hero.description">
+              Bridging the gap between the digital brain and the physical body
+            </Translate>
           </p>
           <div className={styles.buttons}>
             <Link
               className={clsx('button button--lg', styles.ctaButton)}
               to="/docs/introduction">
-              Get Started
+              <Translate id="homepage.cta.getStarted">
+                Get Started
+              </Translate>
             </Link>
           </div>
         </div>
@@ -45,16 +56,40 @@ function CompactFeatures() {
       <div className="container">
         <div className={styles.compactGrid}>
           <div className={styles.compactCard}>
-            <h3>FOCUS</h3>
-            <p>AI Systems in the Physical World</p>
+            <h3>
+              <Translate id="homepage.features.focus.title">
+                FOCUS
+              </Translate>
+            </h3>
+            <p>
+              <Translate id="homepage.features.focus.description">
+                AI Systems in the Physical World
+              </Translate>
+            </p>
           </div>
           <div className={styles.compactCard}>
-            <h3>GOAL</h3>
-            <p>Master the integration of artificial intelligence with embodied robotics</p>
+            <h3>
+              <Translate id="homepage.features.goal.title">
+                GOAL
+              </Translate>
+            </h3>
+            <p>
+              <Translate id="homepage.features.goal.description">
+                Master the integration of artificial intelligence with embodied robotics
+              </Translate>
+            </p>
           </div>
           <div className={styles.compactCard}>
-            <h3>APPROACH</h3>
-            <p>Theory, practical implementation, and real-world applications</p>
+            <h3>
+              <Translate id="homepage.features.approach.title">
+                APPROACH
+              </Translate>
+            </h3>
+            <p>
+              <Translate id="homepage.features.approach.description">
+                Theory, practical implementation, and real-world applications
+              </Translate>
+            </p>
           </div>
         </div>
       </div>
