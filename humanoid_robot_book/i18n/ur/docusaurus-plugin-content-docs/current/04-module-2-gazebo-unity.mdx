@@ -1,0 +1,559 @@
+---
+id: module-2-gazebo-unity
+title: "Module 2: The Digital Twin (Gazebo & Unity)"
+sidebar_label: "Module 2: Gazebo & Unity"
+sidebar_position: 4
+---
+
+import PersonalizeButton from '@site/src/components/Personalization/PersonalizeButton';
+import ContentVariant from '@site/src/components/Personalization/ContentVariant';
+
+
+# Module 2: The Digital Twin (Gazebo & Unity)
+
+## Overview
+
+**Focus**: Physics simulation and environment building
+
+Before deploying robots in the real world, we test them in **digital twins**—highly accurate virtual replicas that simulate physics, sensors, and environmental interactions. This module teaches you to create realistic robot simulations using Gazebo and Unity.
+
+---
+
+## Learning Objectives
+
+By the end of this module, you will:
+
+1. ✅ Master Gazebo simulation environment setup
+2. ✅ Understand URDF and SDF robot description formats
+3. ✅ Simulate physics: gravity, collisions, friction
+4. ✅ Implement sensor simulation (LiDAR, Depth Cameras, IMUs)
+5. ✅ Create high-fidelity visualizations with Unity
+6. ✅ Design human-robot interaction scenarios
+
+---
+
+<PersonalizeButton />
+
+---
+
+## Why Digital Twins?
+
+### The Sim-to-Real Problem
+
+Training robots in the real world is:
+- **Expensive** ($1000s in robot repairs)
+- **Dangerous** (untested behaviors can cause damage)
+- **Slow** (data collection takes weeks)
+
+**Digital twins solve this** by:
+- ✅ Enabling rapid iteration (1000s of test scenarios per hour)
+- ✅ Generating synthetic training data
+- ✅ Reducing risk before real-world deployment
+- ✅ Allowing parallel testing of multiple robot configurations
+
+---
+
+## Gazebo: The Physics Powerhouse
+
+Gazebo is the industry-standard robot simulator with realistic physics and sensor simulation.
+
+### Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **Physics Engines** | ODE, Bullet, Simbody, DART |
+| **Sensor Models** | Camera, Lidar, IMU, GPS, Force/Torque |
+| **Robot Models** | URDF, SDF support |
+| **ROS Integration** | Native ROS 2 support via `ros_gz_bridge` |
+| **Plugin System** | Extend functionality with C++ plugins |
+
+---
+
+### Setting Up Gazebo
+
+<ContentVariant hardwareType="gpu_workstation">
+
+#### For GPU Workstation Users (RTX 4090+)
+
+**Native Installation with GPU Acceleration (Ubuntu 22.04):**
+
+```bash
+# Install Gazebo Garden with full GPU support
+sudo apt-get update
+sudo apt-get install lsb-release wget gnupg
+
+sudo wget https://packages.osrfoundation.org/gazebo.gpg -O /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install gz-garden
+
+# Install ROS 2 Gazebo bridge
+sudo apt-get install ros-humble-ros-gz
+
+# Enable GPU rendering (NVIDIA drivers required)
+export LIBGL_ALWAYS_SOFTWARE=0
+```
+
+**Verify GPU Acceleration:**
+
+```bash
+gz sim shapes.sdf
+# Check GPU usage: nvidia-smi
+```
+
+**Advantages**: Full physics accuracy, RTX ray tracing, high frame rates (60+ FPS)
+
+</ContentVariant>
+
+<ContentVariant hardwareType="edge_device">
+
+#### For Edge Device Users (Jetson Orin Nano)
+
+**Jetson-Optimized Installation:**
+
+```bash
+# Install lightweight Gazebo for Jetson
+sudo apt-get update
+sudo apt-get install gz-garden
+
+# Install ROS 2 bridge (ARM64)
+sudo apt-get install ros-humble-ros-gz
+
+# Reduce physics load for better performance
+export GZ_SIM_RESOURCE_PATH=/usr/share/gz/gz-sim7
+```
+
+**Optimize for Jetson:**
+
+```bash
+# Run with reduced physics steps
+gz sim shapes.sdf --physics-engine bullet --physics-update-rate 50
+```
+
+**Limitations**:
+- Lower frame rates (15-30 FPS)
+- Simplified physics recommended
+- No RTX ray tracing
+
+**Tip**: Use headless mode for better performance: `gz sim -s shapes.sdf`
+
+</ContentVariant>
+
+<ContentVariant hardwareType="cloud_mac">
+
+#### For Cloud/Mac Users
+
+**Docker-Based Setup (Cross-Platform):**
+
+```bash
+# Pull Gazebo Docker image
+docker pull osrf/ros:humble-desktop-full
+
+# Run Gazebo in Docker with X11 forwarding
+docker run -it --rm \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  osrf/ros:humble-desktop-full \
+  bash
+
+# Inside container:
+apt-get update && apt-get install -y gz-garden
+gz sim shapes.sdf
+```
+
+**Mac Users (Alternative)**:
+- Use VcXsrv or XQuartz for GUI
+- Or use cloud-based Gazebo instances (AWS RoboMaker, Azure)
+
+**Limitations**:
+- Performance depends on cloud instance specs
+- X11 forwarding adds latency
+- Consider cloud GPU instances for better performance
+
+</ContentVariant>
+
+---
+
+### SDF (Simulation Description Format)
+
+SDF is more powerful than URDF for simulation-specific features.
+
+**Example: Simple Humanoid World**
+
+```xml
+<?xml version="1.0"?>
+<sdf version="1.8">
+  <world name="humanoid_world">
+
+    <!-- Physics Engine -->
+    <physics name="1ms" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+
+    <!-- Lighting -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <!-- Ground Plane -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Humanoid Robot (reference to URDF) -->
+    <include>
+      <uri>model://humanoid_robot</uri>
+      <pose>0 0 1 0 0 0</pose>
+    </include>
+
+  </world>
+</sdf>
+```
+
+---
+
+### Simulating Sensors
+
+#### LiDAR Sensor
+
+```xml
+<sensor name="lidar" type="gpu_lidar">
+  <pose>0 0 0.1 0 0 0</pose>
+  <topic>lidar</topic>
+  <update_rate>10</update_rate>
+  <lidar>
+    <scan>
+      <horizontal>
+        <samples>640</samples>
+        <resolution>1</resolution>
+        <min_angle>-3.14159</min_angle>
+        <max_angle>3.14159</max_angle>
+      </horizontal>
+      <vertical>
+        <samples>16</samples>
+        <resolution>1</resolution>
+        <min_angle>-0.26</min_angle>
+        <max_angle>0.26</max_angle>
+      </vertical>
+    </scan>
+    <range>
+      <min>0.1</min>
+      <max>30.0</max>
+      <resolution>0.01</resolution>
+    </range>
+  </lidar>
+  <always_on>1</always_on>
+  <visualize>true</visualize>
+</sensor>
+```
+
+#### Depth Camera (RGB-D)
+
+```xml
+<sensor name="rgbd_camera" type="rgbd_camera">
+  <camera>
+    <horizontal_fov>1.047</horizontal_fov>
+    <image>
+      <width>640</width>
+      <height>480</height>
+      <format>R8G8B8</format>
+    </image>
+    <clip>
+      <near>0.1</near>
+      <far>10.0</far>
+    </clip>
+  </camera>
+  <always_on>1</always_on>
+  <update_rate>30</update_rate>
+  <topic>rgbd_camera</topic>
+</sensor>
+```
+
+#### IMU (Inertial Measurement Unit)
+
+```xml
+<sensor name="imu_sensor" type="imu">
+  <always_on>1</always_on>
+  <update_rate>100</update_rate>
+  <imu>
+    <angular_velocity>
+      <x>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>2e-4</stddev>
+        </noise>
+      </x>
+      <y>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>2e-4</stddev>
+        </noise>
+      </y>
+      <z>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>2e-4</stddev>
+        </noise>
+      </z>
+    </angular_velocity>
+    <linear_acceleration>
+      <x>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>1.7e-2</stddev>
+        </noise>
+      </x>
+      <y>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>1.7e-2</stddev>
+        </noise>
+      </y>
+      <z>
+        <noise type="gaussian">
+          <mean>0.0</mean>
+          <stddev>1.7e-2</stddev>
+        </noise>
+      </z>
+    </linear_acceleration>
+  </imu>
+  <topic>imu</topic>
+</sensor>
+```
+
+---
+
+### Physics Simulation
+
+#### Contact Dynamics
+
+```xml
+<collision name="collision">
+  <geometry>
+    <box>
+      <size>1 1 1</size>
+    </box>
+  </geometry>
+  <surface>
+    <friction>
+      <ode>
+        <mu>0.8</mu>
+        <mu2>0.8</mu2>
+        <fdir1>1 0 0</fdir1>
+        <slip1>0.0</slip1>
+        <slip2>0.0</slip2>
+      </ode>
+    </friction>
+    <contact>
+      <ode>
+        <kp>1000000.0</kp>
+        <kd>1.0</kd>
+        <max_vel>0.01</max_vel>
+        <min_depth>0.001</min_depth>
+      </ode>
+    </contact>
+  </surface>
+</collision>
+```
+
+---
+
+## Unity for High-Fidelity Rendering
+
+Unity provides photorealistic rendering and advanced human-robot interaction scenarios.
+
+### Why Unity?
+
+| Feature | Gazebo | Unity |
+|---------|--------|-------|
+| **Physics Accuracy** | Excellent | Good |
+| **Visual Quality** | Basic | Photorealistic |
+| **Human Models** | Limited | Extensive |
+| **VR/AR Support** | None | Native |
+| **Asset Ecosystem** | Small | Massive |
+
+---
+
+### Unity Robotics Hub
+
+**Installation:**
+
+```bash
+# Clone Unity Robotics Hub
+git clone https://github.com/Unity-Technologies/Unity-Robotics-Hub.git
+
+# Open in Unity Editor (2021.3 LTS+)
+# Install Unity Package Manager packages:
+# - ROS TCP Connector
+# - URDF Importer
+```
+
+**Importing URDF to Unity:**
+
+```csharp
+using Unity.Robotics.UrdfImporter;
+
+public class RobotLoader : MonoBehaviour
+{
+    void Start()
+    {
+        // Import URDF file
+        string urdfPath = "Assets/URDF/humanoid.urdf";
+        UrdfRobot.Create(urdfPath);
+    }
+}
+```
+
+---
+
+### ROS-Unity Communication
+
+```csharp
+using RosMessageTypes.Geometry;
+using Unity.Robotics.ROSTCPConnector;
+
+public class RobotController : MonoBehaviour
+{
+    private ROSConnection ros;
+
+    void Start()
+    {
+        // Connect to ROS
+        ros = ROSConnection.GetOrCreateInstance();
+        ros.RegisterPublisher<TwistMsg>("cmd_vel");
+
+        // Subscribe to joint states
+        ros.Subscribe<JointStateMsg>("joint_states", ReceiveJointStates);
+    }
+
+    void ReceiveJointStates(JointStateMsg msg)
+    {
+        // Update Unity robot joints
+        for (int i = 0; i < msg.position.Length; i++)
+        {
+            // Apply joint angles to Unity ArticulationBody
+        }
+    }
+
+    void SendVelocityCommand(float linear, float angular)
+    {
+        TwistMsg twist = new TwistMsg
+        {
+            linear = new Vector3Msg { x = linear },
+            angular = new Vector3Msg { z = angular }
+        };
+
+        ros.Publish("cmd_vel", twist);
+    }
+}
+```
+
+---
+
+## Hands-On Project: Build a Digital Twin
+
+### Project Requirements
+
+Create a complete digital twin that:
+
+1. ✅ Models a humanoid robot in SDF/URDF
+2. ✅ Simulates realistic physics (gravity, friction, collisions)
+3. ✅ Includes at least 3 sensors (Camera, LiDAR, IMU)
+4. ✅ Publishes sensor data to ROS 2 topics
+5. ✅ Responds to velocity commands
+6. ✅ Includes a Unity visualization (bonus)
+
+### Assessment Criteria
+
+- Physics realism
+- Sensor accuracy
+- ROS 2 integration
+- Code quality
+
+---
+
+## Common Challenges and Solutions
+
+### Challenge 1: Simulation Instability
+
+**Problem**: Robot falls through floor or jitters
+
+**Solution**: Adjust contact parameters
+
+```xml
+<ode>
+  <kp>10000000</kp>  <!-- Increase stiffness -->
+  <kd>10</kd>        <!-- Increase damping -->
+  <min_depth>0.001</min_depth>
+</ode>
+```
+
+### Challenge 2: Slow Simulation
+
+**Problem**: Real-time factor < 1.0
+
+**Solution**:
+- Reduce max_contacts
+- Simplify collision meshes
+- Use GPU-accelerated sensors
+- Decrease sensor update rates
+
+---
+
+## Resources
+
+- [Gazebo Documentation](https://gazebosim.org/docs)
+- [SDF Specification](http://sdformat.org/)
+- [Unity Robotics Hub](https://github.com/Unity-Technologies/Unity-Robotics-Hub)
+- [ROS-Unity Integration](https://github.com/Unity-Technologies/ROS-TCP-Connector)
+
+---
+
+## Next Steps
+
+Now that you can simulate robots, let's supercharge them with NVIDIA's AI-powered robotics platform.
+
+👉 **Next**: [Module 3: The AI-Robot Brain (NVIDIA Isaac)](./module-3-nvidia-isaac)
