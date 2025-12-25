@@ -1,14 +1,5 @@
 {
-  "buildCommand": "cd humanoid_robot_book && npm install && npm run build",
+  "buildCommand": "cd humanoid_robot_book && npm run build",
   "outputDirectory": "humanoid_robot_book/build",
-  "framework": "docusaurus",
-  "installCommand": "cd humanoid_robot_book && npm install",
-  "routes": [
-    {
-      "src": "/ur/(.*)",
-      "dest": "/ur/$1"
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  "installCommand": "npm install --prefix humanoid_robot_book"
 }
