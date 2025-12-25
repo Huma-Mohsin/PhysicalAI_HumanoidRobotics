@@ -115,9 +115,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             };
             setUser(userProfile);
           }
+        } else if (response.status === 401) {
+          // 401 is expected for users who aren't logged in - silently continue
+          // No error logging needed
         }
       } catch (error) {
-        console.error('Error checking session:', error);
+        // Only log errors that aren't network/connection issues
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          // Network error - silently fail (backend might be down)
+        } else {
+          console.error('Error checking session:', error);
+        }
       } finally {
         setIsLoading(false);
       }
