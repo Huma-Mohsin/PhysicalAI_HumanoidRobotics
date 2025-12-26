@@ -42,6 +42,18 @@ export function HardwareProfileProvider({ children }: HardwareProfileProviderPro
     }
   }, []);
 
+  // Auto-enable personalization when user logs in with hardware profile
+  useEffect(() => {
+    if (user?.hardwareProfile?.hardwareType || user?.hardwareType) {
+      console.log('[HardwareProfile] User logged in with hardware profile, enabling personalization');
+      setIsPersonalized(true);
+    } else if (!user) {
+      // Reset personalization when user logs out
+      console.log('[HardwareProfile] User logged out, disabling personalization');
+      setIsPersonalized(false);
+    }
+  }, [user]);
+
   const setProfile = async (newProfile: HardwareProfile) => {
     console.log('[HardwareProfile] Setting profile:', newProfile);
 

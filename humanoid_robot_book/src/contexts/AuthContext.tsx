@@ -216,7 +216,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           // Hardware background
           hardwareType: response.user.hardwareType,
           hardwareExperience: response.user.hardwareExperience,
-          hardwareProfile: null, // This will be constructed from hardwareType
+          // Construct hardwareProfile from available data
+          hardwareProfile: response.user.hardwareType ? {
+            id: 'temp-id',
+            userId: response.user.id,
+            hardwareType: response.user.hardwareType as 'gpu_workstation' | 'edge_device' | 'cloud_mac' | null,
+            gpuModel: (response.user as any).gpuModel,
+            cpuModel: (response.user as any).cpuModel,
+            ramSize: (response.user as any).ramSize,
+            osType: (response.user as any).osType,
+            additionalNotes: (response.user as any).additionalNotes,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          } : null,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
