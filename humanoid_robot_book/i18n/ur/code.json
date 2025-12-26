@@ -40,5 +40,41 @@
   },
   "homepage.features.approach.description": {
     "message": "نظریہ، عملی نفاذ، اور حقیقی دنیا کی ایپلیکیشنز"
+  },
+  "chatbot.button.openChat": {
+    "message": "کتاب کے بارے میں سوالات پوچھیں"
+  },
+  "chatbot.header.title": {
+    "message": "کتاب اسسٹنٹ"
+  },
+  "chatbot.header.subtitle": {
+    "message": "فزیکل AI اور ہیومنائیڈ روبوٹکس کے بارے میں مجھ سے کچھ بھی پوچھیں"
+  },
+  "chatbot.button.newConversation": {
+    "message": "نئی گفتگو"
+  },
+  "chatbot.button.closeChat": {
+    "message": "چیٹ بند کریں"
+  },
+  "chatbot.empty.greeting": {
+    "message": "👋 ہیلو! میں اس کتاب کے لیے آپ کا AI اسسٹنٹ ہوں۔"
+  },
+  "chatbot.empty.prompt": {
+    "message": "مجھ سے اس طرح کے سوالات پوچھیں:"
+  },
+  "chatbot.example.ros2": {
+    "message": "ROS 2 کیا ہے؟"
+  },
+  "chatbot.example.isaac": {
+    "message": "میں NVIDIA Isaac Sim کیسے سیٹ اپ کروں؟"
+  },
+  "chatbot.example.locomotion": {
+    "message": "دو پیروں پر چلنے کی تکنیک کی وضاحت کریں"
+  },
+  "chatbot.input.placeholder": {
+    "message": "سوال پوچھیں..."
+  },
+  "chatbot.button.send": {
+    "message": "بھیجیں"
   }
 }

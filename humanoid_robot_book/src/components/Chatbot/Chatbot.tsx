@@ -5,6 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import Translate, { translate } from '@docusaurus/Translate';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   sendChatQuery,
@@ -161,6 +162,38 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
     setIsOpen(!isOpen);
   };
 
+
+  // Get translated placeholder text
+  const placeholderText = translate({
+    id: 'chatbot.input.placeholder',
+    message: 'Ask a question...',
+  });
+
+  const openChatTitle = translate({
+    id: 'chatbot.button.openChat',
+    message: 'Ask questions about the book',
+  });
+
+  const newConversationTitle = translate({
+    id: 'chatbot.button.newConversation',
+    message: 'New conversation',
+  });
+
+  const exampleRos2 = translate({
+    id: 'chatbot.example.ros2',
+    message: 'What is ROS 2?',
+  });
+
+  const exampleIsaac = translate({
+    id: 'chatbot.example.isaac',
+    message: 'How do I set up NVIDIA Isaac Sim?',
+  });
+
+  const exampleLocomotion = translate({
+    id: 'chatbot.example.locomotion',
+    message: 'Explain bipedal locomotion',
+  });
+
   return (
     <div className={styles.chatbotContainer}>
       {/* Floating Button */}
@@ -169,7 +202,7 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
           className={styles.chatButton}
           onClick={toggleChat}
           aria-label="Open chat"
-          title="Ask questions about the book"
+          title={openChatTitle}
         >
           <svg
             width="24"
@@ -192,14 +225,22 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
           {/* Header */}
           <div className={styles.chatHeader}>
             <div>
-              <h3>Book Assistant</h3>
-              <p>Ask me anything about Physical AI & Humanoid Robotics</p>
+              <h3>
+                <Translate id="chatbot.header.title">
+                  Book Assistant
+                </Translate>
+              </h3>
+              <p>
+                <Translate id="chatbot.header.subtitle">
+                  Ask me anything about Physical AI & Humanoid Robotics
+                </Translate>
+              </p>
             </div>
             <div className={styles.headerActions}>
               <button
                 onClick={handleNewConversation}
                 className={styles.newChatButton}
-                title="New conversation"
+                title={newConversationTitle}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M1 4v6h6M23 20v-6h-6" />
@@ -222,8 +263,16 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
           <div className={styles.messagesContainer}>
             {messages.length === 0 && (
               <div className={styles.emptyState}>
-                <p>👋 Hello! I'm your AI assistant for this book.</p>
-                <p>Ask me questions like:</p>
+                <p>
+                  <Translate id="chatbot.empty.greeting">
+                    👋 Hello! I'm your AI assistant for this book.
+                  </Translate>
+                </p>
+                <p>
+                  <Translate id="chatbot.empty.prompt">
+                    Ask me questions like:
+                  </Translate>
+                </p>
                 <ul>
                   <li onClick={() => setInputValue("What is ROS 2?")}>
                     "What is ROS 2?"
@@ -279,7 +328,7 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask a question..."
+              placeholder={placeholderText}
               disabled={isLoading}
               className={styles.input}
             />
