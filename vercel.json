@@ -3,5 +3,7 @@
   "buildCommand": "cd humanoid_robot_book && npm install && npm run build",
   "outputDirectory": "humanoid_robot_book/build",
   "installCommand": "cd humanoid_robot_book && npm install",
-  "framework": null
+  "framework": null,
+  "cleanUrls": true,
+  "trailingSlash": false
 }
