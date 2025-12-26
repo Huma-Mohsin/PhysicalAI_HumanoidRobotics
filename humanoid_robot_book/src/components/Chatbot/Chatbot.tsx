@@ -274,14 +274,14 @@ export default function Chatbot({ selectedText, onSelectedTextUsed }: ChatbotPro
                   </Translate>
                 </p>
                 <ul>
-                  <li onClick={() => setInputValue("What is ROS 2?")}>
-                    "What is ROS 2?"
+                  <li onClick={() => setInputValue(exampleRos2)}>
+                    "{exampleRos2}"
                   </li>
-                  <li onClick={() => setInputValue("How do I set up NVIDIA Isaac Sim?")}>
-                    "How do I set up NVIDIA Isaac Sim?"
+                  <li onClick={() => setInputValue(exampleIsaac)}>
+                    "{exampleIsaac}"
                   </li>
-                  <li onClick={() => setInputValue("Explain bipedal locomotion")}>
-                    "Explain bipedal locomotion"
+                  <li onClick={() => setInputValue(exampleLocomotion)}>
+                    "{exampleLocomotion}"
                   </li>
                 </ul>
               </div>
