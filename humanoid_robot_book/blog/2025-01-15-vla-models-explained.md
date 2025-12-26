@@ -145,7 +145,7 @@ actions = processor.decode(action_tokens)
 robot.execute(actions)
 ```
 
-**Pros:** Low latency (<100ms), privacy
+**Pros:** Low latency (under 100ms), privacy
 **Cons:** Requires powerful edge device (Jetson Orin)
 
 ## Hardware Requirements

@@ -167,7 +167,7 @@ The magic moment: Moving from simulation to real robots!
 
 **Success Rate:**
 - Well-tuned sim: 80-95% transfer success
-- Poor sim: <50% transfer success
+- Poor sim: less than 50% transfer success
 
 ## Getting Started Checklist
 
