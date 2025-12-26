@@ -4,9 +4,10 @@
   "outputDirectory": "humanoid_robot_book/build",
   "installCommand": "cd humanoid_robot_book && npm install",
   "framework": null,
+  "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/$1.html" }
+  "rewrites": [
+    { "source": "/docs/:path*", "destination": "/docs/:path*.html" },
+    { "source": "/ur/docs/:path*", "destination": "/ur/docs/:path*.html" }
   ]
 }
