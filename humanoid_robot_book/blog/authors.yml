@@ -1,16 +1,16 @@
 huma:
-  name: Huma Aftab
+  name: Huma Mohsin
   title: Physical AI & Robotics Educator
-  url: https://github.com/your-username
-  image_url: https://github.com/your-username.png
+  url: https://www.linkedin.com/in/huma-mohsin-0b35382b5/
+  image_url: https://github.com/Huma-Mohsin.png
   page: true
   socials:
-    github: your-username
-    linkedin: your-profile
+    github: Huma-Mohsin
+    linkedin: huma-mohsin-0b35382b5
 
 robotics_team:
   name: Physical AI Team
   title: Humanoid Robotics Education Team
-  url: https://your-book-url.vercel.app
-  image_url: /img/team-logo.png
+  url: https://physical-ai-humanoid-robotics.vercel.app
+  image_url: https://github.com/Huma-Mohsin.png
   page: true
