@@ -68,10 +68,10 @@ const SignupForm: React.FC = () => {
       );
       // Show success message
       setShowSuccessModal(true);
-      // Redirect after 2 seconds
+      // Redirect to login page after 3 seconds
       setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
+        window.location.href = '/login';
+      }, 3000);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during sign up';
 
@@ -117,7 +117,10 @@ const SignupForm: React.FC = () => {
             </div>
             <h3 className={styles.modalTitle}>Successfully Registered!</h3>
             <p className={styles.modalMessage}>
-              Your account has been created successfully. Redirecting to home page...
+              Your account has been created successfully. Redirecting to login page...
+            </p>
+            <p className={styles.modalMessage} style={{ fontSize: '0.9em', marginTop: '8px' }}>
+              Please login with your email and password to access your account.
             </p>
           </div>
         </div>

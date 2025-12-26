@@ -285,7 +285,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        setUser(userProfile);
+        // Don't auto-login after signup - user should login manually
+        // setUser(userProfile);
       }
     } catch (error) {
       console.error('Sign up error:', error);
