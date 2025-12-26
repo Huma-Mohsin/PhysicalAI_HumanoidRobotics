@@ -1,19 +1,44 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+ros2:
+  label: ROS 2
+  permalink: /ros2
+  description: Articles about Robot Operating System 2
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+isaac-sim:
+  label: Isaac Sim
+  permalink: /isaac-sim
+  description: NVIDIA Isaac Sim tutorials and guides
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
+gazebo:
+  label: Gazebo
+  permalink: /gazebo
+  description: Gazebo simulation content
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+hardware:
+  label: Hardware
+  permalink: /hardware
+  description: Robotics hardware reviews and recommendations
+
+jetson:
+  label: Jetson
+  permalink: /jetson
+  description: NVIDIA Jetson edge AI content
+
+tutorials:
+  label: Tutorials
+  permalink: /tutorials
+  description: Step-by-step robotics tutorials
+
+vla:
+  label: VLA Models
+  permalink: /vla
+  description: Vision-Language-Action model content
+
+beginner:
+  label: Beginner
+  permalink: /beginner
+  description: Content for robotics beginners
+
+advanced:
+  label: Advanced
+  permalink: /advanced
+  description: Advanced robotics topics

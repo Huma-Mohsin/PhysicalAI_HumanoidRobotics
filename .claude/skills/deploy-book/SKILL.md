@@ -1,12 +1,11 @@
-# Deploy Book Skill
-
-**Description**: Automated deployment workflow for the Physical AI & Humanoid Robotics book
-
-**Version**: 1.0.0
-
-**Author**: Physical AI Project Team
-
 ---
+name: deploy-book
+description: Automated deployment workflow for the Physical AI & Humanoid Robotics book. Builds frontend, updates embeddings, and deploys to Vercel.
+version: 1.0.0
+author: Physical AI Project Team
+---
+
+# Deploy Book Skill
 
 ## What This Skill Does
 

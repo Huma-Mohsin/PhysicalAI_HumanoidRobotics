@@ -1,12 +1,11 @@
-# Create Chapter Skill
-
-**Description**: Scaffold new MDX chapter files with proper structure, imports, and personalization variants for the Physical AI & Humanoid Robotics book
-
-**Version**: 1.0.0
-
-**Author**: Physical AI & Humanoid Robotics Team
-
 ---
+name: create-chapter
+description: Scaffold new MDX chapter files with proper structure, imports, and personalization variants for the Physical AI & Humanoid Robotics book. Use this when adding new course modules (Week 14+) or supplementary content.
+version: 1.0.0
+author: Physical AI & Humanoid Robotics Team
+---
+
+# Create Chapter Skill
 
 ## What This Skill Does
 
