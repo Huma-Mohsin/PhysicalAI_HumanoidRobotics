@@ -4,6 +4,17 @@
   "outputDirectory": "humanoid_robot_book/build",
   "installCommand": "cd humanoid_robot_book && npm install",
   "framework": null,
-  "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/docs/:slug",
+      "destination": "/docs/:slug.html",
+      "permanent": false
+    },
+    {
+      "source": "/ur/docs/:slug",
+      "destination": "/ur/docs/:slug.html",
+      "permanent": false
+    }
+  ]
 }
