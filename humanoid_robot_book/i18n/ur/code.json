@@ -76,5 +76,8 @@
   },
   "chatbot.button.send": {
     "message": "بھیجیں"
+  },
+  "textSelection.askMe": {
+    "message": "💬 مجھ سے پوچھیں"
   }
 }

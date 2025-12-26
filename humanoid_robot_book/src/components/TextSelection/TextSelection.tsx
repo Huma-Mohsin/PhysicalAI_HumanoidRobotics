@@ -5,6 +5,7 @@
  */
 
 import React, { useEffect, useState, useRef } from 'react';
+import { translate } from '@docusaurus/Translate';
 import styles from './TextSelection.module.css';
 
 interface TextSelectionProps {
@@ -12,6 +13,12 @@ interface TextSelectionProps {
 }
 
 export default function TextSelection({ onAskAboutSelection }: TextSelectionProps): JSX.Element {
+  // Get translated 'Ask Me' text
+  const askMeText = translate({
+    id: 'textSelection.askMe',
+    message: '💬 Ask Me',
+  });
+
   const [selectedText, setSelectedText] = useState('');
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
   const [showButton, setShowButton] = useState(false);
@@ -244,7 +251,7 @@ export default function TextSelection({ onAskAboutSelection }: TextSelectionProp
         <circle cx="12" cy="10" r="0.5" fill="white" />
         <circle cx="15" cy="10" r="0.5" fill="white" />
       </svg>
-      💬 Ask Me
+      {askMeText}
     </button>
   );
 }
