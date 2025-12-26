@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd humanoid_robot_book && npm install && npm run build",
+  "outputDirectory": "humanoid_robot_book/build",
+  "installCommand": "cd humanoid_robot_book && npm install",
+  "framework": null
+}
